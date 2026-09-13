@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>alaqai — Жасанды интеллект курсы</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --ink:#17181C;
+      --ink-soft:#5B5E66;
+      --ink-faint:#9A9CA3;
+      --bg:#FAF9F6;
+      --card:#FFFFFF;
+      --line:#E8E6E0;
+      --teal:#0071E3;
+      --teal-soft:#E8F1FD;
+    }
+    *{box-sizing:border-box;}
+    body{
+      margin:0;
+      font-family:-apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
+      background:#EFEDE7;
+      color:var(--ink);
+      display:flex;
+      justify-content:center;
+      min-height:100vh;
+    }
+    .screen{
+      width:100%;
+      max-width:420px;
+      background:var(--bg);
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      position:relative;
+    }
+    @media (min-width:640px){
+      body{padding:32px 0;}
+      .screen{min-height:0;border-radius:28px;box-shadow:0 20px 60px rgba(20,20,15,0.18);overflow:hidden;}
+    }
+
+    header{
+      padding:28px 28px 20px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      position:sticky;
+      top:0;
+      background:rgba(250,249,246,0.92);
+      backdrop-filter:blur(10px);
+      z-index:10;
+    }
+    .logo{
+      font-family:'Poppins',sans-serif;
+      font-weight:700;
+      font-size:22px;
+      letter-spacing:-0.02em;
+      color:var(--ink);
+    }
+    .logo span{color:var(--teal);}
+    .call-btn{
+      width:36px;height:36px;border-radius:50%;
+      border:1px solid var(--line);
+      display:flex;align-items:center;justify-content:center;
+      color:var(--ink-soft);
+      text-decoration:none;
+      flex-shrink:0;
+    }
+
+    main{padding:8px 28px 36px;flex:1;}
+
+    .eyebrow{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      font-size:12.5px;
+      color:var(--teal);
+      font-weight:500;
+      margin-bottom:14px;
+    }
+    .eyebrow .dot{width:5px;height:5px;border-radius:50%;background:var(--teal);}
+
+    h1{
+      font-family:-apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
+      font-weight:600;
+      font-size:28px;
+      line-height:1.28;
+      letter-spacing:-0.01em;
+      margin:0 0 12px;
+      color:var(--ink);
+    }
+    .lede{
+      font-size:14.5px;
+      line-height:1.6;
+      color:var(--ink-soft);
+      max-width:32ch;
+      margin:0 0 30px;
+    }
+
+    .stats{
+      display:flex;
+      border-top:1px solid var(--line);
+      border-bottom:1px solid var(--line);
+      margin-bottom:34px;
+    }
+    .stat{
+      flex:1;
+      padding:16px 0;
+    }
+    .stat + .stat{border-left:1px solid var(--line);padding-left:18px;}
+    .stat-num{
+      font-family:-apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
+      font-size:20px;
+      font-weight:600;
+      color:var(--ink);
+      margin-bottom:2px;
+    }
+    .stat-label{font-size:12px;color:var(--ink-faint);}
+
+    .section-title{
+      font-family:-apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
+      font-size:17px;
+      font-weight:600;
+      color:var(--ink);
+      margin:0 0 16px;
+    }
+
+    .topics{list-style:none;margin:0 0 36px;padding:0;}
+    .topic{
+      display:flex;
+      align-items:flex-start;
+      gap:14px;
+      padding:14px 0;
+      border-bottom:1px solid var(--line);
+    }
+    .topic:first-child{border-top:1px solid var(--line);}
+    .topic-icon{
+      width:34px;height:34px;
+      border-radius:10px;
+      background:var(--teal-soft);
+      color:var(--teal);
+      display:flex;align-items:center;justify-content:center;
+      flex-shrink:0;
+      margin-top:1px;
+    }
+    .topic-icon svg{width:17px;height:17px;}
+    .topic-body h3{
+      font-size:14.5px;
+      font-weight:600;
+      margin:0 0 2px;
+      color:var(--ink);
+    }
+    .topic-body p{
+      font-size:12.5px;
+      color:var(--ink-faint);
+      margin:0;
+      line-height:1.5;
+    }
+
+    .price-card{
+      border:1px solid var(--line);
+      border-radius:20px;
+      padding:24px;
+      text-align:center;
+      margin-bottom:30px;
+      background:var(--card);
+      box-shadow:0 1px 2px rgba(20,20,15,0.03), 0 12px 28px rgba(20,20,15,0.04);
+    }
+    .price-label{
+      font-size:12.5px;
+      color:var(--ink-faint);
+      margin-bottom:8px;
+    }
+    .price-amount{
+      font-family:-apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
+      font-weight:700;
+      font-size:34px;
+      color:var(--ink);
+      letter-spacing:-0.01em;
+    }
+    .price-amount sup{
+      font-size:17px;
+      font-weight:600;
+      color:var(--ink-soft);
+      margin-left:2px;
+    }
+    .price-note{
+      font-size:12.5px;
+      color:var(--ink-soft);
+      margin-top:8px;
+    }
+    .price-note .warn{
+      color:#D6284A;
+      font-weight:600;
+    }
+
+    .contact{
+      border-top:1px solid var(--line);
+      padding-top:20px;
+      font-size:13.5px;
+      color:var(--ink-soft);
+      line-height:1.9;
+    }
+    .contact strong{color:var(--ink);font-weight:600;}
+
+    .cta-bar{
+      padding:18px 28px 26px;
+      position:sticky;
+      bottom:0;
+      background:linear-gradient(0deg, var(--bg) 65%, rgba(250,249,246,0));
+    }
+    .cta{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      width:100%;
+      padding:15px;
+      border-radius:14px;
+      background:var(--teal);
+      color:#fff;
+      text-decoration:none;
+      font-size:14.5px;
+      font-weight:600;
+      letter-spacing:-0.01em;
+      box-shadow:0 8px 20px rgba(0,113,227,0.28);
+    }
+    .cta svg{width:16px;height:16px;}
+  </style>
+</head>
+<body>
+
+  <div class="screen">
+    <header>
+      <div class="logo">alaqai<span>.</span></div>
+      <a href="https://wa.me/77759018100?text=%D0%A1%D3%99%D0%BB%D0%B5%D0%BC%D0%B5%D1%82%D1%81%D1%96%D0%B7%20%D0%B1%D0%B5%21%20%D0%96%D0%B0%D1%81%D0%B0%D0%BD%D0%B4%D1%8B%20%D0%B8%D0%BD%D1%82%D0%B5%D0%BB%D0%BB%D0%B5%D0%BA%D1%82%20%D0%BA%D1%83%D1%80%D1%81%D1%8B%D0%BD%D0%B0%20%D0%B6%D0%B0%D0%B7%D1%8B%D0%BB%D2%93%D1%8B%D0%BC%20%D0%BA%D0%B5%D0%BB%D0%B5%D0%B4%D1%96." class="call-btn" aria-label="WhatsApp арқылы жазылу">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2c-5.52 0-10 4.48-10 10 0 1.77.46 3.43 1.26 4.87L2 22l5.27-1.38A9.94 9.94 0 0 0 12.04 22c5.52 0 10-4.48 10-10s-4.48-10-10-10zm0 18.2c-1.6 0-3.09-.46-4.35-1.25l-.31-.19-3.13.82.84-3.05-.2-.32a8.18 8.18 0 0 1-1.25-4.36c0-4.52 3.68-8.2 8.2-8.2s8.2 3.68 8.2 8.2-3.68 8.2-8.2 8.2zm4.5-6.15c-.25-.12-1.45-.72-1.68-.8-.23-.08-.39-.12-.56.12-.16.25-.64.8-.78.96-.14.16-.29.18-.54.06-.25-.12-1.04-.38-1.98-1.22-.73-.65-1.23-1.46-1.37-1.71-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.12-.14.16-.25.25-.41.08-.16.04-.31-.02-.43-.06-.12-.56-1.36-.77-1.86-.2-.49-.41-.42-.56-.43h-.48c-.16 0-.43.06-.65.31-.23.25-.85.83-.85 2.03 0 1.2.87 2.35.99 2.51.12.16 1.71 2.6 4.14 3.65.58.25 1.03.4 1.38.51.58.18 1.11.16 1.53.1.47-.07 1.45-.59 1.65-1.16.2-.57.2-1.06.14-1.16-.06-.1-.22-.16-.47-.28z"/></svg>
+      </a>
+    </header>
+
+    <main>
+      <div class="eyebrow"><span class="dot"></span>Мұғалімдерге арналған практик-курс</div>
+
+      <h1>Жасанды интеллект — сабағыңызға көмекші</h1>
+      <p class="lede">Заманауи педагогтерге арналған курс. Сабаққа дайындық уақытын бірнеше есеге қысқартыңыз.</p>
+
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-num">×5</div>
+          <div class="stat-label">уақытты үнемдеу</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">6</div>
+          <div class="stat-label">практикалық модуль</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">10 күн</div>
+          <div class="stat-label">курс ұзақтығы</div>
+        </div>
+      </div>
+
+      <div class="section-title">Курста не үйренесіз</div>
+      <ul class="topics">
+        <li class="topic">
+          <div class="topic-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg></div>
+          <div class="topic-body">
+            <h3>ҚМЖ жасау</h3>
+            <p>Қысқа мерзімді жоспарды бірнеше секундта дайындау</p>
+          </div>
+        </li>
+        <li class="topic">
+          <div class="topic-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg></div>
+          <div class="topic-body">
+            <h3>Презентация дайындау</h3>
+            <p>Көрнекі әрі әсерлі слайдтар құрастыру</p>
+          </div>
+        </li>
+        <li class="topic">
+          <div class="topic-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" x2="10" y1="12" y2="12"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="15" x2="15.01" y1="13" y2="13"/><line x1="18" x2="18.01" y1="11" y2="11"/><rect width="20" height="12" x="2" y="6" rx="2"/></svg></div>
+          <div class="topic-body">
+            <h3>Интерактивті ойындар</h3>
+            <p>Оқушылардың назарын сабаққа аудару</p>
+          </div>
+        </li>
+        <li class="topic">
+          <div class="topic-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.2 6 3 11l-.9-2.4c-.3-1.1.3-2.2 1.3-2.5l13.5-4c1.1-.3 2.2.3 2.5 1.3Z"/><path d="m6.2 5.3 3.1 3.9"/><path d="m12.4 3.4 3.1 4"/><path d="M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></svg></div>
+          <div class="topic-body">
+            <h3>Анимация мен мультфильм</h3>
+            <p>Визуалды оқу материалдарын жасау</p>
+          </div>
+        </li>
+        <li class="topic">
+          <div class="topic-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>
+          <div class="topic-body">
+            <h3>Ән мен музыка</h3>
+            <p>Дыбыстау және аудио генерациялау</p>
+          </div>
+        </li>
+        <li class="topic">
+          <div class="topic-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" x2="20" y1="19" y2="19"/></svg></div>
+          <div class="topic-body">
+            <h3>Дайын промпттар</h3>
+            <p>Нейрожелілерге арналған дайын пәрмендер жинағы</p>
+          </div>
+        </li>
+      </ul>
+
+      <div class="price-card">
+        <div class="price-label">Курс құны</div>
+        <div class="price-amount">20 000<sup>₸</sup></div>
+        <div class="price-note">Толық курс, барлық материалдар қоса берілген. Қатысу сертификаты беріледі, <span class="warn">аттестацияға жарамсыз</span></div>
+      </div>
+
+      <div class="contact">
+        <div><strong>alaqai.online</strong></div>
+        <div>@fazliddinazzamkulov</div>
+        <div>+7 775 901 8100 · +7 707 816 8300</div>
+      </div>
+    </main>
+
+    <div class="cta-bar">
+      <a href="https://wa.me/77759018100?text=%D0%A1%D3%99%D0%BB%D0%B5%D0%BC%D0%B5%D1%82%D1%81%D1%96%D0%B7%20%D0%B1%D0%B5%21%20%D0%96%D0%B0%D1%81%D0%B0%D0%BD%D0%B4%D1%8B%20%D0%B8%D0%BD%D1%82%D0%B5%D0%BB%D0%BB%D0%B5%D0%BA%D1%82%20%D0%BA%D1%83%D1%80%D1%81%D1%8B%D0%BD%D0%B0%20%D0%B6%D0%B0%D0%B7%D1%8B%D0%BB%D2%93%D1%8B%D0%BC%20%D0%BA%D0%B5%D0%BB%D0%B5%D0%B4%D1%96." class="cta">
+        Курсқа жазылу
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>
+      </a>
+    </div>
+  </div>
+
+</body>
+</html>
