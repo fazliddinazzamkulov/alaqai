@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>alaqai — админ-панель</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700;800&family=Inter:wght@400;500;600;700;800&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
+<script>
+  window.ALAQAI_API_BASE = window.ALAQAI_API_BASE || "https://api.alaqai.online";
+  window.ALAQAI_GOOGLE_CLIENT_ID = window.ALAQAI_GOOGLE_CLIENT_ID || "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com";
+</script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="assets/js/api.js" defer></script>
+<style>
+  :root{
+    --ink:#0F1115; --paper:#FFFFFF; --muted:#6B7280; --line:#E9EAEC; --panel:#F7F7F5; --lime:#D6FF3B;
+    --danger:#E4432B; --danger-bg:#FDEDEA; --ok:#10B981; --warn:#F59E0B;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--panel);}
+  code, .mono{font-family:'DM Mono',monospace;}
+  a{color:inherit;}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px 80px;}
+  header{background:var(--ink);color:#fff;padding:16px 0;margin-bottom:24px;}
+  header .wrap{display:flex;align-items:center;justify-content:space-between;padding-bottom:0;}
+  .brand{font-family:'Poppins',sans-serif;font-weight:800;font-size:17px;display:flex;align-items:center;gap:8px;}
+  .brand .tag{font-size:11px;font-weight:700;background:var(--lime);color:var(--ink);padding:2px 8px;border-radius:100px;}
+  .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;font-weight:700;font-size:12.5px;cursor:pointer;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-family:inherit;}
+  .btn:hover{border-color:var(--ink);}
+  .btn-lime{background:var(--lime);border-color:var(--lime);}
+  .btn-danger{color:var(--danger);border-color:#F6D2CB;}
+  .btn-danger:hover{background:var(--danger-bg);}
+  header .btn{background:transparent;color:#fff;border-color:#333;}
+
+  .gate{max-width:520px;margin:80px auto;text-align:center;background:#fff;border:1.5px solid var(--line);border-radius:18px;padding:36px;}
+  .gate h2{margin-bottom:8px;}
+  .gate p{color:var(--muted);font-size:13.5px;margin-bottom:18px;}
+  #gsiGate{display:flex;justify-content:center;}
+
+  .tabs{display:flex;gap:6px;margin-bottom:22px;flex-wrap:wrap;}
+  .tab-btn{padding:9px 16px;border-radius:100px;font-size:13px;font-weight:700;border:1.5px solid var(--line);background:#fff;cursor:pointer;color:var(--muted);font-family:inherit;}
+  .tab-btn.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .tab-panel{display:none;}
+  .tab-panel.active{display:block;}
+
+  .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:28px;}
+  .stat-card{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:16px;}
+  .stat-card .n{font-size:26px;font-weight:800;}
+  .stat-card .l{font-size:12px;color:var(--muted);margin-top:2px;}
+
+  section.card{background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:20px;margin-bottom:20px;}
+  section.card h2{font-size:15px;margin-bottom:4px;}
+  section.card .sub{font-size:12.5px;color:var(--muted);margin-bottom:16px;}
+
+  table{width:100%;border-collapse:collapse;font-size:12.5px;}
+  th{text-align:left;color:var(--muted);font-weight:700;padding:8px 10px;border-bottom:1.5px solid var(--line);text-transform:uppercase;font-size:10.5px;letter-spacing:.03em;}
+  td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:middle;}
+  tr:last-child td{border-bottom:none;}
+  select, input[type=text], input[type=password]{font-family:inherit;font-size:12.5px;padding:6px 9px;border-radius:8px;border:1.5px solid var(--line);}
+  .badge{font-size:10px;font-weight:800;text-transform:uppercase;padding:3px 8px;border-radius:100px;background:var(--panel);color:var(--muted);}
+  .badge.ok{background:#E7F9F1;color:var(--ok);}
+  .badge.warn{background:#FEF3E2;color:var(--warn);}
+  .badge.danger{background:var(--danger-bg);color:var(--danger);}
+
+  .key-form{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px;}
+  .key-form button{grid-column:span 1;}
+  @media (max-width:760px){ .key-form{grid-template-columns:1fr 1fr;} }
+
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:100px;font-size:13px;font-weight:600;opacity:0;pointer-events:none;transition:.25s;z-index:99;}
+  .toast.show{opacity:1;transform:translate(-50%,-6px);}
+  .empty{color:var(--muted);font-size:12.5px;padding:14px;text-align:center;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="brand">alaqai <span class="tag">admin</span></div>
+    <div id="headerActions"></div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="gate" id="gate" style="display:none;">
+    <h2 id="gateTitle">Нужен вход</h2>
+    <p id="gateText">Войдите через Google-аккаунт с правами администратора.</p>
+    <div id="gsiGate"></div>
+  </div>
+
+  <div id="adminApp" style="display:none;">
+    <div class="tabs" id="tabs">
+      <button class="tab-btn active" data-tab="overview">Обзор</button>
+      <button class="tab-btn" data-tab="keys">Ключи API</button>
+      <button class="tab-btn" data-tab="users">Пользователи и подписки</button>
+      <button class="tab-btn" data-tab="security" id="securityTabBtn" style="display:none;">Безопасность</button>
+    </div>
+
+    <div class="tab-panel active" id="tab-overview">
+      <div class="stat-grid" id="statGrid"></div>
+      <section class="card">
+        <h2>Добро пожаловать</h2>
+        <div class="sub">Эта панель управляет ключами ИИ/фотобанков, подписками учителей и (для руководителя) безопасностью аккаунтов. Ничего из этого не видно и не доступно обычным учителям.</div>
+      </section>
+    </div>
+
+    <div class="tab-panel" id="tab-keys">
+      <section class="card">
+        <h2>Хранилище ключей API</h2>
+        <div class="sub">Ключи шифруются на сервере (AES-256-GCM) и никогда не попадают в браузер учителя. Для Gemini можно указать до 3 ключей — при перегрузке одного сервер автоматически переключится на следующий.</div>
+        <div class="key-form">
+          <select id="keyProvider">
+            <option value="gemini">Gemini (текст, слоты 1-3)</option>
+            <option value="gemini_image">Gemini Image / nano banana (слоты 1-3)</option>
+            <option value="pexels">Pexels</option>
+            <option value="unsplash">Unsplash</option>
+            <option value="pixabay">Pixabay</option>
+          </select>
+          <select id="keySlot">
+            <option value="1">Слот 1</option>
+            <option value="2">Слот 2</option>
+            <option value="3">Слот 3</option>
+          </select>
+          <input type="password" id="keyValue" placeholder="Значение ключа">
+          <button class="btn btn-lime" id="saveKeyBtn">Сохранить ключ</button>
+        </div>
+        <table>
+          <thead><tr><th>Провайдер</th><th>Слот</th><th>Превью</th><th>Статус</th><th>Ошибок</th><th></th></tr></thead>
+          <tbody id="keysTbody"></tbody>
+        </table>
+      </section>
+    </div>
+
+    <div class="tab-panel" id="tab-users">
+      <section class="card">
+        <h2>Пользователи</h2>
+        <div class="sub">Управление ролью, статусом подписки и блокировкой аккаунта. Изменение роли на admin/owner доступно только руководителю.</div>
+        <div style="margin-bottom:12px;display:flex;gap:8px;">
+          <input type="text" id="userSearch" placeholder="Поиск по email/имени" style="flex:1;">
+          <button class="btn" id="userSearchBtn">Найти</button>
+        </div>
+        <table>
+          <thead><tr><th>Пользователь</th><th>Роль</th><th>Подписка</th><th>До</th><th>Статус</th><th>Действия</th></tr></thead>
+          <tbody id="usersTbody"></tbody>
+        </table>
+      </section>
+    </div>
+
+    <div class="tab-panel" id="tab-security">
+      <section class="card">
+        <h2>Активные сессии</h2>
+        <div class="sub">Каждая строка — устройство, вошедшее в аккаунт. Можно принудительно выйти удалённо.</div>
+        <table>
+          <thead><tr><th>Пользователь</th><th>Устройство</th><th>IP</th><th>Вход</th><th></th></tr></thead>
+          <tbody id="sessionsTbody"></tbody>
+        </table>
+      </section>
+      <section class="card">
+        <h2>Журнал действий (audit log)</h2>
+        <div class="sub">Все изменения ключей, ролей, подписок и блокировок — только для руководителя.</div>
+        <table>
+          <thead><tr><th>Когда</th><th>Кто</th><th>Действие</th><th>Цель</th></tr></thead>
+          <tbody id="auditTbody"></tbody>
+        </table>
+      </section>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+function toast(msg){ const t=$('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2400); }
+function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function fmtDate(iso){ if(!iso) return '—'; try{ return new Date(iso).toLocaleString('ru-RU'); }catch(e){ return iso; } }
+
+let me = null;
+
+function showGate(title, text, withGsi){
+  $('gate').style.display = 'block';
+  $('adminApp').style.display = 'none';
+  $('gateTitle').textContent = title;
+  $('gateText').textContent = text;
+  if(withGsi) Alaqai.renderGoogleButton('gsiGate', { buttonConfig:{theme:'filled_black',size:'large',shape:'pill',text:'continue_with'}, onSignIn: init });
+}
+
+async function init(){
+  me = await Alaqai.fetchMe();
+  if(!me){ showGate('Нужен вход', 'Войдите через Google-аккаунт с правами администратора.', true); renderHeader(); return; }
+  if(!['admin','owner'].includes(me.role)){
+    showGate('Доступ запрещён', `Аккаунт ${me.email} не имеет прав администратора.`, false);
+    renderHeader();
+    return;
+  }
+  $('gate').style.display = 'none';
+  $('adminApp').style.display = 'block';
+  if(me.role === 'owner') $('securityTabBtn').style.display = 'inline-block';
+  renderHeader();
+  loadOverview();
+  loadKeys();
+  loadUsers();
+  if(me.role === 'owner'){ loadSessions(); loadAudit(); }
+}
+
+function renderHeader(){
+  const el = $('headerActions');
+  if(me){
+    el.innerHTML = `<span style="color:#B9B9B3;font-size:12.5px;margin-right:10px;">${escapeHtml(me.name||me.email)} · ${me.role}</span><button class="btn" id="logoutBtn">Выйти</button> <a class="btn" href="platform.html">Платформа</a>`;
+    const b = document.getElementById('logoutBtn'); if(b) b.onclick = async () => { await Alaqai.logout(); location.reload(); };
+  }else{
+    el.innerHTML = `<a class="btn" href="platform.html">Платформа</a>`;
+  }
+}
+
+// ---------- tabs ----------
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  };
+});
+
+// ---------- overview ----------
+async function loadOverview(){
+  try{
+    const s = await Alaqai.api('/api/admin/stats');
+    $('statGrid').innerHTML = `
+      <div class="stat-card"><div class="n">${s.totalUsers}</div><div class="l">Всего пользователей</div></div>
+      <div class="stat-card"><div class="n">${s.activeSubs}</div><div class="l">Активная подписка</div></div>
+      <div class="stat-card"><div class="n">${s.trialSubs}</div><div class="l">На пробном периоде</div></div>
+      <div class="stat-card"><div class="n">${s.suspended}</div><div class="l">Заблокировано/приостановлено</div></div>
+      <div class="stat-card"><div class="n">${s.aiToday}</div><div class="l">ИИ-запросов за 24ч</div></div>
+    `;
+  }catch(e){ $('statGrid').innerHTML = `<div class="empty">Не удалось загрузить: ${escapeHtml(e.message)}</div>`; }
+}
+
+// ---------- keys ----------
+async function loadKeys(){
+  try{
+    const { keys } = await Alaqai.api('/api/admin/keys');
+    const tbody = $('keysTbody');
+    if(!keys.length){ tbody.innerHTML = `<tr><td colspan="6" class="empty">Ключей ещё нет — добавьте первый выше.</td></tr>`; return; }
+    tbody.innerHTML = keys.map(k => `
+      <tr>
+        <td class="mono">${k.provider}</td>
+        <td>${k.slot}</td>
+        <td class="mono">${escapeHtml(k.preview || '—')}</td>
+        <td><span class="badge ${k.active ? 'ok' : 'danger'}">${k.active ? 'активен' : 'выключен'}</span></td>
+        <td>${k.fail_count || 0}</td>
+        <td>
+          <button class="btn" data-toggle="${k.id}" data-active="${k.active ? 0 : 1}">${k.active ? 'Выключить' : 'Включить'}</button>
+          <button class="btn btn-danger" data-delkey="${k.id}">Удалить</button>
+        </td>
+      </tr>`).join('');
+    tbody.querySelectorAll('[data-toggle]').forEach(btn => {
+      btn.onclick = async () => {
+        await Alaqai.api('/api/admin/keys/' + btn.dataset.toggle, { method:'PATCH', body:{ active: btn.dataset.active === '1' } });
+        toast('Обновлено'); loadKeys();
+      };
+    });
+    tbody.querySelectorAll('[data-delkey]').forEach(btn => {
+      btn.onclick = async () => {
+        if(!confirm('Удалить этот ключ?')) return;
+        await Alaqai.api('/api/admin/keys/' + btn.dataset.delkey, { method:'DELETE' });
+        toast('Удалено'); loadKeys();
+      };
+    });
+  }catch(e){ $('keysTbody').innerHTML = `<tr><td colspan="6" class="empty">${escapeHtml(e.message)}</td></tr>`; }
+}
+$('saveKeyBtn').onclick = async () => {
+  const provider = $('keyProvider').value;
+  const slot = Number($('keySlot').value);
+  const value = $('keyValue').value.trim();
+  if(!value){ toast('Введите значение ключа'); return; }
+  try{
+    await Alaqai.api('/api/admin/keys', { method:'POST', body:{ provider, slot, value } });
+    $('keyValue').value = '';
+    toast('Ключ сохранён'); loadKeys();
+  }catch(e){ toast('Ошибка: ' + e.message); }
+};
+
+// ---------- users ----------
+function subBadge(status){
+  if(status === 'active') return `<span class="badge ok">active</span>`;
+  if(status === 'trial') return `<span class="badge warn">trial</span>`;
+  if(status === 'expired') return `<span class="badge danger">expired</span>`;
+  return `<span class="badge danger">suspended</span>`;
+}
+async function loadUsers(q){
+  try{
+    const { users } = await Alaqai.api('/api/admin/users' + (q ? '?q=' + encodeURIComponent(q) : ''));
+    const tbody = $('usersTbody');
+    if(!users.length){ tbody.innerHTML = `<tr><td colspan="6" class="empty">Никого не найдено.</td></tr>`; return; }
+    tbody.innerHTML = users.map(u => `
+      <tr data-row="${u.id}">
+        <td><div style="font-weight:700;">${escapeHtml(u.name||'—')}</div><div class="mono" style="color:var(--muted);">${escapeHtml(u.email)}</div></td>
+        <td>
+          <select data-role="${u.id}" ${me.role !== 'owner' ? 'disabled' : ''}>
+            <option value="teacher" ${u.role==='teacher'?'selected':''}>teacher</option>
+            <option value="admin" ${u.role==='admin'?'selected':''}>admin</option>
+            <option value="owner" ${u.role==='owner'?'selected':''}>owner</option>
+          </select>
+        </td>
+        <td>
+          <select data-status="${u.id}">
+            <option value="trial" ${u.subscription_status==='trial'?'selected':''}>trial</option>
+            <option value="active" ${u.subscription_status==='active'?'selected':''}>active</option>
+            <option value="suspended" ${u.subscription_status==='suspended'?'selected':''}>suspended</option>
+          </select>
+        </td>
+        <td class="mono" style="font-size:11px;">${fmtDate(u.subscription_expires_at)}</td>
+        <td>${u.disabled ? '<span class="badge danger">заблокирован</span>' : subBadge(u.subscription_status)}</td>
+        <td>
+          <button class="btn" data-save="${u.id}">Сохранить</button>
+          <button class="btn ${u.disabled ? '' : 'btn-danger'}" data-toggledis="${u.id}" data-next="${u.disabled ? 0 : 1}">${u.disabled ? 'Разблокировать' : 'Заблокировать'}</button>
+        </td>
+      </tr>`).join('');
+    tbody.querySelectorAll('[data-save]').forEach(btn => {
+      btn.onclick = async () => {
+        const id = btn.dataset.save;
+        const role = tbody.querySelector(`[data-role="${id}"]`).value;
+        const subscriptionStatus = tbody.querySelector(`[data-status="${id}"]`).value;
+        try{
+          await Alaqai.api('/api/admin/users/' + id, { method:'PATCH', body:{ role, subscriptionStatus } });
+          toast('Сохранено'); loadUsers(q);
+        }catch(e){ toast('Ошибка: ' + e.message); }
+      };
+    });
+    tbody.querySelectorAll('[data-toggledis]').forEach(btn => {
+      btn.onclick = async () => {
+        try{
+          await Alaqai.api('/api/admin/users/' + btn.dataset.toggledis, { method:'PATCH', body:{ disabled: btn.dataset.next === '1' } });
+          toast('Обновлено'); loadUsers(q);
+        }catch(e){ toast('Ошибка: ' + e.message); }
+      };
+    });
+  }catch(e){ $('usersTbody').innerHTML = `<tr><td colspan="6" class="empty">${escapeHtml(e.message)}</td></tr>`; }
+}
+$('userSearchBtn').onclick = () => loadUsers($('userSearch').value.trim());
+$('userSearch').addEventListener('keydown', (e) => { if(e.key === 'Enter') loadUsers($('userSearch').value.trim()); });
+
+// ---------- security (owner only) ----------
+async function loadSessions(){
+  try{
+    const { sessions } = await Alaqai.api('/api/admin/sessions');
+    const tbody = $('sessionsTbody');
+    if(!sessions.length){ tbody.innerHTML = `<tr><td colspan="5" class="empty">Нет активных сессий.</td></tr>`; return; }
+    tbody.innerHTML = sessions.map(s => `
+      <tr>
+        <td>${escapeHtml(s.name||s.email)}</td>
+        <td class="mono" style="font-size:11px;">${escapeHtml((s.user_agent||'').slice(0,40))}</td>
+        <td class="mono">${escapeHtml(s.ip||'—')}</td>
+        <td class="mono" style="font-size:11px;">${fmtDate(s.created_at)}</td>
+        <td><button class="btn btn-danger" data-revoke="${s.id}">Завершить</button></td>
+      </tr>`).join('');
+    tbody.querySelectorAll('[data-revoke]').forEach(btn => {
+      btn.onclick = async () => {
+        await Alaqai.api('/api/admin/sessions/' + btn.dataset.revoke, { method:'DELETE' });
+        toast('Сессия завершена'); loadSessions();
+      };
+    });
+  }catch(e){ $('sessionsTbody').innerHTML = `<tr><td colspan="5" class="empty">${escapeHtml(e.message)}</td></tr>`; }
+}
+async function loadAudit(){
+  try{
+    const { entries } = await Alaqai.api('/api/admin/audit-log');
+    const tbody = $('auditTbody');
+    if(!entries.length){ tbody.innerHTML = `<tr><td colspan="4" class="empty">Пока пусто.</td></tr>`; return; }
+    tbody.innerHTML = entries.map(e => `
+      <tr>
+        <td class="mono" style="font-size:11px;">${fmtDate(e.at)}</td>
+        <td>${escapeHtml(e.actor_email||'—')}</td>
+        <td class="mono">${escapeHtml(e.action)}</td>
+        <td class="mono" style="font-size:11px;">${escapeHtml(e.target||'—')}</td>
+      </tr>`).join('');
+  }catch(e){ $('auditTbody').innerHTML = `<tr><td colspan="4" class="empty">${escapeHtml(e.message)}</td></tr>`; }
+}
+
+window.addEventListener('load', () => {
+  if(!window.Alaqai){ setTimeout(() => window.location.reload(), 300); return; }
+  init();
+});
+</script>
+
+</body>
+</html>

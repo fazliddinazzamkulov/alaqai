@@ -1,0 +1,2036 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>alaqai · Генератор презентаций</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Lora:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.11.0/mammoth.browser.min.js"></script>
+<script>
+  window.ALAQAI_API_BASE = window.ALAQAI_API_BASE || "https://api.alaqai.online";
+  window.ALAQAI_GOOGLE_CLIENT_ID = window.ALAQAI_GOOGLE_CLIENT_ID || "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com";
+</script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="assets/js/api.js" defer></script>
+<style>
+  :root{
+    --lime:#D6FF3B;
+    --ink:#111111;
+    --paper:#FAFAFA;
+    --panel:#F1F1EF;
+    --line:#111111;
+    --line-soft:#DDDDDA;
+    --muted:#6B6B66;
+    --danger:#E4432B;
+    --radius:0px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Inter',system-ui,sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    height:100vh;
+    overflow:hidden;
+  }
+  ::selection{background:var(--lime);}
+  button{font-family:inherit;cursor:pointer;}
+  input,textarea,select{font-family:inherit;}
+
+  /* ---------- Platform shell / nav rail ---------- */
+  .shell{display:flex;height:100vh;}
+  .nav-rail{
+    width:212px;flex-shrink:0;background:var(--ink);color:#EDEDE9;
+    display:flex;flex-direction:column;border-right:2px solid var(--line);
+  }
+  .nav-rail-brand{
+    display:flex;align-items:center;gap:9px;padding:16px 16px;
+    border-bottom:1px solid #2A2A28;font-weight:800;font-size:14px;color:#fff;
+  }
+  .nav-rail-brand .brand-mark{width:20px;height:20px;background:var(--lime);}
+  .nav-rail-brand .brand-mark::after{display:none;}
+  .nav-list{padding:10px 8px;flex:1;}
+  .nav-item{
+    display:flex;align-items:center;gap:10px;padding:10px 10px;margin-bottom:2px;
+    font-size:13px;font-weight:700;color:#B9B9B3;border-left:3px solid transparent;
+    cursor:pointer;user-select:none;
+  }
+  .nav-item .ico{width:18px;text-align:center;font-size:14px;}
+  .nav-item .badge{
+    margin-left:auto;font-size:9px;font-weight:800;color:#8A8A84;background:#242422;
+    border:1px solid #333;padding:2px 6px;text-transform:uppercase;letter-spacing:.03em;
+  }
+  .nav-item.active{background:#1D1D1B;color:#fff;border-left-color:var(--lime);}
+  .nav-item.disabled{cursor:default;opacity:.65;}
+  .nav-item:not(.disabled):not(.active):hover{color:#fff;}
+  .nav-rail-foot{padding:12px 16px;border-top:1px solid #2A2A28;font-size:11px;color:#7A7A75;line-height:1.5;}
+  .workspace{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
+  .tool-view{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0;}
+
+  /* ---------- Slide skins ---------- */
+  .slide.skin-playful{border-radius:16px;overflow:hidden;}
+  .slide.skin-playful .slide-image,
+  .slide.skin-playful .full-bg{border-radius:12px;}
+  .slide.skin-playful .slide-icon-wrap{border-radius:50%;}
+  .slide.skin-playful .slide-icon-wrap.big{border-radius:50%;}
+  .slide.skin-playful .stat-number{border-radius:10px;}
+  .slide.skin-playful .full-eyebrow{border-radius:20px;}
+
+  .slide.skin-academic{box-shadow:none;}
+  .slide.skin-academic .slide-title,
+  .slide.skin-academic .compare-title{font-family:'Lora',Georgia,serif;font-weight:700;letter-spacing:0;}
+  .slide.skin-academic .slide-eyebrow{color:var(--muted);font-weight:600;}
+  .slide.skin-academic .slide-icon-wrap{background:transparent;border-color:var(--line-soft);}
+  .slide.skin-academic .stat-number{background:transparent;border:2px solid var(--line);}
+
+  .slide.skin-minimal{box-shadow:none;border-color:var(--line-soft);}
+  .slide.skin-minimal .slide-eyebrow{opacity:0;}
+  .slide.skin-minimal .slide-icon-wrap{background:transparent;border:none;}
+  .slide.skin-minimal .slide-title{font-weight:600;}
+  .slide.skin-minimal .slide-bullets li::before{content:"–";width:auto;height:auto;background:none;color:var(--ink);font-weight:700;margin-top:0;}
+  .slide.skin-minimal .stat-number{background:transparent;color:var(--ink);}
+
+  .slide.skin-bold{box-shadow:11px 11px 0 var(--line);border-width:3px;}
+  .slide.skin-bold .slide-title{background:var(--lime);display:inline-block;padding:2px 10px;box-decoration-break:clone;-webkit-box-decoration-break:clone;}
+  .slide.skin-bold .slide-icon-wrap{border-width:3px;}
+  .slide.skin-bold.layout-full-image .slide-title{background:#fff;}
+
+  /* ---------- Mini-game slides ---------- */
+  .game-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 60px;gap:14px;text-align:center;}
+  .game-question{font-size:24px;font-weight:800;line-height:1.3;max-width:720px;outline:none;}
+  .quiz-options{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:640px;margin-top:6px;}
+  .quiz-opt{
+    border:2px solid var(--line);background:#fff;padding:14px 16px;font-size:15px;font-weight:700;
+    text-align:left;transition:transform .08s ease;
+  }
+  .quiz-opt:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0 var(--line);}
+  .quiz-opt.correct{background:#B8F0A0;border-color:#2E7D32;}
+  .quiz-opt.wrong{background:#FFC9C0;border-color:var(--danger);}
+
+  .fillblank-sentence{font-size:22px;font-weight:700;line-height:1.6;max-width:700px;}
+  .blank-slot{
+    display:inline-block;min-width:90px;border-bottom:3px solid var(--ink);padding:0 8px;font-weight:800;color:var(--muted);
+  }
+  .blank-slot.correct{color:#2E7D32;border-color:#2E7D32;}
+  .blank-slot.wrong{color:var(--danger);border-color:var(--danger);}
+  .word-bank{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:10px;}
+  .word-chip{border:2px solid var(--line);background:var(--lime);padding:9px 16px;font-size:14px;font-weight:800;}
+  .word-chip:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0 var(--line);}
+
+  .match-body{flex:1;display:flex;gap:40px;padding:20px 60px;align-items:center;justify-content:center;}
+  .match-col{display:flex;flex-direction:column;gap:10px;width:280px;}
+  .match-item{
+    border:2px solid var(--line);background:#fff;padding:12px 14px;font-size:14px;font-weight:700;cursor:pointer;
+  }
+  .match-item.selected{background:var(--lime);}
+  .match-item.locked{background:#B8F0A0;border-color:#2E7D32;cursor:default;opacity:.85;}
+  .match-item.wrong-flash{background:#FFC9C0;border-color:var(--danger);}
+
+  .scoreboard{display:flex;gap:30px;margin-bottom:6px;}
+  .score-team{border:2px solid var(--line);padding:10px 18px;display:flex;flex-direction:column;align-items:center;gap:6px;background:var(--panel);}
+  .score-label{font-size:11px;font-weight:800;text-transform:uppercase;color:var(--muted);}
+  .score-val{font-size:32px;font-weight:800;}
+  .score-btn{border:2px solid var(--line);background:var(--lime);padding:3px 10px;font-weight:800;font-size:12px;}
+
+  .problem-text{font-size:19px;font-weight:600;line-height:1.5;max-width:680px;outline:none;}
+  .reveal-btn{margin-top:6px;}
+  .solution-box{margin-top:10px;text-align:left;max-width:600px;}
+  .solution-box .slide-bullets li{font-size:14px;}
+
+  /* ---------- Math formulas (KaTeX) — deliberately large for projector visibility ---------- */
+  .katex{font-size:1.5em !important;}
+  .katex-display{font-size:1.9em !important;margin:18px 0 !important;}
+  .katex-display > .katex{text-align:center;}
+  .problem-text .katex, .solution-box .katex{font-size:1.4em !important;}
+  .stat-body .katex-display, .bigidea-body .katex-display{font-size:2.2em !important;}
+
+  /* ---------- True/False ---------- */
+  .tf-buttons{display:flex;gap:16px;margin-top:10px;}
+  .tf-btn{border:2px solid var(--line);background:#fff;padding:14px 34px;font-size:18px;font-weight:800;min-width:140px;}
+  .tf-btn:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0 var(--line);}
+  .tf-btn.correct{background:#B8F0A0;border-color:#2E7D32;}
+  .tf-btn.wrong{background:#FFC9C0;border-color:var(--danger);}
+
+  /* ---------- Word search ---------- */
+  .ws-body{flex:1;display:flex;gap:26px;padding:16px 40px;align-items:center;justify-content:center;}
+  .ws-grid{display:grid;gap:2px;user-select:none;}
+  .ws-cell{
+    width:28px;height:28px;display:flex;align-items:center;justify-content:center;
+    border:1px solid var(--line-soft);font-size:13px;font-weight:700;cursor:pointer;background:#fff;
+  }
+  .ws-cell.selected{background:var(--lime);}
+  .ws-cell.found{background:#B8F0A0;border-color:#2E7D32;}
+  .ws-words{display:flex;flex-direction:column;gap:8px;}
+  .ws-word-chip{border:2px solid var(--line);padding:6px 12px;font-size:13px;font-weight:700;background:#fff;}
+  .ws-word-chip.found{background:#B8F0A0;border-color:#2E7D32;text-decoration:line-through;color:#2E7D32;}
+
+  /* ---------- Memory ---------- */
+  .memory-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;max-width:560px;margin:0 auto;}
+  .memory-card{
+    aspect-ratio:1;border:2px solid var(--line);background:var(--ink);color:#fff;display:flex;align-items:center;
+    justify-content:center;text-align:center;font-size:12px;font-weight:700;padding:6px;cursor:pointer;
+  }
+  .memory-card.flipped{background:#fff;color:var(--ink);}
+  .memory-card.matched{background:#B8F0A0;color:#2E7D32;border-color:#2E7D32;cursor:default;}
+
+  /* ---------- Sort ---------- */
+  .sort-body{flex:1;display:flex;flex-direction:column;gap:14px;padding:16px 50px;align-items:center;}
+  .sort-items{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
+  .sort-item{border:2px solid var(--line);background:var(--lime);padding:8px 14px;font-size:13px;font-weight:800;cursor:pointer;}
+  .sort-item.placed{opacity:.35;cursor:default;}
+  .sort-item.selected{outline:3px solid var(--ink);}
+  .sort-bins{display:flex;gap:14px;width:100%;justify-content:center;}
+  .sort-bin{border:2px dashed var(--line);min-width:150px;min-height:90px;padding:8px;cursor:pointer;}
+  .sort-bin .bin-label{font-size:11px;font-weight:800;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+  .sort-bin .bin-item{display:inline-block;border:1px solid var(--line);background:#fff;padding:3px 8px;font-size:12px;margin:2px;}
+
+  /* ---------- Anagram ---------- */
+  .anagram-answer{display:flex;gap:6px;min-height:44px;justify-content:center;flex-wrap:wrap;}
+  .anagram-slot{width:38px;height:38px;border-bottom:3px solid var(--ink);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;}
+  .anagram-tiles{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:8px;}
+  .anagram-tile{width:38px;height:38px;border:2px solid var(--line);background:var(--lime);font-size:18px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+  .anagram-tile.used{opacity:.25;cursor:default;}
+  .anagram-hint{font-size:13px;color:var(--muted);font-weight:600;}
+
+  /* ---------- Crossword (list style) ---------- */
+  .crossword-list{display:flex;flex-direction:column;gap:14px;max-width:560px;margin:0 auto;text-align:left;}
+  .crossword-clue{font-size:13px;}
+  .crossword-clue b{margin-right:4px;}
+  .crossword-boxes{display:flex;gap:3px;margin-top:4px;}
+  .crossword-box{width:26px;height:26px;border:2px solid var(--line);text-align:center;font-size:14px;font-weight:800;text-transform:uppercase;}
+
+  /* ---------- Charts ---------- */
+  .chart-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 50px;gap:16px;}
+  .chart-title{font-size:19px;font-weight:800;}
+  .pie-wrap{display:flex;align-items:center;gap:30px;}
+  .pie-circle{width:200px;height:200px;border-radius:50%;border:2px solid var(--line);flex-shrink:0;}
+  .chart-legend{display:flex;flex-direction:column;gap:8px;}
+  .legend-row{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;}
+  .legend-swatch{width:14px;height:14px;border:1px solid var(--line);flex-shrink:0;}
+  .bar-chart{width:100%;max-width:520px;display:flex;flex-direction:column;gap:10px;}
+  .bar-row{display:flex;align-items:center;gap:10px;}
+  .bar-label{width:120px;font-size:12px;font-weight:700;text-align:right;flex-shrink:0;}
+  .bar-track{flex:1;background:var(--panel);border:1px solid var(--line-soft);height:22px;}
+  .bar-fill{height:100%;background:var(--lime);border-right:2px solid var(--line);}
+  .bar-value{width:44px;font-size:12px;font-weight:800;}
+
+  /* ---------- Process / structured flow ---------- */
+  .process-body{flex:1;display:flex;align-items:center;justify-content:center;padding:16px 40px;gap:0;flex-wrap:wrap;}
+  .process-step{
+    border:2px solid var(--line);background:#fff;padding:14px 16px;font-size:13px;font-weight:700;
+    max-width:150px;text-align:center;position:relative;
+  }
+  .process-step .step-n{display:block;width:22px;height:22px;border:2px solid var(--line);background:var(--lime);
+    border-radius:50%;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;}
+  .process-arrow{font-size:20px;font-weight:800;padding:0 10px;color:var(--muted);}
+
+  /* ---------- History screen ---------- */
+  .history-wrap{flex:1;overflow-y:auto;padding:34px;}
+  .history-head{display:flex;align-items:center;justify-content:space-between;max-width:900px;margin:0 auto 20px;}
+  .history-head h1{font-size:22px;margin:0;}
+  .history-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;max-width:900px;margin:0 auto;}
+  .history-card{
+    border:2px solid var(--line);background:#fff;padding:16px;cursor:pointer;position:relative;
+  }
+  .history-card:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--line);}
+  .history-card .h-topic{font-weight:800;font-size:14px;margin-bottom:6px;line-height:1.3;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .history-card .h-meta{font-size:11px;color:var(--muted);font-weight:600;}
+  .history-card .h-del{
+    position:absolute;top:8px;right:8px;border:none;background:transparent;color:var(--muted);font-size:14px;padding:2px 6px;
+  }
+  .history-empty{max-width:500px;margin:60px auto;text-align:center;color:var(--muted);font-size:14px;line-height:1.6;}
+
+  .upload-thumbs{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+  .upload-thumb{position:relative;width:56px;height:56px;border:2px solid var(--line);}
+  .upload-thumb img{width:100%;height:100%;object-fit:cover;}
+  .upload-thumb .rm{position:absolute;top:-6px;right:-6px;width:18px;height:18px;background:var(--danger);color:#fff;
+    border:1px solid var(--line);font-size:11px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+
+  /* ---------- Top bar ---------- */
+  .topbar{
+    height:56px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 18px;
+    border-bottom:2px solid var(--line);
+    background:var(--paper);
+  }
+  .brand{
+    display:flex;align-items:center;gap:10px;
+    font-weight:800;font-size:16px;letter-spacing:-0.01em;
+  }
+  .brand-mark{
+    width:24px;height:24px;background:var(--ink);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .brand-mark::after{
+    content:"";width:10px;height:10px;background:var(--lime);
+  }
+  .brand small{color:var(--muted);font-weight:500;font-size:12px;margin-left:6px;}
+  .topbar-actions{display:flex;gap:8px;align-items:center;}
+  .btn{
+    border:2px solid var(--line);
+    background:var(--paper);
+    color:var(--ink);
+    padding:8px 14px;
+    font-weight:700;
+    font-size:13px;
+    display:inline-flex;align-items:center;gap:6px;
+    transition:transform .08s ease;
+  }
+  .btn:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0 var(--line);}
+  .btn:active{transform:translate(0,0);box-shadow:none;}
+  .btn-primary{background:var(--lime);}
+  .btn-icon{padding:8px;width:36px;height:36px;justify-content:center;}
+  .btn-ghost{border-color:var(--line-soft);}
+
+  /* ---------- Layout ---------- */
+  .app{display:flex;height:calc(100vh - 56px);}
+  .sidebar{
+    width:230px;
+    border-right:2px solid var(--line);
+    background:var(--panel);
+    overflow-y:auto;
+    flex-shrink:0;
+    padding:14px 10px;
+  }
+  .slide-thumb{
+    border:2px solid var(--line-soft);
+    background:#fff;
+    padding:10px;
+    margin-bottom:10px;
+    cursor:pointer;
+    position:relative;
+  }
+  .slide-thumb.active{border-color:var(--line);background:var(--lime);}
+  .slide-thumb .n{font-size:11px;font-weight:800;color:var(--muted);}
+  .slide-thumb.active .n{color:var(--ink);}
+  .slide-thumb .t{font-size:12px;font-weight:700;margin-top:4px;line-height:1.25;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .slide-thumb .del{
+    position:absolute;top:4px;right:4px;border:none;background:transparent;
+    color:var(--muted);font-size:14px;line-height:1;padding:2px 5px;display:none;
+  }
+  .slide-thumb:hover .del{display:block;}
+  .add-slide-btn{
+    width:100%;border:2px dashed var(--line-soft);background:transparent;
+    padding:10px;font-weight:700;font-size:12px;color:var(--muted);
+  }
+  .add-slide-btn:hover{border-color:var(--line);color:var(--ink);}
+
+  .main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+  .canvas-wrap{
+    flex:1;display:flex;align-items:center;justify-content:center;
+    padding:30px;overflow:auto;background:
+      repeating-linear-gradient(45deg, #F5F5F2, #F5F5F2 10px, #F1F1EE 10px, #F1F1EE 20px);
+  }
+  .slide{
+    width:960px;max-width:100%;aspect-ratio:16/9;
+    background:#fff;border:2px solid var(--line);
+    display:flex;flex-direction:column;
+    position:relative;
+    box-shadow:6px 6px 0 var(--line);
+  }
+  .slide-eyebrow{
+    display:flex;align-items:center;gap:8px;
+    padding:22px 40px 0 40px;color:var(--muted);font-size:12px;font-weight:700;
+    text-transform:uppercase;letter-spacing:.06em;
+  }
+  .slide-eyebrow .dot{width:8px;height:8px;background:var(--lime);border:1px solid var(--ink);}
+  .slide-body{flex:1;display:flex;padding:10px 40px 34px 40px;gap:30px;align-items:center;}
+  .slide-text{flex:1.1;min-width:0;}
+  .slide-title{
+    font-size:34px;font-weight:800;line-height:1.12;letter-spacing:-0.01em;
+    outline:none;margin-bottom:16px;
+  }
+  .slide-title mark{background:var(--lime);padding:0 4px;}
+  .slide-bullets{list-style:none;margin:0;padding:0;}
+  .slide-bullets li{
+    display:flex;gap:10px;align-items:flex-start;font-size:16px;line-height:1.4;margin-bottom:10px;outline:none;
+  }
+  .slide-bullets li::before{content:"";width:8px;height:8px;background:var(--ink);margin-top:8px;flex-shrink:0;}
+  .slide-visual{
+    flex:0.9;display:flex;flex-direction:column;gap:10px;align-items:center;justify-content:center;
+    min-width:0;height:100%;
+  }
+  .slide-image{
+    width:100%;height:70%;object-fit:cover;border:2px solid var(--line);background:var(--panel);
+  }
+  .slide-image.placeholder{display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12px;}
+  .slide-icon-wrap{
+    width:56px;height:56px;border:2px solid var(--line);background:var(--lime);
+    display:flex;align-items:center;justify-content:center;align-self:flex-start;
+  }
+  .slide-icon-wrap img{width:30px;height:30px;}
+  [contenteditable="true"]:hover{background:rgba(214,255,59,.25);}
+  [contenteditable="true"]:focus{background:rgba(214,255,59,.4);}
+
+  .slide-controls{
+    display:flex;align-items:center;justify-content:center;gap:14px;
+    padding:12px;border-top:2px solid var(--line);background:var(--paper);
+  }
+  .slide-controls .count{font-size:13px;font-weight:700;color:var(--muted);}
+
+  /* ---------- Layout: title ---------- */
+  .title-layout-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:16px;padding:0 70px;}
+  .slide-icon-wrap.big{width:76px;height:76px;}
+  .slide-icon-wrap.big img{width:40px;height:40px;}
+  .slide-title.big{font-size:46px;}
+  .slide-subtitle{font-size:17px;color:var(--muted);font-weight:600;outline:none;max-width:560px;}
+
+  /* ---------- Layout: full-image ---------- */
+  .slide.layout-full-image{padding:0;overflow:hidden;}
+  .slide.layout-full-image .slide-body{padding:0;height:100%;position:relative;}
+  .full-bg-wrap{position:relative;width:100%;height:100%;}
+  .full-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:var(--panel);}
+  .full-eyebrow{
+    position:absolute;top:18px;left:18px;background:var(--lime);border:2px solid var(--line);
+    padding:5px 10px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;
+    display:flex;align-items:center;gap:6px;
+  }
+  .full-overlay{
+    position:absolute;left:0;right:0;bottom:0;background:#fff;border-top:2px solid var(--line);
+    padding:20px 36px;
+  }
+  .full-overlay .slide-title{font-size:24px;margin-bottom:8px;}
+  .full-overlay .slide-bullets li{font-size:14px;margin-bottom:4px;}
+
+  /* ---------- Layout: stat ---------- */
+  .stat-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 60px;}
+  .stat-number{font-size:84px;font-weight:800;background:var(--lime);padding:0 16px;line-height:1.05;outline:none;letter-spacing:-0.02em;}
+  .stat-label{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:10px 0 22px;outline:none;}
+  .stat-body .slide-title{font-size:22px;margin-bottom:12px;}
+  .stat-body .slide-bullets{text-align:left;max-width:480px;}
+
+  /* ---------- Layout: bigidea ---------- */
+  .bigidea-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 80px;gap:16px;}
+  .bigidea-body .slide-title{font-size:36px;line-height:1.2;}
+  .bigidea-body .slide-bullets{text-align:left;max-width:480px;margin-top:6px;}
+
+  /* ---------- Layout: compare ---------- */
+  .compare-body{flex:1;display:flex;padding:6px 40px 30px;gap:0;align-items:stretch;}
+  .compare-col{flex:1;padding:0 22px;display:flex;flex-direction:column;}
+  .compare-divider{width:2px;background:var(--line);}
+  .compare-title{font-size:19px;font-weight:800;margin-bottom:14px;outline:none;}
+  .compare-title:nth-of-type(1)::before{content:"";}
+  .compare-col .slide-bullets li{font-size:14px;}
+
+  /* ---------- Compose / empty state ---------- */
+  .compose{
+    flex:1;display:flex;align-items:center;justify-content:center;padding:30px;
+  }
+  .compose-card{
+    width:560px;max-width:100%;border:2px solid var(--line);background:#fff;padding:32px;
+    box-shadow:6px 6px 0 var(--line);
+  }
+  .compose-card h1{font-size:22px;margin:0 0 6px 0;letter-spacing:-0.01em;}
+  .compose-card p{color:var(--muted);font-size:13px;margin:0 0 20px 0;line-height:1.5;}
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;color:var(--muted);}
+  .field textarea{width:100%;border:2px solid var(--line);padding:10px;font-size:14px;resize:vertical;min-height:80px;}
+  .field input[type=text], .field input[type=password], .field select{
+    width:100%;border:2px solid var(--line);padding:9px 10px;font-size:14px;background:#fff;
+  }
+  .row2{display:flex;gap:10px;}
+  .row2>div{flex:1;}
+  .compose-actions{display:flex;justify-content:flex-end;margin-top:6px;}
+  .hint{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.4;}
+  .hint a{color:var(--ink);}
+
+  /* ---------- Modal ---------- */
+  .modal-overlay{
+    position:fixed;inset:0;background:rgba(17,17,17,.5);display:none;
+    align-items:center;justify-content:center;z-index:50;
+  }
+  .modal-overlay.open{display:flex;}
+  .modal{
+    width:440px;max-width:92vw;background:#fff;border:2px solid var(--line);
+    box-shadow:6px 6px 0 var(--line);padding:26px;max-height:88vh;overflow-y:auto;
+  }
+  .modal h2{margin:0 0 4px 0;font-size:18px;}
+  .modal .sub{color:var(--muted);font-size:12px;margin-bottom:18px;}
+  .modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px;}
+
+  /* ---------- Present mode ---------- */
+  .present-overlay{
+    position:fixed;inset:0;background:#0A0A0A;display:none;
+    align-items:center;justify-content:center;z-index:60;flex-direction:column;
+  }
+  .present-overlay.open{display:flex;}
+  .present-slide{width:min(92vw,1200px);aspect-ratio:16/9;background:#fff;border:2px solid var(--ink);}
+  .present-slide .slide-controls{display:none;}
+  .present-close{position:fixed;top:18px;right:18px;color:#fff;background:transparent;border:2px solid #fff;padding:8px 14px;font-weight:700;}
+  .present-nav{position:fixed;bottom:22px;color:#fff;font-size:13px;font-weight:600;opacity:.7;}
+
+  .status{
+    font-size:12px;font-weight:700;padding:5px 10px;border:2px solid var(--line-soft);color:var(--muted);
+  }
+  .status.busy{border-color:var(--lime);color:var(--ink);background:rgba(214,255,59,.3);}
+  .status.err{border-color:var(--danger);color:var(--danger);}
+
+  @media print{
+    .topbar,.sidebar,.slide-controls,.compose-actions,.nav-rail{display:none !important;}
+    .canvas-wrap{padding:0;background:#fff !important;}
+    .slide{box-shadow:none;page-break-after:always;width:100%;}
+  }
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <div class="nav-rail" id="navRail">
+    <div class="nav-rail-brand"><div class="brand-mark"></div>alaqai</div>
+    <div class="nav-list">
+      <a class="nav-item" href="platform.html" style="text-decoration:none;"><span class="ico">←</span> Платформа</a>
+      <div class="nav-item active" data-tool="presentation"><span class="ico">▤</span> Презентации</div>
+      <a class="nav-item" href="tests.html" style="text-decoration:none;"><span class="ico">🧩</span> Тесты</a>
+    </div>
+    <div class="nav-rail-foot" id="navRailFoot">Платформа для учителей<br>alaqai · MVP</div>
+  </div>
+
+  <div class="workspace">
+  <div class="tool-view" id="tool-presentation">
+<div class="topbar">
+  <div class="brand"><small>Презентации</small></div>
+  <div class="topbar-actions">
+    <span id="status" class="status">Готово</span>
+    <button class="btn btn-ghost" id="printBtn" title="Сохранить как PDF">Печать / PDF</button>
+    <button class="btn btn-primary" id="presentBtn">▶ Показ</button>
+  </div>
+</div>
+
+<div class="app">
+  <div class="sidebar" id="sidebar" style="display:none;"></div>
+
+  <div class="main">
+    <div class="history-wrap" id="historyWrap">
+      <div class="history-head">
+        <h1>Мои презентации</h1>
+        <button class="btn btn-primary" id="newFromHistoryBtn">+ Новая презентация</button>
+      </div>
+      <div class="history-grid" id="historyGrid"></div>
+      <div class="history-empty" id="historyEmpty" style="display:none;">Пока нет сохранённых презентаций. Создайте первую — она появится здесь.</div>
+    </div>
+
+    <div class="compose-wrap" id="composeWrap" style="display:none;">
+      <div class="compose">
+        <div class="compose-card">
+          <button class="btn btn-ghost btn-icon" id="backToHistoryBtn" title="К списку презентаций" style="margin-bottom:14px;">←</button>
+          <h1>Создать презентацию</h1>
+          <p>Опишите тему урока — ИИ соберёт слайды с текстом, фото и иконками.</p>
+          <div class="field">
+            <label>Тема / материал урока</label>
+            <textarea id="topicInput" placeholder="Например: Фотосинтез для 7 класса — процесс, значение, факторы"></textarea>
+          </div>
+          <div class="field">
+            <label>Дополнительный промпт (необязательно)</label>
+            <textarea id="extraPrompt" style="min-height:56px;" placeholder="Например: сделай акцент на формулах, добавь больше практических задач, ориентируйся на слабых учеников..."></textarea>
+          </div>
+          <div class="field">
+            <label>Материалы для урока (необязательно)</label>
+            <input type="file" id="materialUpload" accept="image/*,application/pdf,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple>
+            <div class="upload-thumbs" id="uploadThumbs"></div>
+            <p class="hint" style="margin-top:6px;">Фото страниц учебника, PDF или план урока в Word (.docx) — ИИ учтёт их при генерации. Старый формат .doc (Word 97-2003) распознаётся ненадёжно — если файл в этом формате, пересохраните его как .docx через «Файл → Сохранить как» в Word.</p>
+          </div>
+          <div class="row2">
+            <div class="field">
+              <label>Количество слайдов</label>
+              <select id="slideCount">
+                <option>5</option><option selected>7</option><option>10</option><option>12</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Язык слайдов</label>
+              <select id="slideLang">
+                <option value="русском">Русский</option>
+                <option value="казахском">Қазақша</option>
+                <option value="узбекском">O'zbekcha</option>
+                <option value="английском">English</option>
+              </select>
+            </div>
+          </div>
+          <div class="row2">
+            <div class="field">
+              <label>Цветовая тема</label>
+              <select id="themeSelect">
+                <option value="#D6FF3B">Лайм</option>
+                <option value="#FF6B4A">Коралл</option>
+                <option value="#4AD8FF">Небо</option>
+                <option value="#FFD23F">Солнце</option>
+                <option value="#B8A6FF">Сирень</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Визуальный стиль</label>
+              <select id="skinSelect">
+                <option value="playful">Playful — для младших классов</option>
+                <option value="academic">Academic — строгий, для старших</option>
+                <option value="minimal">Minimal — тихий, без декора</option>
+                <option value="bold">Bold — крупно и контрастно</option>
+              </select>
+            </div>
+          </div>
+          <div class="field" style="border:2px solid var(--line);padding:12px 14px;background:var(--panel);">
+            <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;text-transform:none;font-size:13px;color:var(--ink);font-weight:600;">
+              <input type="checkbox" id="aiDesignToggle" style="width:16px;height:16px;margin-top:2px;flex-shrink:0;">
+              <span>ИИ-дизайн (эксперимент) — ИИ сам придумывает уникальную композицию для каждого слайда вместо готовых макетов. Генерация дольше, качество может отличаться от слайда к слайду.</span>
+            </label>
+          </div>
+          <div class="compose-actions">
+            <button class="btn btn-primary" id="generateBtn">Сгенерировать →</button>
+          </div>
+          <p class="hint">Нужен ключ Gemini API (обязательно). Ключ Pexels — по желанию, для фото. Иконки подключаются без ключа. Формулы пишутся в LaTeX и отображаются в режиме показа.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="canvas-wrap" id="canvasWrap" style="display:none;">
+      <div class="slide" id="slideEl"></div>
+    </div>
+    <div class="slide-controls" id="controlsBar" style="display:none;">
+      <button class="btn btn-ghost btn-icon" id="prevBtn">←</button>
+      <span class="count" id="countLabel">1 / 1</span>
+      <button class="btn btn-ghost btn-icon" id="nextBtn">→</button>
+      <select id="layoutSelect" class="btn btn-ghost" style="margin-left:20px;">
+        <option value="content">Текст + фото</option>
+        <option value="title">Титульный</option>
+        <option value="full-image">Фото на весь слайд</option>
+        <option value="stat">Цифра / статистика</option>
+        <option value="bigidea">Ключевая мысль</option>
+        <option value="compare">Сравнение (2 колонки)</option>
+        <option value="quiz">❓ Викторина</option>
+        <option value="truefalse">✅ Правда/Ложь</option>
+        <option value="fillblank">✏️ Вставь слова</option>
+        <option value="match">🧩 Совпадения</option>
+        <option value="memory">🃏 Мемори</option>
+        <option value="wordsearch">🔍 Найди слова</option>
+        <option value="sort">🗂️ Сортировка</option>
+        <option value="anagram">🔤 Анаграмма</option>
+        <option value="crossword">🧵 Кроссворд</option>
+        <option value="compete">🎮 Соревнование команд</option>
+        <option value="problem">🎮 Задача</option>
+        <option value="piechart">📊 Круговая диаграмма</option>
+        <option value="barchart">📊 Столбчатая диаграмма</option>
+        <option value="process">➡️ Схема процесса</option>
+      </select>
+      <button class="btn btn-ghost" id="regenDesignBtn" style="display:none;">🔄 Дизайн заново</button>
+      <button class="btn btn-ghost" id="aiImageBtn" title="Сгенерировать изображение слайда через ИИ (Gemini image)">🎨 AI-сурет</button>
+      <button class="btn btn-ghost" id="newBtn">Новая презентация</button>
+    </div>
+  </div>
+</div>
+  </div><!-- /tool-presentation -->
+  </div><!-- /workspace -->
+</div><!-- /shell -->
+
+<!-- Login-required modal (AI keys are managed by the admin on the backend now —
+     teachers just need to be signed in with Google to use generation) -->
+<div class="modal-overlay" id="loginRequiredOverlay">
+  <div class="modal">
+    <h2>Нужен вход через Google</h2>
+    <div class="sub">Ключи ИИ и фотобанков настраивает администратор на сервере — учителю достаточно один раз войти через Google.</div>
+    <div id="loginRequiredGsi" style="margin:10px 0 4px;"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="loginRequiredCancel">Закрыть</button>
+    </div>
+  </div>
+</div>
+
+<!-- Present mode -->
+<div class="present-overlay" id="presentOverlay">
+  <button class="present-close" id="presentClose">Esc · Закрыть</button>
+  <div class="present-slide" id="presentSlideEl"></div>
+  <div class="present-nav" id="presentNav"></div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  const state = {
+    slides: [],
+    current: 0,
+    skin: "playful",
+    contentId: null // backend content_items id once this deck has been saved server-side
+  };
+
+  const $ = (id) => document.getElementById(id);
+  const statusEl = $("status");
+
+  function setStatus(text, kind){
+    statusEl.textContent = text;
+    statusEl.className = "status" + (kind ? " " + kind : "");
+  }
+
+  // ---------- auth ----------
+  // Embedded mode: opened inside lesson.html's in-lesson tool overlay — hide the
+  // nav rail so the tool has the full frame to itself.
+  if(new URLSearchParams(location.search).get("embed")){
+    const rail = $("navRail");
+    if(rail) rail.style.display = "none";
+  }
+  function isLoggedIn(){ return !!(window.Alaqai && Alaqai.getCachedUser()); }
+  function renderAccountFoot(user){
+    const foot = $("navRailFoot");
+    if(!foot) return;
+    if(user){
+      foot.innerHTML = `Вы: ${escapeHtml(user.name || user.email || "")}<br><a href="#" id="psLogout" style="color:#B9B9B3;">Выйти</a>`;
+      const btn = document.getElementById("psLogout");
+      if(btn) btn.onclick = async (e) => { e.preventDefault(); await Alaqai.logout(); location.reload(); };
+    }else{
+      foot.innerHTML = `Вход через Google нужен для генерации ИИ.<div id="psGsi" style="margin-top:8px;"></div>`;
+      if(window.Alaqai) Alaqai.renderGoogleButton("psGsi", { buttonConfig:{ theme:"filled_black", size:"medium", shape:"pill", text:"signin" } });
+    }
+  }
+  function requireLoginOrPrompt(){
+    if(isLoggedIn()) return true;
+    $("loginRequiredOverlay").classList.add("open");
+    if(window.Alaqai) Alaqai.renderGoogleButton("loginRequiredGsi", {
+      buttonConfig:{ theme:"filled_black", size:"large", shape:"pill", text:"continue_with" },
+      onSignIn: () => { $("loginRequiredOverlay").classList.remove("open"); }
+    });
+    return false;
+  }
+  $("loginRequiredCancel").onclick = () => $("loginRequiredOverlay").classList.remove("open");
+  window.addEventListener("load", () => {
+    if(!window.Alaqai) return;
+    Alaqai.onAuthChange((user) => { renderAccountFoot(user); renderHistoryList(); });
+  });
+
+  // ---------- Gemini ----------
+  // Content-safety settings applied to EVERY generation call — this is a school
+  // platform, so sexual content and dangerous content (drugs/weapons/extremism)
+  // are blocked at the strictest level. Harassment is set one notch looser than
+  // strictest so that legitimate anti-bullying lesson content ("how to recognize
+  // bullying", "consequences of violence") isn't over-blocked for merely touching
+  // the topic. Google always blocks core child-safety harms regardless of these
+  // settings — that protection can't be adjusted and isn't listed here.
+  const SAFETY_SETTINGS = [
+    { category:"HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold:"BLOCK_LOW_AND_ABOVE" },
+    { category:"HARM_CATEGORY_DANGEROUS_CONTENT", threshold:"BLOCK_LOW_AND_ABOVE" },
+    { category:"HARM_CATEGORY_HATE_SPEECH", threshold:"BLOCK_LOW_AND_ABOVE" },
+    { category:"HARM_CATEGORY_HARASSMENT", threshold:"BLOCK_MEDIUM_AND_ABOVE" }
+  ];
+
+  async function callGemini(prompt, opts){
+    opts = opts || {};
+    const wantJson = opts.json !== false;
+    if(!requireLoginOrPrompt()){
+      throw new Error("Войдите через Google, чтобы использовать ИИ-генерацию.");
+    }
+    const genConfig = wantJson
+      ? { responseMimeType:"application/json", temperature:0.7 }
+      : { temperature: opts.temperature || 0.9 };
+    const parts = [{ text: prompt }];
+    (opts.images || []).forEach(img => parts.push({ inline_data: { mime_type: img.mimeType, data: img.base64 } }));
+    const res = await fetch(`${Alaqai.API_BASE}/api/ai/generate`, {
+      method:"POST",
+      credentials:"include",
+      headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({
+        contents:[{ parts }],
+        generationConfig: genConfig,
+        safetySettings: SAFETY_SETTINGS
+      })
+    });
+    if(!res.ok){
+      const errBody = await res.json().catch(() => ({}));
+      throw new Error(errBody?.message || errBody?.error?.message || ("Ошибка генерации: HTTP " + res.status));
+    }
+    const data = await res.json();
+    if(data?.promptFeedback?.blockReason){
+      throw new Error("Запрос заблокирован фильтром безопасности (" + data.promptFeedback.blockReason + "). Переформулируйте тему.");
+    }
+    const text = data?.candidates?.[0]?.content?.parts?.map(p=>p.text||"").join("") || "";
+    if(!text){
+      const finishReason = data?.candidates?.[0]?.finishReason;
+      if(finishReason === "SAFETY"){
+        throw new Error("Ответ заблокирован фильтром безопасности. Переформулируйте тему более нейтрально.");
+      }
+    }
+    let cleaned = text.trim().replace(/^```html/i,"").replace(/^```json/i,"").replace(/^```/,"").replace(/```$/,"").trim();
+    return wantJson ? JSON.parse(cleaned) : cleaned;
+  }
+
+  function buildPrompt(topic, count, lang, extra, hasMaterials){
+    return `Ты дизайнер учебных презентаций. Составь план из ${count} слайдов на ${lang} языке по теме: "${topic}".
+${extra ? 'Дополнительные пожелания учителя: "' + extra + '".' : ''}
+${hasMaterials ? 'К запросу приложены фото учебных материалов (страницы учебника и т.п.) — используй их содержание как основной источник фактов для слайдов.' : ''}
+Верни ТОЛЬКО валидный JSON-массив без пояснений и без markdown-разметки, в формате:
+[
+  {
+    "layout": "title | content | full-image | stat | bigidea | compare | quiz | fillblank | match | compete | problem | truefalse | wordsearch | memory | sort | anagram | crossword | piechart | barchart | process",
+    "title": "короткий заголовок (до 8 слов)",
+    "subtitle": "подзаголовок — ТОЛЬКО для layout=title",
+    "bullets": ["3-4 коротких пункта — для layout content/full-image/stat/bigidea"],
+    "stat_number": "крупное число или % — ТОЛЬКО для layout=stat, например '70%' или '1665'",
+    "stat_label": "короткая подпись к числу — ТОЛЬКО для layout=stat",
+    "left_title": "название левой колонки — ТОЛЬКО для layout=compare",
+    "left_bullets": ["пункты слева — ТОЛЬКО для layout=compare"],
+    "right_title": "название правой колонки — ТОЛЬКО для layout=compare",
+    "right_bullets": ["пункты справа — ТОЛЬКО для layout=compare"],
+    "question": "вопрос — ТОЛЬКО для layout=quiz/compete",
+    "options": ["4 варианта ответа — ТОЛЬКО для layout=quiz/compete"],
+    "correct_index": "индекс правильного варианта 0-3 — ТОЛЬКО для layout=quiz/compete",
+    "sentence_before": "текст предложения ДО пропуска — ТОЛЬКО для layout=fillblank",
+    "sentence_after": "текст предложения ПОСЛЕ пропуска — ТОЛЬКО для layout=fillblank",
+    "correct_word": "правильное слово для пропуска — ТОЛЬКО для layout=fillblank",
+    "word_options": ["4 слова-варианта, включая correct_word, в случайном порядке — ТОЛЬКО для layout=fillblank"],
+    "pairs": [{"left":"термин","right":"определение"}, "3-4 пары — ТОЛЬКО для layout=match ИЛИ layout=memory"],
+    "problem_text": "текст задачи по теме урока (можно из разных областей: математика, физика, жизненная ситуация) — ТОЛЬКО для layout=problem",
+    "solution_steps": ["3-5 шагов решения — ТОЛЬКО для layout=problem"],
+    "statement": "утверждение по теме, может быть истинным или ложным — ТОЛЬКО для layout=truefalse",
+    "is_true": "true или false — ТОЛЬКО для layout=truefalse",
+    "words": ["5-6 однословных терминов по теме, БЕЗ пробелов, на ${lang} языке — ТОЛЬКО для layout=wordsearch"],
+    "categories": ["2-3 названия категорий — ТОЛЬКО для layout=sort"],
+    "items": [{"text":"элемент","category":"к какой категории относится (должно совпадать с одним из categories)"}, "6-8 штук — ТОЛЬКО для layout=sort"],
+    "word": "одно слово по теме для разгадывания, БЕЗ пробелов — ТОЛЬКО для layout=anagram",
+    "hint": "подсказка/определение к слову — ТОЛЬКО для layout=anagram",
+    "crossword_words": [{"word":"слово БЕЗ пробелов","clue":"определение/подсказка"}], "4-5 штук — ТОЛЬКО для layout=crossword",
+    "chart_title": "заголовок диаграммы — ТОЛЬКО для layout=piechart или layout=barchart",
+    "chart_data": [{"label":"название","value":"число"}, "3-6 штук с реальными по смыслу значениями — ТОЛЬКО для layout=piechart или layout=barchart"],
+    "process_title": "заголовок процесса — ТОЛЬКО для layout=process",
+    "steps": ["3-5 коротких шагов процесса по порядку — ТОЛЬКО для layout=process"],
+    "notes": "1-2 предложения — заметки для учителя, что рассказать на слайде",
+    "image_query": "короткая фраза на английском для поиска фотографии на стоковом фотобанке",
+    "icon": "одно слово на английском в kebab-case — название иконки Lucide (например: leaf, atom, book-open, users, target, lightbulb)"
+  }
+]
+Правила выбора layout:
+- Слайд 1 — всегда "title" (тема урока).
+- "full-image" — для слайда, где фото важнее текста (не более 1-2 раз за презентацию).
+- "stat" — если по теме есть уместное число, дата, процент или количество.
+- "bigidea" — для одной ключевой мысли, вывода или определения крупным текстом.
+- "compare" — только если в теме реально есть что сравнивать (два явления, "до/после", плюсы/минусы). Если сравнивать нечего — не используй.
+- "piechart" / "barchart" — используй, если по теме есть данные, которые естественно показать в виде долей или сравнения величин (проценты состава, статистика, сравнение показателей). Не выдумывай данные "из воздуха" для тем, где это неуместно.
+- "process" — для процесса/последовательности этапов (например, "этапы фотосинтеза", "порядок действий при..."), 3-5 шагов.
+- "quiz" — короткий проверочный вопрос по только что показанному материалу.
+- "truefalse" — короткое утверждение по теме, ученики решают правда это или ложь.
+- "fillblank" — предложение с пропущенным ключевым словом/термином темы.
+- "match" — сопоставление терминов и определений (используй, если в теме есть 3-4 чётких термина).
+- "compete" — вопрос в формате командного соревнования (как quiz, но для игры между двумя командами класса).
+- "problem" — практическая задача по теме (математическая, прикладная или жизненная, в зависимости от предмета) с пошаговым решением.
+- "wordsearch" — используй РЕДКО (максимум 1 раз), для тем с достаточным набором однословных терминов.
+- "memory" — игра на запоминание пар термин-определение, используй НЕ ЧАСТО (максимум 1 раз).
+- "sort" — сортировка элементов по категориям, используй НЕ ЧАСТО (максимум 1 раз), только если у темы есть естественные 2-3 категории.
+- "anagram" — разгадывание слова по перемешанным буквам, используй РЕДКО (максимум 1 раз).
+- "crossword" — используй РЕДКО (максимум 1 раз), только для тем с 4-5 чёткими терминами.
+- "content" — стандартный слайд текст+фото, для остального.
+- Используй минимум 1-2 игровых слайда (quiz/fillblank/match/compete/problem/truefalse) на презентацию из ${count} слайдов, ближе к середине или концу, для закрепления материала. Редкие типы (wordsearch/memory/sort/anagram/crossword) — по желанию, не обязательны, и не более одного каждого типа за презентацию.
+- НЕ используй один и тот же layout больше 2 раз подряд, чередуй разные типы для разнообразия.
+- Последний слайд — вывод/итоги (layout "bigidea" или "content").
+Математика и формулы: если тема требует формул, уравнений или математических выражений — записывай их в LaTeX, оборачивая строчные формулы в $...$, а отдельно стоящие — в $$...$$ (например: "Площадь круга: $$S = \\pi r^2$$"). Не используй LaTeX там, где формулы не нужны.
+Пиши по существу, без воды, языком, понятным школьникам.`;
+  }
+
+  // ---------- guaranteed quiz / worked-example / student practice ----------
+  function buildGamesPrompt(topic, lang, needQuiz, problemCount){
+    return `Тема урока: "${topic}". Пиши на ${lang} языке.
+Верни ТОЛЬКО валидный JSON-объект без пояснений и markdown, ровно в таком формате:
+{
+  ${needQuiz ? `"quiz": {"question":"короткий проверочный вопрос по теме","options":["4 варианта ответа"],"correct_index":0},` : `"quiz": null,`}
+  "problems": [${problemCount > 0 ? Array(problemCount).fill('{"problem_text":"конкретная задача С РЕАЛЬНЫМИ ЧИСЛАМИ по теме, которую ученик может решить","solution_steps":["4-6 шагов решения с подстановкой чисел, формулы в LaTeX ($...$ или $$...$$), последний шаг — явный численный ответ"]}').join(",") : ""}]
+}
+${problemCount > 1 ? 'Сделай ДВЕ РАЗНЫЕ задачи: первая — разобранный пример с числами попроще, вторая — чуть сложнее, для самостоятельной работы ученика.' : ''}
+${problemCount > 0 ? 'Задачи обязаны использовать конкретные числа и формулы в LaTeX, а не только словесное описание метода.' : ''}
+Верни только валидный JSON, без текста до или после.`;
+  }
+
+  function emptySlideBase(){
+    return {
+      subtitle:"", bullets:[], notes:"", image_query:"", stat_number:"", stat_label:"",
+      left_title:"", left_bullets:[], right_title:"", right_bullets:[],
+      question:"", options:[], correct_index:0,
+      sentence_before:"", sentence_after:"", correct_word:"", word_options:[],
+      pairs:[], problem_text:"", solution_steps:[], scoreA:0, scoreB:0,
+      statement:"", is_true:true, words:[], categories:[], items:[],
+      word:"", hint:"", crossword_words:[], chart_title:"", chart_data:[],
+      process_title:"", steps:[],
+      imageUrl:null, customHtml:null
+    };
+  }
+
+  function makeQuizSlide(q){
+    return Object.assign(emptySlideBase(), {
+      layout:"quiz", title:"Проверь себя", icon:"help-circle", iconUrl: iconifyUrl("help-circle"),
+      question: q.question || "", options: Array.isArray(q.options) ? q.options : [],
+      correct_index: typeof q.correct_index === "number" ? q.correct_index : 0
+    });
+  }
+
+  function makeProblemSlide(p, title){
+    return Object.assign(emptySlideBase(), {
+      layout:"problem", title: title || "Задача", icon:"calculator", iconUrl: iconifyUrl("calculator"),
+      problem_text: p.problem_text || "", solution_steps: Array.isArray(p.solution_steps) ? p.solution_steps : []
+    });
+  }
+
+  // ---------- Stock photos + AI image generation — proxied through the backend,
+  // which holds the Pexels/Unsplash/Pixabay/Gemini-image keys (admin-managed). ----------
+  async function fetchPexelsImage(query){
+    if(!isLoggedIn()) return null;
+    try{
+      const data = await Alaqai.api("/api/images/search?q=" + encodeURIComponent(query));
+      return data?.url || null;
+    }catch(e){ return null; }
+  }
+
+  async function generateAiImage(prompt){
+    if(!requireLoginOrPrompt()) return null;
+    try{
+      const data = await Alaqai.api("/api/images/generate", { method:"POST", body:{ prompt } });
+      return data?.dataUrl || null;
+    }catch(e){
+      setStatus(e.message || "Не удалось сгенерировать изображение", "err");
+      return null;
+    }
+  }
+
+  // ---------- Iconify (no key needed) ----------
+  function iconifyUrl(name){
+    const safe = (name || "sparkles").toLowerCase().replace(/[^a-z0-9-]/g,"-");
+    return `https://api.iconify.design/lucide:${safe}.svg?color=%23111111`;
+  }
+
+  // ---------- material upload (photos of textbook pages, PDFs, Word docs) ----------
+  let uploadedMaterials = []; // {kind:'file', mimeType, base64, name} | {kind:'doctext', name, text}
+  function fileToBase64(file){
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result.split(",")[1]);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+  function fileToArrayBuffer(file){
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsArrayBuffer(file);
+    });
+  }
+  function isDocx(file){
+    return file.name.toLowerCase().endsWith(".docx") ||
+      file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+  }
+  function isOldDoc(file){
+    return file.name.toLowerCase().endsWith(".doc") && !file.name.toLowerCase().endsWith(".docx");
+  }
+  function renderUploadThumbs(){
+    const wrap = $("uploadThumbs");
+    wrap.innerHTML = "";
+    uploadedMaterials.forEach((m, i) => {
+      const div = document.createElement("div");
+      div.className = "upload-thumb";
+      if(m.kind === "file" && m.mimeType.startsWith("image/")){
+        div.innerHTML = `<img src="data:${m.mimeType};base64,${m.base64}" alt=""><span class="rm" data-i="${i}">✕</span>`;
+      }else{
+        const icon = m.kind === "doctext" ? "📝" : "📄";
+        div.style.cssText = "display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:9px;font-weight:700;text-align:center;padding:2px;overflow:hidden;background:var(--panel);";
+        div.innerHTML = `<span style="font-size:18px;">${icon}</span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:100%;">${escapeHtml(m.name||"файл")}</span><span class="rm" data-i="${i}">✕</span>`;
+      }
+      wrap.appendChild(div);
+    });
+    wrap.querySelectorAll(".rm").forEach(btn => {
+      btn.onclick = () => { uploadedMaterials.splice(parseInt(btn.dataset.i,10),1); renderUploadThumbs(); };
+    });
+  }
+  $("materialUpload").onchange = async (e) => {
+    const files = [...e.target.files].slice(0, 8);
+    for(const f of files){
+      try{
+        if(isOldDoc(f)){
+          alert(`Файл "${f.name}" в старом формате .doc распознаётся ненадёжно. Пересохраните его как .docx в Word («Файл → Сохранить как → Word Document (.docx)») и загрузите снова.`);
+          continue;
+        }
+        if(isDocx(f)){
+          const buf = await fileToArrayBuffer(f);
+          const result = await mammoth.extractRawText({ arrayBuffer: buf });
+          const text = (result.value || "").trim();
+          if(!text){
+            alert(`Не удалось извлечь текст из "${f.name}" — файл может быть повреждён или пустым.`);
+            continue;
+          }
+          uploadedMaterials.push({ kind:"doctext", name: f.name, text });
+        }else{
+          const base64 = await fileToBase64(f);
+          uploadedMaterials.push({ kind:"file", mimeType: f.type || "image/jpeg", base64, name: f.name });
+        }
+      }catch(err){
+        console.error("file read failed", err);
+        alert(`Не удалось прочитать файл "${f.name}".`);
+      }
+    }
+    renderUploadThumbs();
+    e.target.value = "";
+  };
+
+  // ---------- generation flow ----------
+  $("generateBtn").onclick = async () => {
+    const topic = $("topicInput").value.trim();
+    if(!topic){ setStatus("Введите тему", "err"); return; }
+    const count = $("slideCount").value;
+    const lang = $("slideLang").value;
+    const extra = $("extraPrompt").value.trim();
+
+    const fileParts = uploadedMaterials.filter(m => m.kind === "file");
+    const docTexts = uploadedMaterials.filter(m => m.kind === "doctext");
+    const docTextBlock = docTexts.map(d => `\n\n--- Текст документа "${d.name}" ---\n${d.text.slice(0, 12000)}`).join("");
+    const extraWithDocs = extra + docTextBlock;
+
+    setStatus("Генерация плана…", "busy");
+    $("generateBtn").disabled = true;
+    try{
+      const outline = await callGemini(
+        buildPrompt(topic, count, lang, extraWithDocs, fileParts.length > 0 || docTexts.length > 0),
+        { images: fileParts }
+      );
+      if(!Array.isArray(outline) || outline.length === 0) throw new Error("Пустой ответ от модели");
+
+      const validLayouts = ["title","content","full-image","stat","bigidea","compare","quiz","fillblank","match","compete","problem",
+        "truefalse","wordsearch","memory","sort","anagram","crossword","piechart","barchart","process"];
+      document.documentElement.style.setProperty("--lime", $("themeSelect").value);
+      state.skin = $("skinSelect").value || "playful";
+
+      state.slides = outline.map((s,i) => ({
+        layout: (i === 0) ? "title" : (validLayouts.includes(s.layout) ? s.layout : "content"),
+        title: s.title || "Без названия",
+        subtitle: s.subtitle || "",
+        bullets: Array.isArray(s.bullets) ? s.bullets : [],
+        notes: s.notes || "",
+        image_query: s.image_query || "",
+        icon: s.icon || "sparkles",
+        stat_number: s.stat_number || "",
+        stat_label: s.stat_label || "",
+        left_title: s.left_title || "",
+        left_bullets: Array.isArray(s.left_bullets) ? s.left_bullets : [],
+        right_title: s.right_title || "",
+        right_bullets: Array.isArray(s.right_bullets) ? s.right_bullets : [],
+        question: s.question || "",
+        options: Array.isArray(s.options) ? s.options : [],
+        correct_index: typeof s.correct_index === "number" ? s.correct_index : 0,
+        sentence_before: s.sentence_before || "",
+        sentence_after: s.sentence_after || "",
+        correct_word: s.correct_word || "",
+        word_options: Array.isArray(s.word_options) ? s.word_options : [],
+        pairs: Array.isArray(s.pairs) ? s.pairs : [],
+        problem_text: s.problem_text || "",
+        solution_steps: Array.isArray(s.solution_steps) ? s.solution_steps : [],
+        statement: s.statement || "",
+        is_true: !!s.is_true,
+        words: Array.isArray(s.words) ? s.words : [],
+        categories: Array.isArray(s.categories) ? s.categories : [],
+        items: Array.isArray(s.items) ? s.items : [],
+        word: s.word || "",
+        hint: s.hint || "",
+        crossword_words: Array.isArray(s.crossword_words) ? s.crossword_words : [],
+        chart_title: s.chart_title || "",
+        chart_data: Array.isArray(s.chart_data) ? s.chart_data : [],
+        process_title: s.process_title || "",
+        steps: Array.isArray(s.steps) ? s.steps : [],
+        scoreA: 0, scoreB: 0,
+        imageUrl: null,
+        iconUrl: iconifyUrl(s.icon),
+        customHtml: null
+      }));
+      state.current = 0;
+
+      // Validate game-layout slides — if the model returned a game layout without
+      // the required fields, don't render a broken/empty game slide, fall back to content.
+      const gameLayouts = ["quiz","fillblank","match","compete","problem","truefalse","wordsearch","memory","sort","anagram","crossword","piechart","barchart","process"];
+      function isValidGameSlide(s){
+        if(s.layout === "quiz" || s.layout === "compete") return !!s.question && s.options.length >= 2;
+        if(s.layout === "fillblank") return !!s.correct_word && s.word_options.length >= 2;
+        if(s.layout === "match" || s.layout === "memory") return s.pairs.length >= 2;
+        if(s.layout === "problem") return !!s.problem_text && s.solution_steps.length >= 1;
+        if(s.layout === "truefalse") return !!s.statement;
+        if(s.layout === "wordsearch") return s.words.length >= 3;
+        if(s.layout === "sort") return s.categories.length >= 2 && s.items.length >= 3;
+        if(s.layout === "anagram") return !!s.word && s.word.length >= 3;
+        if(s.layout === "crossword") return s.crossword_words.length >= 2;
+        if(s.layout === "piechart" || s.layout === "barchart") return s.chart_data.length >= 2;
+        if(s.layout === "process") return s.steps.length >= 2;
+        return false;
+      }
+      state.slides.forEach(s => {
+        if(gameLayouts.includes(s.layout) && !isValidGameSlide(s)) s.layout = "content";
+      });
+
+      // Guarantee real practice: at least one quiz, and — if the topic involves
+      // formulas — at least one worked example + one student practice problem.
+      const hasFormula = state.slides.some(s => /\$[^$]+\$/.test((s.title||"") + " " + (s.bullets||[]).join(" ")));
+      const hasQuiz = state.slides.some(s => (s.layout === "quiz" || s.layout === "compete") && isValidGameSlide(s));
+      const problemCount = state.slides.filter(s => s.layout === "problem" && isValidGameSlide(s)).length;
+      const needQuiz = !hasQuiz;
+      const needProblems = hasFormula ? Math.max(0, 2 - problemCount) : 0;
+
+      if(needQuiz || needProblems > 0){
+        setStatus("Добавляем тест и задачи…", "busy");
+        try{
+          const extra = await callGemini(buildGamesPrompt(topic, lang, needQuiz, needProblems));
+          const inserts = [];
+          if(needProblems > 0 && Array.isArray(extra.problems)){
+            extra.problems.slice(0, needProblems).forEach((p,i) => {
+              inserts.push(makeProblemSlide(p, i === 0 ? "Разбор примера" : "Задание для учеников"));
+            });
+          }
+          if(needQuiz && extra.quiz){
+            inserts.push(makeQuizSlide(extra.quiz));
+          }
+          const insertAt = Math.max(1, state.slides.length - 1);
+          state.slides.splice(insertAt, 0, ...inserts);
+        }catch(e){
+          console.error("Guaranteed games generation failed", e);
+        }
+      }
+
+      setStatus("Загрузка фото…", "busy");
+      const aiDesign = $("aiDesignToggle").checked;
+      await Promise.all(state.slides.map(async (s) => {
+        if(aiDesign || s.layout === "content" || s.layout === "full-image"){
+          s.imageUrl = await fetchPexelsImage(s.image_query || s.title);
+        }
+      }));
+
+      if(aiDesign){
+        for(let i=0; i<state.slides.length; i++){
+          setStatus(`Дизайн слайда ${i+1} из ${state.slides.length}…`, "busy");
+          try{
+            state.slides[i].customHtml = await generateSlideDesign(state.slides[i], $("themeSelect").value);
+          }catch(e){
+            console.error("Design failed for slide", i, e);
+            state.slides[i].customHtml = null; // fall back to template layout for this slide
+          }
+        }
+      }
+
+      showDeck();
+      await saveDeckToHistory(topic);
+      setStatus("Готово");
+    }catch(e){
+      console.error(e);
+      setStatus(e.message || "Ошибка генерации", "err");
+    }finally{
+      $("generateBtn").disabled = false;
+    }
+  };
+
+  // ---------- AI slide design (experimental) ----------
+  function buildDesignPrompt(s, themeColor){
+    return `Ты UI/UX-дизайнер презентаций. Создай HTML+CSS для ОДНОГО слайда презентации размером ровно 960×540px.
+
+Содержание слайда:
+Заголовок: "${s.title}"
+Пункты: ${JSON.stringify(s.bullets)}
+${s.imageUrl ? 'Фото доступно по URL (используй как <img src>, object-fit:cover): ' + s.imageUrl : 'Фото для этого слайда нет — не придумывай ссылку на картинку.'}
+Иконка доступна по URL (используй как <img src>, это SVG): ${s.iconUrl}
+
+Дизайн-система (обязательно соблюдай):
+- Акцентный цвет: ${themeColor}
+- Цвет текста: #111111, фон белый или очень светлый нейтральный
+- Плоский дизайн: только сплошные цвета, БЕЗ градиентов, БЕЗ размытых теней (жёсткая тень со смещением, например box-shadow:6px 6px 0 #111, — можно)
+- Шрифт: 'Inter', system-ui, sans-serif
+- Текст должен быть читаемым, контраст высокий, ничего не должно обрезаться или вылезать за 960×540
+
+Придумай ОРИГИНАЛЬНУЮ, не шаблонную композицию: необычное расположение текста и изображения, асимметрия, интересные акценты формы — но не в ущерб читаемости.
+
+Верни ТОЛЬКО HTML-фрагмент без пояснений и без markdown-разметки: один корневой <div style="width:960px;height:540px;position:relative;overflow:hidden;"> с инлайн-стилями или внутренним <style>, готовый для вставки как есть. Не используй <html>, <head> или <body>.`;
+  }
+
+  async function generateSlideDesign(s, themeColor){
+    const html = await callGemini(buildDesignPrompt(s, themeColor), { json:false, temperature:0.95 });
+    return html;
+  }
+
+  function designSrcdoc(fragmentHtml){
+    return `<!DOCTYPE html><html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>*{box-sizing:border-box;}html,body{margin:0;padding:0;width:960px;height:540px;overflow:hidden;font-family:'Inter',system-ui,sans-serif;}</style>
+</head><body>${fragmentHtml}</body></html>`;
+  }
+
+  function renderAiSlide(container, s){
+    container.innerHTML = "";
+    container.style.position = "relative";
+    container.style.overflow = "hidden";
+    const iframe = document.createElement("iframe");
+    iframe.setAttribute("sandbox","allow-same-origin");
+    iframe.setAttribute("title","AI slide design");
+    iframe.style.cssText = "position:absolute;top:0;left:0;width:960px;height:540px;border:none;transform-origin:top left;background:#fff;";
+    iframe.srcdoc = designSrcdoc(s.customHtml);
+    container.appendChild(iframe);
+    requestAnimationFrame(() => {
+      const w = container.clientWidth || 960, h = container.clientHeight || 540;
+      const scale = Math.min(w/960, h/540);
+      iframe.style.transform = "scale(" + scale + ")";
+    });
+  }
+
+  // ---------- rendering ----------
+  function showDeck(){
+    $("historyWrap").style.display = "none";
+    $("composeWrap").style.display = "none";
+    $("canvasWrap").style.display = "flex";
+    $("controlsBar").style.display = "flex";
+    $("sidebar").style.display = "block";
+    renderSidebar();
+    renderSlide();
+  }
+
+  function showHistoryScreen(){
+    $("historyWrap").style.display = "block";
+    $("composeWrap").style.display = "none";
+    $("canvasWrap").style.display = "none";
+    $("controlsBar").style.display = "none";
+    $("sidebar").style.display = "none";
+    renderHistoryList();
+  }
+
+  function showComposeScreen(){
+    $("historyWrap").style.display = "none";
+    $("composeWrap").style.display = "flex";
+    $("canvasWrap").style.display = "none";
+    $("controlsBar").style.display = "none";
+    $("sidebar").style.display = "none";
+  }
+
+  $("newFromHistoryBtn").onclick = () => { state.contentId = null; showComposeScreen(); };
+  $("backToHistoryBtn").onclick = showHistoryScreen;
+
+  // ---------- history (saved presentations) ----------
+  // Signed-in teachers get real persistence via the backend content library
+  // (shared with platform.html). Signed-out visitors get a per-browser
+  // localStorage fallback so they can still try the tool before logging in.
+  const LOCAL_DECKS_KEY = "alaqai_local_presentations";
+  function loadLocalDecks(){ try{ return JSON.parse(localStorage.getItem(LOCAL_DECKS_KEY) || "[]"); }catch(e){ return []; } }
+  function saveLocalDecks(list){ localStorage.setItem(LOCAL_DECKS_KEY, JSON.stringify(list.slice(0,50))); }
+
+  async function saveDeckToHistory(topic){
+    const title = topic.slice(0,90);
+    const meta = { theme: $("themeSelect").value, skin: state.skin };
+    const payload = { meta, slides: state.slides };
+    if(isLoggedIn()){
+      try{
+        if(state.contentId){
+          await Alaqai.api("/api/content/" + state.contentId, { method:"PUT", body:{ title, data: payload } });
+        }else{
+          const { item } = await Alaqai.api("/api/content", { method:"POST", body:{ type:"presentation", title, data: payload } });
+          state.contentId = item.id;
+        }
+      }catch(e){ console.error("history save failed", e); }
+    }else{
+      const list = loadLocalDecks();
+      const id = "local_" + Date.now();
+      list.unshift({ id, title, date: new Date().toISOString(), count: state.slides.length, ...payload });
+      saveLocalDecks(list);
+      state.contentId = null;
+    }
+  }
+
+  function formatHistoryDate(iso){
+    try{
+      const d = new Date(iso);
+      return d.toLocaleDateString("ru-RU", { day:"2-digit", month:"2-digit", year:"numeric" }) + " " +
+             d.toLocaleTimeString("ru-RU", { hour:"2-digit", minute:"2-digit" });
+    }catch(e){ return ""; }
+  }
+
+  async function renderHistoryList(){
+    const grid = $("historyGrid");
+    const empty = $("historyEmpty");
+    let items = [];
+    if(isLoggedIn()){
+      try{
+        const { items: serverItems } = await Alaqai.api("/api/content?type=presentation");
+        items = serverItems.map(it => ({ id: it.id, title: it.title || "Без названия", date: it.updatedAt, remote: true }));
+      }catch(e){ console.error("history load failed", e); }
+    }else{
+      items = loadLocalDecks().map(d => ({ id: d.id, title: d.title || "Без названия", date: d.date, count: d.count, remote: false }));
+    }
+    if(items.length === 0){ grid.innerHTML = ""; empty.style.display = "block"; return; }
+    empty.style.display = "none";
+    grid.innerHTML = items.map(m => `
+      <div class="history-card" data-id="${m.id}" data-remote="${m.remote ? "1" : "0"}">
+        <button class="h-del" data-id="${m.id}" data-remote="${m.remote ? "1" : "0"}" title="Удалить">✕</button>
+        <div class="h-topic">${escapeHtml(m.title)}</div>
+        <div class="h-meta">${formatHistoryDate(m.date)}</div>
+      </div>`).join("");
+    grid.querySelectorAll(".history-card").forEach(card => {
+      card.onclick = (ev) => { if(ev.target.classList.contains("h-del")) return; openDeckFromHistory(card.dataset.id, card.dataset.remote === "1"); };
+    });
+    grid.querySelectorAll(".h-del").forEach(btn => {
+      btn.onclick = async (ev) => {
+        ev.stopPropagation();
+        try{
+          if(btn.dataset.remote === "1"){
+            await Alaqai.api("/api/content/" + btn.dataset.id, { method:"DELETE" });
+          }else{
+            saveLocalDecks(loadLocalDecks().filter(d => d.id !== btn.dataset.id));
+          }
+        }catch(e){ console.error("history delete failed", e); }
+        renderHistoryList();
+      };
+    });
+  }
+
+  async function openDeckFromHistory(id, remote){
+    try{
+      let data;
+      if(remote){
+        const { item } = await Alaqai.api("/api/content/" + id);
+        data = item.data;
+        state.contentId = id;
+      }else{
+        const found = loadLocalDecks().find(d => d.id === id);
+        if(!found){ setStatus("Не удалось открыть презентацию", "err"); return; }
+        data = found;
+        state.contentId = null;
+      }
+      state.slides = data.slides;
+      state.current = 0;
+      state.skin = data.meta.skin || "playful";
+      document.documentElement.style.setProperty("--lime", (data.meta && data.meta.theme) || "#D6FF3B");
+      showDeck();
+    }catch(e){ setStatus("Не удалось открыть презентацию", "err"); }
+  }
+
+  function renderSidebar(){
+    const sb = $("sidebar");
+    sb.innerHTML = "";
+    state.slides.forEach((s,i) => {
+      const el = document.createElement("div");
+      el.className = "slide-thumb" + (i===state.current ? " active" : "");
+      el.innerHTML = `<button class="del" data-i="${i}" title="Удалить">✕</button>
+        <div class="n">Слайд ${i+1}</div><div class="t">${escapeHtml(s.title)}</div>`;
+      el.onclick = (ev) => { if(ev.target.classList.contains("del")) return; state.current = i; renderSidebar(); renderSlide(); };
+      sb.appendChild(el);
+    });
+    sb.querySelectorAll(".del").forEach(btn => {
+      btn.onclick = (ev) => {
+        ev.stopPropagation();
+        const i = parseInt(btn.dataset.i,10);
+        state.slides.splice(i,1);
+        if(state.current >= state.slides.length) state.current = state.slides.length - 1;
+        renderSidebar(); renderSlide();
+      };
+    });
+    const addBtn = document.createElement("button");
+    addBtn.className = "add-slide-btn";
+    addBtn.textContent = "+ Добавить слайд";
+    addBtn.onclick = () => {
+      state.slides.push({
+        layout:"content", title:"Новый слайд", subtitle:"", bullets:["Пункт"], notes:"",
+        image_query:"", icon:"sparkles", stat_number:"", stat_label:"",
+        left_title:"", left_bullets:[], right_title:"", right_bullets:[],
+        question:"", options:[], correct_index:0,
+        sentence_before:"", sentence_after:"", correct_word:"", word_options:[],
+        pairs:[], problem_text:"", solution_steps:[], scoreA:0, scoreB:0,
+        statement:"", is_true:true, words:[], categories:[], items:[],
+        word:"", hint:"", crossword_words:[], chart_title:"", chart_data:[],
+        process_title:"", steps:[],
+        imageUrl:null, iconUrl:iconifyUrl("sparkles"), customHtml:null
+      });
+      state.current = state.slides.length - 1;
+      renderSidebar(); renderSlide();
+    };
+    sb.appendChild(addBtn);
+  }
+
+  function escapeHtml(str){
+    const d = document.createElement("div");
+    d.textContent = str || "";
+    return d.innerHTML;
+  }
+
+  function eyebrow(idx, total){
+    return `<div class="slide-eyebrow"><span class="dot"></span>alaqai · слайд ${idx+1} из ${total}</div>`;
+  }
+  function bulletsHtml(items, field){
+    return `<ul class="slide-bullets" data-listfield="${field}">
+      ${items.map((b,bi)=>`<li contenteditable="true" data-bi="${bi}">${escapeHtml(b)}</li>`).join("")}
+    </ul>`;
+  }
+
+  function layoutTitle(s, idx, total){
+    return `${eyebrow(idx,total)}
+      <div class="title-layout-body">
+        <div class="slide-icon-wrap big"><img src="${s.iconUrl}" alt=""></div>
+        <div class="slide-title big" contenteditable="true" data-field="title">${escapeHtml(s.title)}</div>
+        <div class="slide-subtitle" contenteditable="true" data-field="subtitle">${escapeHtml(s.subtitle)}</div>
+      </div>`;
+  }
+  function layoutContent(s, idx, total){
+    const img = s.imageUrl
+      ? `<img class="slide-image" src="${s.imageUrl}" alt="">`
+      : `<div class="slide-image placeholder">Нет фото</div>`;
+    return `${eyebrow(idx,total)}
+      <div class="slide-body">
+        <div class="slide-text">
+          <div class="slide-icon-wrap"><img src="${s.iconUrl}" alt=""></div>
+          <div class="slide-title" contenteditable="true" data-field="title" style="margin-top:14px;">${escapeHtml(s.title)}</div>
+          ${bulletsHtml(s.bullets, "bullets")}
+        </div>
+        <div class="slide-visual">${img}</div>
+      </div>`;
+  }
+  function layoutFullImage(s, idx, total){
+    const img = s.imageUrl
+      ? `<img class="full-bg" src="${s.imageUrl}" alt="">`
+      : `<div class="full-bg placeholder" style="display:flex;align-items:center;justify-content:center;color:var(--muted);">Нет фото</div>`;
+    return `<div class="full-bg-wrap">
+        ${img}
+        <div class="full-eyebrow"><span class="dot"></span>слайд ${idx+1} из ${total}</div>
+        <div class="full-overlay">
+          <div class="slide-title" contenteditable="true" data-field="title">${escapeHtml(s.title)}</div>
+          ${bulletsHtml(s.bullets, "bullets")}
+        </div>
+      </div>`;
+  }
+  function layoutStat(s, idx, total){
+    return `${eyebrow(idx,total)}
+      <div class="stat-body">
+        <div class="slide-icon-wrap"><img src="${s.iconUrl}" alt=""></div>
+        <div class="stat-number" contenteditable="true" data-field="stat_number">${escapeHtml(s.stat_number)}</div>
+        <div class="stat-label" contenteditable="true" data-field="stat_label">${escapeHtml(s.stat_label)}</div>
+        <div class="slide-title" contenteditable="true" data-field="title">${escapeHtml(s.title)}</div>
+        ${bulletsHtml(s.bullets, "bullets")}
+      </div>`;
+  }
+  function layoutBigidea(s, idx, total){
+    return `${eyebrow(idx,total)}
+      <div class="bigidea-body">
+        <div class="slide-icon-wrap"><img src="${s.iconUrl}" alt=""></div>
+        <div class="slide-title" contenteditable="true" data-field="title">${escapeHtml(s.title)}</div>
+        ${bulletsHtml(s.bullets, "bullets")}
+      </div>`;
+  }
+  function layoutCompare(s, idx, total){
+    return `${eyebrow(idx,total)}
+      <div class="compare-body">
+        <div class="compare-col">
+          <div class="compare-title" contenteditable="true" data-field="left_title">${escapeHtml(s.left_title)}</div>
+          ${bulletsHtml(s.left_bullets, "left_bullets")}
+        </div>
+        <div class="compare-divider"></div>
+        <div class="compare-col">
+          <div class="compare-title" contenteditable="true" data-field="right_title">${escapeHtml(s.right_title)}</div>
+          ${bulletsHtml(s.right_bullets, "right_bullets")}
+        </div>
+      </div>`;
+  }
+
+  function layoutQuiz(s, idx, total){
+    return `${eyebrow(idx,total)}
+      <div class="game-body">
+        <div class="slide-icon-wrap"><img src="${s.iconUrl}" alt=""></div>
+        <div class="game-question" contenteditable="true" data-field="question">${escapeHtml(s.question || s.title)}</div>
+        <div class="quiz-options">
+          ${(s.options||[]).map((o,oi)=>`<button class="quiz-opt" data-oi="${oi}">${escapeHtml(o)}</button>`).join("")}
+        </div>
+      </div>`;
+  }
+
+  function layoutFillblank(s, idx, total){
+    return `${eyebrow(idx,total)}
+      <div class="game-body">
+        <div class="slide-icon-wrap"><img src="${s.iconUrl}" alt=""></div>
+        <div class="fillblank-sentence">${escapeHtml(s.sentence_before)} <span class="blank-slot">____</span> ${escapeHtml(s.sentence_after)}</div>
+        <div class="word-bank">${(s.word_options||[]).map(w=>`<button class="word-chip" data-word="${escapeHtml(w)}">${escapeHtml(w)}</button>`).join("")}</div>
+      </div>`;
+  }
+
+  function layoutMatch(s, idx, total){
+    const right = (s.pairs||[]).map((p,i)=>({text:p.right, pairIndex:i}));
+    for(let i=right.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [right[i],right[j]]=[right[j],right[i]]; }
+    return `${eyebrow(idx,total)}
+      <div class="match-body">
+        <div class="match-col">${(s.pairs||[]).map((p,i)=>`<div class="match-item" data-side="left" data-pair="${i}">${escapeHtml(p.left)}</div>`).join("")}</div>
+        <div class="match-col">${right.map(r=>`<div class="match-item" data-side="right" data-pair="${r.pairIndex}">${escapeHtml(r.text)}</div>`).join("")}</div>
+      </div>`;
+  }
+
+  function layoutCompete(s, idx, total){
+    return `${eyebrow(idx,total)}
+      <div class="game-body">
+        <div class="scoreboard">
+          <div class="score-team"><span class="score-label">Команда А</span><span class="score-val score-a">${s.scoreA||0}</span><button class="score-btn" data-team="a">+1</button></div>
+          <div class="score-team"><span class="score-label">Команда Б</span><span class="score-val score-b">${s.scoreB||0}</span><button class="score-btn" data-team="b">+1</button></div>
+        </div>
+        <div class="game-question" contenteditable="true" data-field="question">${escapeHtml(s.question || s.title)}</div>
+        <div class="quiz-options">
+          ${(s.options||[]).map((o,oi)=>`<button class="quiz-opt" data-oi="${oi}">${escapeHtml(o)}</button>`).join("")}
+        </div>
+      </div>`;
+  }
+
+  function layoutProblem(s, idx, total){
+    return `${eyebrow(idx,total)}
+      <div class="game-body">
+        <div class="slide-icon-wrap"><img src="${s.iconUrl}" alt=""></div>
+        <div class="problem-text" contenteditable="true" data-field="problem_text">${escapeHtml(s.problem_text || s.title)}</div>
+        <button class="btn btn-ghost reveal-btn">Показать решение</button>
+        <div class="solution-box" style="display:none;">${bulletsHtml(s.solution_steps, "solution_steps")}</div>
+      </div>`;
+  }
+
+  function layoutTruefalse(s, idx, total){
+    return `${eyebrow(idx,total)}
+      <div class="game-body">
+        <div class="slide-icon-wrap"><img src="${s.iconUrl}" alt=""></div>
+        <div class="game-question" contenteditable="true" data-field="statement">${escapeHtml(s.statement || s.title)}</div>
+        <div class="tf-buttons">
+          <button class="tf-btn" data-val="true">Правда</button>
+          <button class="tf-btn" data-val="false">Ложь</button>
+        </div>
+      </div>`;
+  }
+
+  // deterministic-ish word search grid builder
+  function buildWordSearchGrid(words, size){
+    size = size || 10;
+    const grid = Array.from({length:size}, () => Array(size).fill(null));
+    const dirs = [[0,1],[1,0],[1,1],[-1,1]];
+    const placed = [];
+    function randRange(min, max){ return Math.floor(Math.random()*(max-min+1)) + min; }
+    words.forEach(wRaw => {
+      const w = (wRaw||"").toUpperCase().replace(/[^A-ZА-ЯЁ]/g,"");
+      if(!w || w.length > size) return;
+      let done = false;
+      for(let attempt=0; attempt<80 && !done; attempt++){
+        const dir = dirs[Math.floor(Math.random()*dirs.length)];
+        let rowMin, rowMax, colMin, colMax;
+        if(dir[0] === 1){ rowMin = 0; rowMax = size - w.length; }
+        else if(dir[0] === -1){ rowMin = w.length - 1; rowMax = size - 1; }
+        else { rowMin = 0; rowMax = size - 1; }
+        if(dir[1] === 1){ colMin = 0; colMax = size - w.length; }
+        else { colMin = 0; colMax = size - 1; }
+        if(rowMax < rowMin || colMax < colMin) continue;
+        const startRow = randRange(rowMin, rowMax);
+        const startCol = randRange(colMin, colMax);
+        let ok = true;
+        for(let i=0;i<w.length;i++){
+          const r = startRow + dir[0]*i, c = startCol + dir[1]*i;
+          if(grid[r][c] && grid[r][c] !== w[i]){ ok = false; break; }
+        }
+        if(ok){
+          for(let i=0;i<w.length;i++){ const r=startRow+dir[0]*i, c=startCol+dir[1]*i; grid[r][c]=w[i]; }
+          placed.push({word:w, row:startRow, col:startCol, dir});
+          done = true;
+        }
+      }
+    });
+    const alphabet = "АБВГДЕЖЗИКЛМНОПРСТУФХЦЧШЭЮЯ";
+    for(let r=0;r<size;r++) for(let c=0;c<size;c++) if(!grid[r][c]) grid[r][c] = alphabet[Math.floor(Math.random()*alphabet.length)];
+    return { grid, placed, size };
+  }
+
+  function layoutWordsearch(s, idx, total){
+    if(!s._wsData) s._wsData = buildWordSearchGrid(s.words, 10);
+    const { grid, size } = s._wsData;
+    let cells = "";
+    for(let r=0;r<size;r++) for(let c=0;c<size;c++) cells += `<div class="ws-cell" data-r="${r}" data-c="${c}">${grid[r][c]}</div>`;
+    return `${eyebrow(idx,total)}
+      <div class="ws-body">
+        <div class="ws-grid" style="grid-template-columns:repeat(${size},28px);">${cells}</div>
+        <div class="ws-words">${(s.words||[]).map(w=>`<div class="ws-word-chip" data-word="${escapeHtml((w||"").toUpperCase())}">${escapeHtml(w)}</div>`).join("")}</div>
+      </div>`;
+  }
+
+  function layoutMemory(s, idx, total){
+    if(!s._memCards){
+      const cards = [];
+      (s.pairs||[]).forEach((p,i) => {
+        cards.push({pairId:i, text:p.left, id:"a"+i});
+        cards.push({pairId:i, text:p.right, id:"b"+i});
+      });
+      for(let i=cards.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [cards[i],cards[j]]=[cards[j],cards[i]]; }
+      s._memCards = cards;
+    }
+    return `${eyebrow(idx,total)}
+      <div class="game-body">
+        <div class="memory-grid">
+          ${s._memCards.map(c=>`<div class="memory-card" data-pair="${c.pairId}" data-cardid="${c.id}"><span class="card-back">?</span><span class="card-front" style="display:none;">${escapeHtml(c.text)}</span></div>`).join("")}
+        </div>
+      </div>`;
+  }
+
+  function layoutSort(s, idx, total){
+    return `${eyebrow(idx,total)}
+      <div class="sort-body">
+        <div class="game-question" style="font-size:18px;">${escapeHtml(s.title)}</div>
+        <div class="sort-items">${(s.items||[]).map((it,i)=>`<div class="sort-item" data-i="${i}" data-cat="${escapeHtml(it.category)}">${escapeHtml(it.text)}</div>`).join("")}</div>
+        <div class="sort-bins">${(s.categories||[]).map(cat=>`<div class="sort-bin" data-cat="${escapeHtml(cat)}"><div class="bin-label">${escapeHtml(cat)}</div></div>`).join("")}</div>
+      </div>`;
+  }
+
+  function layoutAnagram(s, idx, total){
+    const letters = (s.word||"").toUpperCase().split("");
+    const shuffled = letters.slice();
+    for(let i=shuffled.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [shuffled[i],shuffled[j]]=[shuffled[j],shuffled[i]]; }
+    return `${eyebrow(idx,total)}
+      <div class="game-body">
+        <div class="anagram-hint">${escapeHtml(s.hint)}</div>
+        <div class="anagram-answer" data-answer="${escapeHtml((s.word||"").toUpperCase())}">
+          ${letters.map(()=>`<div class="anagram-slot"></div>`).join("")}
+        </div>
+        <div class="anagram-tiles">
+          ${shuffled.map((l,i)=>`<div class="anagram-tile" data-letter="${l}" data-i="${i}">${l}</div>`).join("")}
+        </div>
+      </div>`;
+  }
+
+  function layoutCrossword(s, idx, total){
+    return `${eyebrow(idx,total)}
+      <div class="game-body">
+        <div class="crossword-list">
+          ${(s.crossword_words||[]).map((cw,i)=>`
+            <div class="crossword-clue">
+              <b>${i+1}.</b>${escapeHtml(cw.clue)}
+              <div class="crossword-boxes" data-answer="${escapeHtml((cw.word||"").toUpperCase())}">
+                ${(cw.word||"").split("").map(()=>`<input class="crossword-box" maxlength="1">`).join("")}
+              </div>
+            </div>`).join("")}
+        </div>
+      </div>`;
+  }
+
+  function pieSlicesCss(data, colors){
+    let acc = 0;
+    const total = data.reduce((s,d)=>s+(Number(d.value)||0),0) || 1;
+    const stops = data.map((d,i) => {
+      const start = acc/total*360;
+      acc += Number(d.value)||0;
+      const end = acc/total*360;
+      return `${colors[i%colors.length]} ${start}deg ${end}deg`;
+    });
+    return stops.join(",");
+  }
+
+  function layoutPiechart(s, idx, total){
+    const colors = ["var(--lime)","#FF6B4A","#4AD8FF","#FFD23F","#B8A6FF","#8ED6A5"];
+    const css = pieSlicesCss(s.chart_data||[], colors);
+    return `${eyebrow(idx,total)}
+      <div class="chart-body">
+        <div class="chart-title" contenteditable="true" data-field="chart_title">${escapeHtml(s.chart_title || s.title)}</div>
+        <div class="pie-wrap">
+          <div class="pie-circle" style="background:conic-gradient(${css});"></div>
+          <div class="chart-legend">${(s.chart_data||[]).map((d,i)=>`<div class="legend-row"><span class="legend-swatch" style="background:${colors[i%colors.length]};"></span>${escapeHtml(d.label)} — ${escapeHtml(String(d.value))}</div>`).join("")}</div>
+        </div>
+      </div>`;
+  }
+
+  function layoutBarchart(s, idx, total){
+    const data = s.chart_data || [];
+    const max = Math.max(1, ...data.map(d=>Number(d.value)||0));
+    return `${eyebrow(idx,total)}
+      <div class="chart-body">
+        <div class="chart-title" contenteditable="true" data-field="chart_title">${escapeHtml(s.chart_title || s.title)}</div>
+        <div class="bar-chart">
+          ${data.map(d=>`
+            <div class="bar-row">
+              <div class="bar-label">${escapeHtml(d.label)}</div>
+              <div class="bar-track"><div class="bar-fill" style="width:${Math.max(4,(Number(d.value)||0)/max*100)}%;"></div></div>
+              <div class="bar-value">${escapeHtml(String(d.value))}</div>
+            </div>`).join("")}
+        </div>
+      </div>`;
+  }
+
+  function layoutProcess(s, idx, total){
+    const steps = s.steps || [];
+    return `${eyebrow(idx,total)}
+      <div class="process-body">
+        ${steps.map((st,i)=>`<div class="process-step"><span class="step-n">${i+1}</span>${escapeHtml(st)}</div>${i<steps.length-1?'<span class="process-arrow">→</span>':''}`).join("")}
+      </div>`;
+  }
+
+  function slideHtml(s, idx, total){
+    switch(s.layout){
+      case "title": return layoutTitle(s, idx, total);
+      case "full-image": return layoutFullImage(s, idx, total);
+      case "stat": return layoutStat(s, idx, total);
+      case "bigidea": return layoutBigidea(s, idx, total);
+      case "compare": return layoutCompare(s, idx, total);
+      case "quiz": return layoutQuiz(s, idx, total);
+      case "fillblank": return layoutFillblank(s, idx, total);
+      case "match": return layoutMatch(s, idx, total);
+      case "compete": return layoutCompete(s, idx, total);
+      case "problem": return layoutProblem(s, idx, total);
+      case "truefalse": return layoutTruefalse(s, idx, total);
+      case "wordsearch": return layoutWordsearch(s, idx, total);
+      case "memory": return layoutMemory(s, idx, total);
+      case "sort": return layoutSort(s, idx, total);
+      case "anagram": return layoutAnagram(s, idx, total);
+      case "crossword": return layoutCrossword(s, idx, total);
+      case "piechart": return layoutPiechart(s, idx, total);
+      case "barchart": return layoutBarchart(s, idx, total);
+      case "process": return layoutProcess(s, idx, total);
+      default: return layoutContent(s, idx, total);
+    }
+  }
+
+  // ---------- mini-game interactivity ----------
+  function bindGameInteractions(el, s){
+    el.querySelectorAll(".quiz-opt").forEach(btn => {
+      btn.onclick = () => {
+        const oi = parseInt(btn.dataset.oi, 10);
+        el.querySelectorAll(".quiz-opt").forEach(b => b.classList.remove("correct","wrong"));
+        if(oi === s.correct_index){ btn.classList.add("correct"); }
+        else{
+          btn.classList.add("wrong");
+          const cb = el.querySelector(`.quiz-opt[data-oi="${s.correct_index}"]`);
+          if(cb) cb.classList.add("correct");
+        }
+      };
+    });
+    const blank = el.querySelector(".blank-slot");
+    if(blank){
+      el.querySelectorAll(".word-chip").forEach(chip => {
+        chip.onclick = () => {
+          blank.textContent = chip.dataset.word;
+          blank.classList.remove("correct","wrong");
+          blank.classList.add(chip.dataset.word === s.correct_word ? "correct" : "wrong");
+        };
+      });
+    }
+    let selected = null;
+    el.querySelectorAll(".match-item").forEach(item => {
+      item.onclick = () => {
+        if(item.classList.contains("locked")) return;
+        if(!selected){ selected = item; item.classList.add("selected"); return; }
+        if(selected === item) return;
+        if(selected.dataset.side === item.dataset.side){
+          selected.classList.remove("selected"); selected = item; item.classList.add("selected"); return;
+        }
+        if(selected.dataset.pair === item.dataset.pair){
+          selected.classList.add("locked"); item.classList.add("locked");
+          selected.classList.remove("selected"); selected = null;
+        }else{
+          item.classList.add("wrong-flash"); selected.classList.add("wrong-flash");
+          const prevSel = selected;
+          setTimeout(() => {
+            item.classList.remove("wrong-flash"); prevSel.classList.remove("wrong-flash","selected");
+          }, 500);
+          selected = null;
+        }
+      };
+    });
+    el.querySelectorAll(".score-btn").forEach(btn => {
+      btn.onclick = () => {
+        if(btn.dataset.team === "a"){ s.scoreA = (s.scoreA||0) + 1; el.querySelector(".score-a").textContent = s.scoreA; }
+        else{ s.scoreB = (s.scoreB||0) + 1; el.querySelector(".score-b").textContent = s.scoreB; }
+      };
+    });
+    const revealBtn = el.querySelector(".reveal-btn");
+    if(revealBtn){
+      revealBtn.onclick = () => {
+        const box = el.querySelector(".solution-box");
+        const showing = box.style.display !== "none";
+        box.style.display = showing ? "none" : "block";
+        revealBtn.textContent = showing ? "Показать решение" : "Скрыть решение";
+      };
+    }
+
+    // True/False
+    el.querySelectorAll(".tf-btn").forEach(btn => {
+      btn.onclick = () => {
+        const chosen = btn.dataset.val === "true";
+        el.querySelectorAll(".tf-btn").forEach(b => b.classList.remove("correct","wrong"));
+        if(chosen === !!s.is_true){ btn.classList.add("correct"); }
+        else{
+          btn.classList.add("wrong");
+          const other = el.querySelector(`.tf-btn[data-val="${s.is_true}"]`);
+          if(other) other.classList.add("correct");
+        }
+      };
+    });
+
+    // Word search — click-drag select a straight line of cells
+    const wsGrid = el.querySelector(".ws-grid");
+    if(wsGrid){
+      let dragging = false, startCell = null, path = [];
+      const foundWords = new Set();
+      function cellsBetween(a, b){
+        const dr = Math.sign(b.r - a.r), dc = Math.sign(b.c - a.c);
+        const len = Math.max(Math.abs(b.r-a.r), Math.abs(b.c-a.c)) + 1;
+        const out = [];
+        for(let i=0;i<len;i++) out.push({r:a.r+dr*i, c:a.c+dc*i});
+        return out;
+      }
+      function clearSelection(){ el.querySelectorAll(".ws-cell.selected").forEach(c=>c.classList.remove("selected")); }
+      function cellAt(r,c){ return el.querySelector(`.ws-cell[data-r="${r}"][data-c="${c}"]`); }
+      function checkWord(){
+        const text = path.map(p => cellAt(p.r,p.c).textContent).join("");
+        const rev = text.split("").reverse().join("");
+        (s.words||[]).forEach(w => {
+          const wu = (w||"").toUpperCase();
+          if((text === wu || rev === wu) && !foundWords.has(wu)){
+            foundWords.add(wu);
+            path.forEach(p => cellAt(p.r,p.c).classList.add("found"));
+            const chip = el.querySelector(`.ws-word-chip[data-word="${wu}"]`);
+            if(chip) chip.classList.add("found");
+          }
+        });
+      }
+      el.querySelectorAll(".ws-cell").forEach(cell => {
+        cell.onmousedown = () => { dragging = true; startCell = {r:+cell.dataset.r, c:+cell.dataset.c}; clearSelection(); path=[startCell]; cell.classList.add("selected"); };
+        cell.onmouseenter = () => {
+          if(!dragging || !startCell) return;
+          const cur = {r:+cell.dataset.r, c:+cell.dataset.c};
+          const dr = cur.r-startCell.r, dc = cur.c-startCell.c;
+          if(dr!==0 && dc!==0 && Math.abs(dr)!==Math.abs(dc)) return;
+          clearSelection();
+          path = cellsBetween(startCell, cur);
+          path.forEach(p => { const cc = cellAt(p.r,p.c); if(cc) cc.classList.add("selected"); });
+        };
+      });
+      el.addEventListener("mouseup", () => { if(dragging){ dragging=false; checkWord(); } });
+    }
+
+    // Memory (flip cards)
+    let memFlipped = [];
+    el.querySelectorAll(".memory-card").forEach(card => {
+      card.onclick = () => {
+        if(card.classList.contains("flipped") || card.classList.contains("matched") || memFlipped.length >= 2) return;
+        card.classList.add("flipped");
+        card.querySelector(".card-back").style.display = "none";
+        card.querySelector(".card-front").style.display = "block";
+        memFlipped.push(card);
+        if(memFlipped.length === 2){
+          const [a,b] = memFlipped;
+          if(a.dataset.pair === b.dataset.pair){
+            a.classList.add("matched"); b.classList.add("matched");
+            memFlipped = [];
+          }else{
+            setTimeout(() => {
+              [a,b].forEach(c => {
+                c.classList.remove("flipped");
+                c.querySelector(".card-back").style.display = "flex";
+                c.querySelector(".card-front").style.display = "none";
+              });
+              memFlipped = [];
+            }, 800);
+          }
+        }
+      };
+    });
+
+    // Sort (click item, then click bin)
+    let sortSelected = null;
+    el.querySelectorAll(".sort-item").forEach(item => {
+      item.onclick = () => {
+        if(item.classList.contains("placed")) return;
+        el.querySelectorAll(".sort-item").forEach(i => i.classList.remove("selected"));
+        sortSelected = item; item.classList.add("selected");
+      };
+    });
+    el.querySelectorAll(".sort-bin").forEach(bin => {
+      bin.onclick = () => {
+        if(!sortSelected) return;
+        const ok = sortSelected.dataset.cat === bin.dataset.cat;
+        if(ok){
+          const chip = document.createElement("span");
+          chip.className = "bin-item";
+          chip.textContent = sortSelected.textContent;
+          bin.appendChild(chip);
+          sortSelected.classList.add("placed");
+          sortSelected.classList.remove("selected");
+        }else{
+          bin.style.borderColor = "var(--danger)";
+          setTimeout(() => { bin.style.borderColor = ""; }, 400);
+        }
+        sortSelected = null;
+      };
+    });
+
+    // Anagram
+    const anagramAnswer = el.querySelector(".anagram-answer");
+    if(anagramAnswer){
+      let built = "";
+      const slots = [...anagramAnswer.querySelectorAll(".anagram-slot")];
+      el.querySelectorAll(".anagram-tile").forEach(tile => {
+        tile.onclick = () => {
+          if(tile.classList.contains("used") || built.length >= slots.length) return;
+          slots[built.length].textContent = tile.dataset.letter;
+          built += tile.dataset.letter;
+          tile.classList.add("used");
+          if(built.length === slots.length){
+            const correct = built === anagramAnswer.dataset.answer;
+            slots.forEach(sl => sl.style.color = correct ? "#2E7D32" : "var(--danger)");
+          }
+        };
+      });
+    }
+
+    // Crossword (check on blur)
+    el.querySelectorAll(".crossword-boxes").forEach(row => {
+      const inputs = [...row.querySelectorAll(".crossword-box")];
+      const answer = row.dataset.answer;
+      inputs.forEach((inp, i) => {
+        inp.oninput = () => {
+          inp.value = inp.value.toUpperCase().slice(0,1);
+          if(inp.value && i < inputs.length-1) inputs[i+1].focus();
+          if(inputs.every(x => x.value)){
+            const guess = inputs.map(x=>x.value).join("");
+            inputs.forEach(x => x.style.borderColor = guess === answer ? "#2E7D32" : "var(--danger)");
+          }
+        };
+      });
+    });
+  }
+
+  function renderMathIn(el){
+    if(window.renderMathInElement){
+      try{
+        renderMathInElement(el, {
+          delimiters: [
+            {left:"$$", right:"$$", display:true},
+            {left:"$", right:"$", display:false}
+          ],
+          throwOnError: false
+        });
+      }catch(e){ console.error("KaTeX render failed", e); }
+    }
+  }
+
+  function renderSlide(){
+    if(state.slides.length === 0) return;
+    const s = state.slides[state.current];
+    const el = $("slideEl");
+    if(s.customHtml){
+      el.className = "slide";
+      renderAiSlide(el, s);
+      $("layoutSelect").style.display = "none";
+      $("regenDesignBtn").style.display = "inline-flex";
+    }else{
+      el.className = "slide layout-" + (s.layout || "content") + " skin-" + state.skin;
+      el.innerHTML = slideHtml(s, state.current, state.slides.length);
+      bindEditable(el, s);
+      bindGameInteractions(el, s);
+      $("layoutSelect").value = s.layout || "content";
+      $("layoutSelect").style.display = "";
+      $("regenDesignBtn").style.display = "none";
+    }
+    $("countLabel").textContent = (state.current+1) + " / " + state.slides.length;
+  }
+
+  $("layoutSelect").onchange = () => {
+    if(state.slides.length === 0) return;
+    state.slides[state.current].layout = $("layoutSelect").value;
+    renderSlide();
+  };
+
+  $("regenDesignBtn").onclick = async () => {
+    if(state.slides.length === 0) return;
+    const s = state.slides[state.current];
+    setStatus("Дизайн заново…", "busy");
+    $("regenDesignBtn").disabled = true;
+    try{
+      s.customHtml = await generateSlideDesign(s, $("themeSelect").value);
+      renderSlide();
+      setStatus("Готово");
+    }catch(e){
+      setStatus(e.message || "Ошибка дизайна", "err");
+    }finally{
+      $("regenDesignBtn").disabled = false;
+    }
+  };
+
+  $("aiImageBtn").onclick = async () => {
+    if(state.slides.length === 0) return;
+    const s = state.slides[state.current];
+    setStatus("Генерация изображения…", "busy");
+    $("aiImageBtn").disabled = true;
+    try{
+      const dataUrl = await generateAiImage(s.image_query || s.title);
+      if(dataUrl){ s.imageUrl = dataUrl; renderSlide(); setStatus("Готово"); }
+      else setStatus("Не удалось сгенерировать изображение", "err");
+    }finally{
+      $("aiImageBtn").disabled = false;
+    }
+  };
+
+  function bindEditable(root, s){
+    root.querySelectorAll('[data-field]').forEach(el => {
+      const f = el.dataset.field;
+      el.oninput = () => { s[f] = el.textContent; if(f === "title") renderSidebar(); };
+    });
+    root.querySelectorAll('ul[data-listfield]').forEach(ul => {
+      const f = ul.dataset.listfield;
+      ul.querySelectorAll('li[data-bi]').forEach(li => {
+        li.oninput = () => { s[f][parseInt(li.dataset.bi,10)] = li.textContent; };
+      });
+    });
+  }
+
+  $("prevBtn").onclick = () => { if(state.current>0){ state.current--; renderSidebar(); renderSlide(); } };
+  $("nextBtn").onclick = () => { if(state.current < state.slides.length-1){ state.current++; renderSidebar(); renderSlide(); } };
+  $("newBtn").onclick = () => {
+    if(!confirm("Закрыть текущую презентацию? Она уже сохранена в истории.")) return;
+    state.slides = []; state.current = 0; state.contentId = null;
+    uploadedMaterials = []; renderUploadThumbs();
+    showHistoryScreen();
+  };
+  $("printBtn").onclick = () => window.print();
+
+  // ---------- present mode ----------
+  $("presentBtn").onclick = () => {
+    if(state.slides.length === 0){ setStatus("Сначала создайте презентацию", "err"); return; }
+    $("presentOverlay").classList.add("open");
+    renderPresent();
+  };
+  $("presentClose").onclick = () => $("presentOverlay").classList.remove("open");
+  function renderPresent(){
+    const s = state.slides[state.current];
+    const el = $("presentSlideEl");
+    if(s.customHtml){
+      el.className = "present-slide slide";
+      renderAiSlide(el, s);
+    }else{
+      el.className = "present-slide slide layout-" + (s.layout || "content") + " skin-" + state.skin;
+      el.innerHTML = slideHtml(s, state.current, state.slides.length);
+      bindGameInteractions(el, s);
+      renderMathIn(el);
+    }
+    $("presentNav").textContent = (state.current+1) + " / " + state.slides.length + "   ·   ← →";
+  }
+  document.addEventListener("keydown",(e)=>{
+    if(!$("presentOverlay").classList.contains("open")) return;
+    if(e.key === "Escape") $("presentOverlay").classList.remove("open");
+    if(e.key === "ArrowRight" && state.current < state.slides.length-1){ state.current++; renderPresent(); renderSidebar(); }
+    if(e.key === "ArrowLeft" && state.current > 0){ state.current--; renderPresent(); renderSidebar(); }
+  });
+
+  document.querySelectorAll(".nav-item[data-tool]").forEach(item => {
+    item.onclick = () => {
+      if(item.classList.contains("disabled")){
+        setStatus("«" + item.textContent.replace("Скоро","").trim() + "» скоро появится", "busy");
+        return;
+      }
+      document.querySelectorAll(".nav-item[data-tool]").forEach(n => n.classList.remove("active"));
+      item.classList.add("active");
+      document.querySelectorAll(".tool-view").forEach(v => v.style.display = "none");
+      const view = document.getElementById("tool-" + item.dataset.tool);
+      if(view) view.style.display = "flex";
+    };
+  });
+
+  // ---------- init ----------
+  showHistoryScreen();
+  window.addEventListener("load", () => {
+    const wantedId = new URLSearchParams(location.search).get("id");
+    if(wantedId && window.Alaqai){
+      Alaqai.onAuthChange((user) => { if(user) openDeckFromHistory(wantedId, true); });
+    }
+  });
+})();
+</script>
+</body>
+</html>
