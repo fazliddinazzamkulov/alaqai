@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>alaqai · Генератор презентаций</title>
+<link rel="icon" type="image/png" href="assets/img/logo-badge.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Lora:wght@600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
@@ -18,7 +19,7 @@
 <script src="assets/js/api.js" defer></script>
 <style>
   :root{
-    --lime:#D6FF3B;
+    --lime:#2B5BFF;
     --ink:#111111;
     --paper:#FAFAFA;
     --panel:#F1F1EF;
@@ -51,8 +52,7 @@
     display:flex;align-items:center;gap:9px;padding:16px 16px;
     border-bottom:1px solid #2A2A28;font-weight:800;font-size:14px;color:#fff;
   }
-  .nav-rail-brand .brand-mark{width:20px;height:20px;background:var(--lime);}
-  .nav-rail-brand .brand-mark::after{display:none;}
+  .nav-rail-brand img{width:22px;height:22px;}
   .nav-list{padding:10px 8px;flex:1;}
   .nav-item{
     display:flex;align-items:center;gap:10px;padding:10px 10px;margin-bottom:2px;
@@ -286,7 +286,8 @@
   }
   .btn:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0 var(--line);}
   .btn:active{transform:translate(0,0);box-shadow:none;}
-  .btn-primary{background:var(--lime);}
+  .btn-primary{background:var(--lime);color:#fff;border-color:var(--lime);}
+  .btn-primary:hover{box-shadow:3px 3px 0 var(--ink);}
   .btn-icon{padding:8px;width:36px;height:36px;justify-content:center;}
   .btn-ghost{border-color:var(--line-soft);}
 
@@ -471,7 +472,7 @@
   .status{
     font-size:12px;font-weight:700;padding:5px 10px;border:2px solid var(--line-soft);color:var(--muted);
   }
-  .status.busy{border-color:var(--lime);color:var(--ink);background:rgba(214,255,59,.3);}
+  .status.busy{border-color:var(--lime);color:var(--ink);background:rgba(43,91,255,.14);}
   .status.err{border-color:var(--danger);color:var(--danger);}
 
   @media print{
@@ -485,7 +486,7 @@
 
 <div class="shell">
   <div class="nav-rail" id="navRail">
-    <div class="nav-rail-brand"><div class="brand-mark"></div>alaqai</div>
+    <div class="nav-rail-brand"><img src="assets/img/logo-mark-white.png" alt=""> alaqai</div>
     <div class="nav-list">
       <a class="nav-item" href="platform.html" style="text-decoration:none;"><span class="ico">←</span> Платформа</a>
       <div class="nav-item active" data-tool="presentation"><span class="ico">▤</span> Презентации</div>
@@ -559,6 +560,7 @@
             <div class="field">
               <label>Цветовая тема</label>
               <select id="themeSelect">
+                <option value="#2B5BFF" selected>alaqai (синий)</option>
                 <option value="#D6FF3B">Лайм</option>
                 <option value="#FF6B4A">Коралл</option>
                 <option value="#4AD8FF">Небо</option>
@@ -1296,7 +1298,7 @@ ${s.imageUrl ? 'Фото доступно по URL (используй как <i
       state.slides = data.slides;
       state.current = 0;
       state.skin = data.meta.skin || "playful";
-      document.documentElement.style.setProperty("--lime", (data.meta && data.meta.theme) || "#D6FF3B");
+      document.documentElement.style.setProperty("--lime", (data.meta && data.meta.theme) || "#2B5BFF");
       showDeck();
     }catch(e){ setStatus("Не удалось открыть презентацию", "err"); }
   }
