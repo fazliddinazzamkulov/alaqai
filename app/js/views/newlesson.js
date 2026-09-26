@@ -1,10 +1,10 @@
 /* Screen 2 · Create lesson — one topic, and every part of the lesson is made at once. */
 import { add, t, lang } from '../i18n.js';
-import { html, icon, esc, toast } from '../ui.js';
+import { html, raw, icon, esc, toast, moreBox } from '../ui.js';
 import { db } from '../data/store.js';
 import { fileToPart } from '../ai.js';
 import { weeklyUsage } from '../plans.js';
-import { materialLangs, defaultMaterialLang, RATIOS, subjects } from '../gen/materials.js';
+import { materialLangs, defaultMaterialLang, RATIOS, subjectField, bindSubject } from '../gen/materials.js';
 import { startLesson, blankLesson, currentJob, onJob, retry, clearJob, ROWS } from '../gen/lesson.js';
 
 add({
@@ -12,7 +12,7 @@ add({
     'new.title': 'Создать урок', 'new.sub': 'Одна тема — и всё для урока готово сразу',
     'new.subject': 'Предмет', 'new.class': 'Класс', 'new.noClass': 'Без класса', 'new.topic': 'Тема урока', 'new.topicPh': 'Например: Past Simple — правильные и неправильные глаголы',
     'new.lang': 'Язык материалов', 'new.ratio': 'Формат', 'new.upload': 'Добавить материал из учебника (необязательно)', 'new.uploadHint': 'Фото страниц или PDF, до 3 файлов', 'new.fileTooBig': 'Файл больше 10 МБ: {name}',
-    'new.what': 'Что создать',
+    'new.what': 'Что создать', 'new.settings': 'Язык, формат и учебник', 'new.nFiles': 'файлов: {n}',
     'new.p.ksp': 'КСП', 'new.h.ksp': 'Word, новый формат', 'new.p.slides': 'Презентация', 'new.h.slides': '10 слайдов', 'new.p.games': 'Игры и викторина', 'new.h.games': '2 игры',
     'new.p.test': 'Тест', 'new.h.test': '8 вопросов', 'new.p.homework': 'Домашнее задание', 'new.h.homework': 'онлайн-тест', 'new.p.analysis': 'Анализ урока', 'new.h.analysis': 'после урока',
     'new.create': 'Создать урок', 'new.manual': 'Создать без ИИ — заполню сам', 'new.usage': 'Это {n}-й из {max} уроков с ИИ на этой неделе', 'new.unlimited': 'Уроки с ИИ — без ограничений',
@@ -30,7 +30,7 @@ add({
     'new.title': 'Сабақ құру', 'new.sub': 'Бір тақырып — сабаққа қажеттінің бәрі бірден дайын',
     'new.subject': 'Пән', 'new.class': 'Сынып', 'new.noClass': 'Сыныпсыз', 'new.topic': 'Сабақ тақырыбы', 'new.topicPh': 'Мысалы: Past Simple — дұрыс және бұрыс етістіктер',
     'new.lang': 'Материалдар тілі', 'new.ratio': 'Формат', 'new.upload': 'Оқулықтан материал қосу (міндетті емес)', 'new.uploadHint': 'Бет суреттері немесе PDF, 3 файлға дейін', 'new.fileTooBig': 'Файл 10 МБ-тан үлкен: {name}',
-    'new.what': 'Не құру керек',
+    'new.what': 'Не құру керек', 'new.settings': 'Тіл, формат және оқулық', 'new.nFiles': 'файл: {n}',
     'new.p.ksp': 'ҚМЖ', 'new.h.ksp': 'Word, жаңа формат', 'new.p.slides': 'Презентация', 'new.h.slides': '10 слайд', 'new.p.games': 'Ойындар мен викторина', 'new.h.games': '2 ойын',
     'new.p.test': 'Тест', 'new.h.test': '8 сұрақ', 'new.p.homework': 'Үй тапсырмасы', 'new.h.homework': 'онлайн-тест', 'new.p.analysis': 'Сабақ талдауы', 'new.h.analysis': 'сабақтан кейін',
     'new.create': 'Сабақ құру', 'new.manual': 'ЖИ-сіз құру — өзім толтырамын', 'new.usage': 'Бұл аптадағы {max} ЖИ-сабақтың {n}-шісі', 'new.unlimited': 'ЖИ-сабақтар — шектеусіз',
@@ -48,7 +48,7 @@ add({
     'new.title': 'Create lesson', 'new.sub': 'One topic — and everything for the lesson is ready at once',
     'new.subject': 'Subject', 'new.class': 'Class', 'new.noClass': 'No class', 'new.topic': 'Lesson topic', 'new.topicPh': 'For example: Past Simple — regular and irregular verbs',
     'new.lang': 'Language of materials', 'new.ratio': 'Format', 'new.upload': 'Add material from the textbook (optional)', 'new.uploadHint': 'Page photos or PDF, up to 3 files', 'new.fileTooBig': 'File is over 10 MB: {name}',
-    'new.what': 'What to create',
+    'new.what': 'What to create', 'new.settings': 'Language, format and textbook', 'new.nFiles': 'files: {n}',
     'new.p.ksp': 'Lesson plan', 'new.h.ksp': 'Word, official format', 'new.p.slides': 'Slides', 'new.h.slides': '10 slides', 'new.p.games': 'Games and quiz', 'new.h.games': '2 games',
     'new.p.test': 'Test', 'new.h.test': '8 questions', 'new.p.homework': 'Homework', 'new.h.homework': 'online test', 'new.p.analysis': 'Lesson analysis', 'new.h.analysis': 'after class',
     'new.create': 'Create lesson', 'new.manual': 'Create without AI — I’ll fill it in', 'new.usage': 'This is AI lesson {n} of {max} this week', 'new.unlimited': 'AI lessons — unlimited',
@@ -85,11 +85,11 @@ export async function render(main, { query }) {
     <div class="new-body">
       <form class="new-form" novalidate>
         <div class="fields two">
-          <label class="field muted">${t('new.subject')}<input name="subject" list="subjects" value="${form.subject}" maxlength="60" autocomplete="off"></label>
+          ${raw(subjectField(form.subject, t('new.subject')))}
           <label class="field muted">${t('new.class')}<select name="classId"><option value="">${t('new.noClass')}</option>${classes.map(c => html`<option value="${c.id}" ${c.id === form.classId ? 'selected' : ''}>${c.name}</option>`)}</select></label>
         </div>
-        <datalist id="subjects">${subjects().map(s => html`<option value="${s}">`)}</datalist>
         <label class="field muted">${t('new.topic')}<input name="topic" value="${form.topic}" maxlength="160" placeholder="${t('new.topicPh')}" autocomplete="off"></label>
+        ${moreBox('new-settings', html`
         <div class="new-row">
           <label class="field muted grow">${t('new.lang')}<select name="lang">${materialLangs().map(l => html`<option value="${l.id}" ${l.id === form.lang ? 'selected' : ''}>${l.label}</option>`)}</select></label>
           <label class="field muted" style="width:110px">${t('new.ratio')}<select name="ratio">${RATIOS.map(r => html`<option ${r === form.ratio ? 'selected' : ''}>${r}</option>`)}</select></label>
@@ -100,6 +100,7 @@ export async function render(main, { query }) {
           <span class="grow">${form.files.length ? form.files.map(f => f.name).join(', ') : t('new.upload')}</span>
           ${form.files.length ? html`<button type="button" class="link-btn" data-clear-files aria-label="×">${icon('close', 14)}</button>` : ''}
         </label>
+        `.toString(), [(materialLangs().find(l => l.id === form.lang) || {}).label, form.ratio, form.files.length ? t('new.nFiles', { n: form.files.length }) : ''].filter(Boolean).join(' · '), t('new.settings'))}
         <div class="what">${t('new.what')}</div>
         <div class="checks">
           ${PART_IDS.map(id => html`<label class="check-row"><input type="checkbox" name="p-${id}" ${form.parts[id] ? 'checked' : ''}><span class="box">${icon('check', 12)}</span><span class="grow">${t('new.p.' + id)}</span><span class="small">${t('new.h.' + id)}</span></label>`)}
@@ -113,6 +114,7 @@ export async function render(main, { query }) {
     </div>`;
 
   const f = main.querySelector('form');
+  bindSubject(f);
   const read = () => {
     const d = new FormData(f);
     form.subject = String(d.get('subject') || '').trim();
@@ -126,7 +128,7 @@ export async function render(main, { query }) {
   f.addEventListener('change', e => {
     if (e.target.name === 'classId') {
       const c = classes.find(x => x.id === e.target.value);
-      if (c && c.subject && !form.subject) { f.subject.value = c.subject; }
+      if (c && c.subject && !form.subject) { read(); form.subject = c.subject; form.lang = defaultMaterialLang(c.subject, lang()); render(main, { query: {} }); return; }
     }
     read(); drawProgress(main, classes);
   });

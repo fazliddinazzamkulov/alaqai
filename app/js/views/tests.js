@@ -1,6 +1,6 @@
 /* Screens 8 and 9 · Tests and games. */
 import { add, t, lang } from '../i18n.js';
-import { html, raw, esc, icon, openModal, toast } from '../ui.js';
+import { html, raw, esc, icon, openModal, toast, confirmModal, moreBox } from '../ui.js';
 import { db } from '../data/store.js';
 import { generateJSON, fileToPart, AiError } from '../ai.js';
 import { officeText } from '../deck.js';
@@ -14,13 +14,13 @@ add({
     'ts.title': 'Тесты и игры', 'ts.test': 'Тест', 'ts.games': 'Игры', 'ts.preview': 'Предпросмотр', 'ts.asHw': 'Дать как ДЗ', 'ts.run': 'Провести в классе', 'ts.mine': 'Мои тесты · {n}',
     'ts.ai': 'С ИИ', 'ts.aiSub': 'из вашего материала', 'ts.manual': 'Вручную', 'ts.manualSub': 'сами пишете вопросы', 'ts.manualText': 'Пишите вопросы справа: выберите тип, отметьте правильный ответ, добавьте картинку или пояснение.',
     'ts.material': 'Материал', 'ts.addMore': 'Добавьте ещё: PDF, DOCX, фото учебника или текст', 'ts.addFirst': 'PDF, DOCX, фото учебника или текст', 'ts.pasteText': 'Вставить текст', 'ts.textPh': 'Вставьте текст параграфа',
-    'ts.count': 'Вопросов', 'ts.types': 'Типы вопросов', 'ts.level': 'Сложность', 'ts.easy': 'Лёгкий', 'ts.medium': 'Средний', 'ts.hard': 'Сложный', 'ts.generate': 'Сгенерировать вопросы', 'ts.generating': 'ИИ пишет вопросы…',
+    'ts.settings': 'Количество, типы и сложность', 'ts.nQ': '{n} вопросов', 'ts.count': 'Вопросов', 'ts.types': 'Типы вопросов', 'ts.level': 'Сложность', 'ts.easy': 'Лёгкий', 'ts.medium': 'Средний', 'ts.hard': 'Сложный', 'ts.generate': 'Сгенерировать вопросы', 'ts.generating': 'ИИ пишет вопросы…',
     'ts.untitled': 'Новый тест', 'ts.titlePh': 'Название теста', 'ts.meta': '{n} вопросов · {p} баллов · ~{m} мин', 'ts.point': '{n} балл', 'ts.improve': '✦ Улучшить', 'ts.dup': 'Дублировать', 'ts.del': 'Удалить',
     'ts.qPh': 'Текст вопроса', 'ts.optPh': 'Вариант ответа', 'ts.right': 'ВЕРНО', 'ts.addOpt': '+ Вариант', 'ts.addImg': '+ Картинка', 'ts.addExpl': '+ Пояснение к ответу', 'ts.explPh': 'Почему этот ответ верный',
     'ts.openAns': 'Правильный ответ (варианты через |)', 'ts.openHint': 'Можно оставить пустым — такой ответ проверите вы', 'ts.numAns': 'Ответ', 'ts.tol': 'Допуск ±', 'ts.addQ': '+ Добавить вопрос вручную',
     'ts.needTopic': 'Добавьте материал или напишите название теста — по нему ИИ составит вопросы', 'ts.noQuestions': 'Вопросов пока нет. Сгенерируйте их слева или добавьте вручную.',
     'ts.hwMade': 'Домашнее задание создано', 'ts.needQ': 'Сначала добавьте вопросы', 'ts.listTitle': 'Мои тесты', 'ts.newTest': '+ Новый тест', 'ts.none': 'Тестов пока нет.', 'ts.quizKind': 'викторина', 'ts.deleteConfirm': 'Удалить тест «{name}»?', 'ts.deleted': 'Удалено',
-    'gm.search': 'Найти игру', 'gm.frequent': 'Чаще всего используете', 'gm.used': 'Использовано {n} раз', 'gm.notUsed': 'Ещё не использовали', 'gm.other': 'Остальные форматы', 'gm.mine': 'Мои игры', 'gm.new': 'Новые игры', 'gm.soon': 'скоро',
+    'gm.searchBtn': 'Поиск', 'gm.search': 'Найти игру', 'gm.frequent': 'Чаще всего используете', 'gm.used': 'Использовано {n} раз', 'gm.notUsed': 'Ещё не использовали', 'gm.other': 'Остальные форматы', 'gm.mine': 'Мои игры', 'gm.new': 'Новые игры', 'gm.soon': 'скоро',
     'gm.ph1': 'место для командной игры', 'gm.ph2': 'место для игры на скорость', 'gm.ph3': 'пришлите описание — добавлю', 'gm.phName': 'Новая игра {n}',
     'gm.play': 'Играть', 'gm.edit': 'Изменить', 'gm.builder': 'Новая игра · {type}', 'gm.titlePh': 'Название игры', 'gm.text': 'Содержание', 'gm.sample': 'Пример', 'gm.aiTopic': 'Тема для ИИ', 'gm.aiFill': '✦ Заполнить с ИИ', 'gm.save': 'Сохранить', 'gm.saved': 'Игра сохранена',
     'gm.preview': 'Так увидит класс', 'gm.forLesson': 'Игры урока «{name}»', 'gm.all': 'Все игры', 'gm.noneMine': 'Своих игр пока нет — выберите формат выше.', 'gm.deleteConfirm': 'Удалить игру «{name}»?'
@@ -29,13 +29,13 @@ add({
     'ts.title': 'Тест және ойын', 'ts.test': 'Тест', 'ts.games': 'Ойындар', 'ts.preview': 'Алдын ала қарау', 'ts.asHw': 'ҮТ ретінде беру', 'ts.run': 'Сыныпта өткізу', 'ts.mine': 'Менің тесттерім · {n}',
     'ts.ai': 'ЖИ-мен', 'ts.aiSub': 'сіздің материалыңыздан', 'ts.manual': 'Қолмен', 'ts.manualSub': 'сұрақтарды өзіңіз жазасыз', 'ts.manualText': 'Сұрақтарды оң жақта жазыңыз: түрін таңдап, дұрыс жауапты белгілеңіз, сурет не түсініктеме қосыңыз.',
     'ts.material': 'Материал', 'ts.addMore': 'Тағы қосыңыз: PDF, DOCX, оқулық суреті немесе мәтін', 'ts.addFirst': 'PDF, DOCX, оқулық суреті немесе мәтін', 'ts.pasteText': 'Мәтін қою', 'ts.textPh': 'Параграф мәтінін қойыңыз',
-    'ts.count': 'Сұрақ саны', 'ts.types': 'Сұрақ түрлері', 'ts.level': 'Күрделілік', 'ts.easy': 'Жеңіл', 'ts.medium': 'Орташа', 'ts.hard': 'Күрделі', 'ts.generate': 'Сұрақтарды жасау', 'ts.generating': 'ЖИ сұрақ жазып жатыр…',
+    'ts.settings': 'Саны, түрлері және күрделілігі', 'ts.nQ': '{n} сұрақ', 'ts.count': 'Сұрақ саны', 'ts.types': 'Сұрақ түрлері', 'ts.level': 'Күрделілік', 'ts.easy': 'Жеңіл', 'ts.medium': 'Орташа', 'ts.hard': 'Күрделі', 'ts.generate': 'Сұрақтарды жасау', 'ts.generating': 'ЖИ сұрақ жазып жатыр…',
     'ts.untitled': 'Жаңа тест', 'ts.titlePh': 'Тест атауы', 'ts.meta': '{n} сұрақ · {p} балл · ~{m} мин', 'ts.point': '{n} балл', 'ts.improve': '✦ Жақсарту', 'ts.dup': 'Көшірме', 'ts.del': 'Жою',
     'ts.qPh': 'Сұрақ мәтіні', 'ts.optPh': 'Жауап нұсқасы', 'ts.right': 'ДҰРЫС', 'ts.addOpt': '+ Нұсқа', 'ts.addImg': '+ Сурет', 'ts.addExpl': '+ Жауапқа түсініктеме', 'ts.explPh': 'Неге бұл жауап дұрыс',
     'ts.openAns': 'Дұрыс жауап (нұсқаларды | арқылы)', 'ts.openHint': 'Бос қалдыруға болады — мұндай жауапты өзіңіз тексересіз', 'ts.numAns': 'Жауап', 'ts.tol': 'Ауытқу ±', 'ts.addQ': '+ Сұрақты қолмен қосу',
     'ts.needTopic': 'Материал қосыңыз немесе тест атауын жазыңыз — ЖИ сол бойынша сұрақ құрады', 'ts.noQuestions': 'Әзірге сұрақ жоқ. Сол жақта жасаңыз немесе қолмен қосыңыз.',
     'ts.hwMade': 'Үй тапсырмасы құрылды', 'ts.needQ': 'Алдымен сұрақ қосыңыз', 'ts.listTitle': 'Менің тесттерім', 'ts.newTest': '+ Жаңа тест', 'ts.none': 'Әзірге тест жоқ.', 'ts.quizKind': 'викторина', 'ts.deleteConfirm': '«{name}» тестін жоясыз ба?', 'ts.deleted': 'Жойылды',
-    'gm.search': 'Ойын іздеу', 'gm.frequent': 'Жиі қолданасыз', 'gm.used': '{n} рет қолданылды', 'gm.notUsed': 'Әлі қолданылмаған', 'gm.other': 'Басқа форматтар', 'gm.mine': 'Менің ойындарым', 'gm.new': 'Жаңа ойындар', 'gm.soon': 'жақында',
+    'gm.searchBtn': 'Іздеу', 'gm.search': 'Ойын іздеу', 'gm.frequent': 'Жиі қолданасыз', 'gm.used': '{n} рет қолданылды', 'gm.notUsed': 'Әлі қолданылмаған', 'gm.other': 'Басқа форматтар', 'gm.mine': 'Менің ойындарым', 'gm.new': 'Жаңа ойындар', 'gm.soon': 'жақында',
     'gm.ph1': 'командалық ойынға орын', 'gm.ph2': 'жылдамдық ойынына орын', 'gm.ph3': 'сипаттамасын жіберіңіз — қосамын', 'gm.phName': 'Жаңа ойын {n}',
     'gm.play': 'Ойнау', 'gm.edit': 'Өзгерту', 'gm.builder': 'Жаңа ойын · {type}', 'gm.titlePh': 'Ойын атауы', 'gm.text': 'Мазмұны', 'gm.sample': 'Мысал', 'gm.aiTopic': 'ЖИ-ге тақырып', 'gm.aiFill': '✦ ЖИ-мен толтыру', 'gm.save': 'Сақтау', 'gm.saved': 'Ойын сақталды',
     'gm.preview': 'Сынып осылай көреді', 'gm.forLesson': '«{name}» сабағының ойындары', 'gm.all': 'Барлық ойындар', 'gm.noneMine': 'Өз ойындарыңыз әзірге жоқ — жоғарыдан формат таңдаңыз.', 'gm.deleteConfirm': '«{name}» ойынын жоясыз ба?'
@@ -44,13 +44,13 @@ add({
     'ts.title': 'Tests & games', 'ts.test': 'Test', 'ts.games': 'Games', 'ts.preview': 'Preview', 'ts.asHw': 'Set as homework', 'ts.run': 'Run in class', 'ts.mine': 'My tests · {n}',
     'ts.ai': 'With AI', 'ts.aiSub': 'from your material', 'ts.manual': 'By hand', 'ts.manualSub': 'you write the questions', 'ts.manualText': 'Write questions on the right: choose a type, mark the correct answer, add a picture or an explanation.',
     'ts.material': 'Material', 'ts.addMore': 'Add more: PDF, DOCX, a textbook photo or text', 'ts.addFirst': 'PDF, DOCX, a textbook photo or text', 'ts.pasteText': 'Paste text', 'ts.textPh': 'Paste the paragraph text',
-    'ts.count': 'Questions', 'ts.types': 'Question types', 'ts.level': 'Difficulty', 'ts.easy': 'Easy', 'ts.medium': 'Medium', 'ts.hard': 'Hard', 'ts.generate': 'Generate questions', 'ts.generating': 'AI is writing questions…',
+    'ts.settings': 'Number, types and difficulty', 'ts.nQ': '{n} questions', 'ts.count': 'Questions', 'ts.types': 'Question types', 'ts.level': 'Difficulty', 'ts.easy': 'Easy', 'ts.medium': 'Medium', 'ts.hard': 'Hard', 'ts.generate': 'Generate questions', 'ts.generating': 'AI is writing questions…',
     'ts.untitled': 'New test', 'ts.titlePh': 'Test title', 'ts.meta': '{n} questions · {p} points · ~{m} min', 'ts.point': '{n} pt', 'ts.improve': '✦ Improve', 'ts.dup': 'Duplicate', 'ts.del': 'Delete',
     'ts.qPh': 'Question text', 'ts.optPh': 'Answer option', 'ts.right': 'CORRECT', 'ts.addOpt': '+ Option', 'ts.addImg': '+ Picture', 'ts.addExpl': '+ Explanation', 'ts.explPh': 'Why this answer is correct',
     'ts.openAns': 'Correct answer (alternatives separated by |)', 'ts.openHint': 'Leave empty and you will check it yourself', 'ts.numAns': 'Answer', 'ts.tol': 'Tolerance ±', 'ts.addQ': '+ Add a question by hand',
     'ts.needTopic': 'Add material or type a test title — the AI will write questions from it', 'ts.noQuestions': 'No questions yet. Generate them on the left or add by hand.',
     'ts.hwMade': 'Homework created', 'ts.needQ': 'Add questions first', 'ts.listTitle': 'My tests', 'ts.newTest': '+ New test', 'ts.none': 'No tests yet.', 'ts.quizKind': 'quiz', 'ts.deleteConfirm': 'Delete “{name}”?', 'ts.deleted': 'Deleted',
-    'gm.search': 'Find a game', 'gm.frequent': 'Used most often', 'gm.used': 'Used {n} times', 'gm.notUsed': 'Not used yet', 'gm.other': 'Other formats', 'gm.mine': 'My games', 'gm.new': 'New games', 'gm.soon': 'soon',
+    'gm.searchBtn': 'Search', 'gm.search': 'Find a game', 'gm.frequent': 'Used most often', 'gm.used': 'Used {n} times', 'gm.notUsed': 'Not used yet', 'gm.other': 'Other formats', 'gm.mine': 'My games', 'gm.new': 'New games', 'gm.soon': 'soon',
     'gm.ph1': 'a spot for a team game', 'gm.ph2': 'a spot for a speed game', 'gm.ph3': 'send a description and I’ll add it', 'gm.phName': 'New game {n}',
     'gm.play': 'Play', 'gm.edit': 'Edit', 'gm.builder': 'New game · {type}', 'gm.titlePh': 'Game title', 'gm.text': 'Content', 'gm.sample': 'Example', 'gm.aiTopic': 'Topic for AI', 'gm.aiFill': '✦ Fill with AI', 'gm.save': 'Save', 'gm.saved': 'Game saved',
     'gm.preview': 'What the class sees', 'gm.forLesson': 'Games of “{name}”', 'gm.all': 'All games', 'gm.noneMine': 'No games of your own yet — pick a format above.', 'gm.deleteConfirm': 'Delete “{name}”?'
@@ -104,9 +104,11 @@ export async function render(main, { query }) {
               ${gen.showText ? '' : html`<button type="button" class="link-btn" data-text>${t('ts.pasteText')}</button>`}
             </div>
           </div>
+          ${moreBox('ts-settings', html`
           <div class="field muted">${t('ts.count')}<div class="seg2">${[5, 10, 15, 20].map(n => html`<button type="button" data-count="${n}" aria-pressed="${gen.count === n}">${n}</button>`)}</div></div>
           <div class="field muted">${t('ts.types')}<div class="chips">${QTYPES.map(q => html`<button type="button" class="chip${gen.types.includes(q) ? ' on' : ''}" data-type="${q}">${t('qt.' + q)}</button>`)}</div></div>
           <div class="field muted">${t('ts.level')}<div class="seg2">${['easy', 'medium', 'hard'].map(l => html`<button type="button" data-level="${l}" aria-pressed="${gen.level === l}">${t('ts.' + l)}</button>`)}</div></div>
+          `.toString(), [t('ts.nQ', { n: gen.count }), gen.types.map(q => t('qt.' + q)).join(', '), t('ts.' + gen.level)].join(' · '), t('ts.settings'))}
           <div class="grow"></div>
           <button type="button" class="btn-k btn-xl" data-generate ${busy ? 'disabled' : ''}>${icon('sparkle', 15, 'style="color:var(--lime)"')}${busy ? t('ts.generating') : t('ts.generate')}</button>`
         : html`<p class="muted-note">${t('ts.manualText')}</p><div class="grow"></div><button type="button" class="btn-k btn-xl" data-addq>${t('ts.addQ').replace('+ ', '')}</button>`}
@@ -306,7 +308,7 @@ async function testList(main) {
       : html`<div class="empty"><p>${t('ts.none')}</p><div class="row"><a class="btn-k" href="#/tests?new=1">${t('ts.newTest')}</a></div></div>`}`;
   main.querySelectorAll('[data-del]').forEach(b => b.onclick = async () => {
     const x = tests.find(y => y.id === b.dataset.del);
-    if (!confirm(t('ts.deleteConfirm', { name: x.title }))) return;
+    if (!(await confirmModal(t('ts.deleteConfirm', { name: x.title })))) return;
     await db.tests.remove(x.id);
     if (testId === x.id) testId = null;
     toast(t('ts.deleted')); testList(main);
@@ -329,7 +331,8 @@ async function games(main, query) {
   main.innerHTML = html`
     <div class="page-head center">
       <div class="head-left"><h1 class="title title-md">${t('ts.title')}</h1>${tabs('games')}</div>
-      <label class="search-box">${icon('M11 4a7 7 0 1 0 0 14a7 7 0 1 0 0-14M20 20l-3.5-3.5')}<input placeholder="${t('gm.search')}" aria-label="${t('gm.search')}" data-search></label>
+      <span class="search-fold"><button type="button" class="tool-toggle" data-searchtoggle aria-label="${t('gm.search')}">${icon('M11 4a7 7 0 1 0 0 14a7 7 0 1 0 0-14M20 20l-3.5-3.5', 16)}${t('gm.searchBtn')}</button>
+        <label class="search-box" hidden>${icon('M11 4a7 7 0 1 0 0 14a7 7 0 1 0 0-14M20 20l-3.5-3.5')}<input placeholder="${t('gm.search')}" aria-label="${t('gm.search')}" data-search></label></span>
     </div>
     ${lesson ? '' : html`
     <div class="gm-sec"><div class="sec-label">${t('gm.frequent')}</div>
@@ -349,6 +352,7 @@ async function games(main, query) {
     ${lesson ? '' : html`<div class="gm-sec grow"><div class="sec-label">${t('gm.new')} <span class="soon">${t('gm.soon')}</span></div>
       <div class="gm-new">${[1, 2, 3].map(n => html`<div class="gm-ph"><span>+</span><b>${t('gm.phName', { n })}</b><span class="small">${t('gm.ph' + n)}</span></div>`)}</div></div>`}`;
 
+  main.querySelector('[data-searchtoggle]').onclick = e => { e.currentTarget.hidden = true; const box = main.querySelector('.search-fold .search-box'); box.hidden = false; box.querySelector('input').focus(); };
   main.querySelector('[data-search]').oninput = e => {
     const q = e.target.value.trim().toLowerCase();
     main.querySelectorAll('[data-name]').forEach(el => { el.hidden = !!q && !el.dataset.name.toLowerCase().includes(q); });
@@ -363,7 +367,7 @@ async function games(main, query) {
   main.querySelectorAll('[data-delg]').forEach(b => b.onclick = async () => {
     const [src, id] = b.dataset.delg.split(':');
     const g = list.find(x => x.id === id && x.src === src);
-    if (!confirm(t('gm.deleteConfirm', { name: g.title || t('g.' + g.type) }))) return;
+    if (!(await confirmModal(t('gm.deleteConfirm', { name: g.title || t('g.' + g.type) })))) return;
     await (src === 'test' ? db.tests : db.games).remove(id);
     toast(t('ts.deleted')); games(main, query);
   });

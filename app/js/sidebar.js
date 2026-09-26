@@ -5,9 +5,9 @@ import { db } from './data/store.js';
 import { weeklyUsage } from './plans.js';
 
 add({
-  ru: { 'nav.home': 'Главная', 'nav.lessons': 'Уроки', 'nav.calendar': 'Календарь', 'nav.classes': 'Классы', 'nav.presentations': 'Презентации', 'nav.tests': 'Тесты и игры', 'nav.ksp': 'КСП', 'nav.homework': 'Домашние задания', 'nav.guide': 'Инструкция', 'nav.plan': 'Подписка', 'nav.create': 'Создать урок', 'nav.free': 'бесплатно', 'nav.teacher': 'Учитель', 'nav.guest': 'Гость', 'nav.menu': 'Меню', 'nav.lang': 'Язык интерфейса' },
-  kk: { 'nav.home': 'Басты бет', 'nav.lessons': 'Сабақтар', 'nav.calendar': 'Күнтізбе', 'nav.classes': 'Сыныптар', 'nav.presentations': 'Презентациялар', 'nav.tests': 'Тест және ойын', 'nav.ksp': 'ҚМЖ', 'nav.homework': 'Үй тапсырмасы', 'nav.guide': 'Нұсқаулық', 'nav.plan': 'Жазылым', 'nav.create': 'Сабақ құру', 'nav.free': 'тегін', 'nav.teacher': 'Мұғалім', 'nav.guest': 'Қонақ', 'nav.menu': 'Мәзір', 'nav.lang': 'Интерфейс тілі' },
-  en: { 'nav.home': 'Home', 'nav.lessons': 'Lessons', 'nav.calendar': 'Calendar', 'nav.classes': 'Classes', 'nav.presentations': 'Presentations', 'nav.tests': 'Tests & games', 'nav.ksp': 'Lesson plan', 'nav.homework': 'Homework', 'nav.guide': 'Guide', 'nav.plan': 'Subscription', 'nav.create': 'Create lesson', 'nav.free': 'free', 'nav.teacher': 'Teacher', 'nav.guest': 'Guest', 'nav.menu': 'Menu', 'nav.lang': 'Interface language' }
+  ru: { 'nav.home': 'Главная', 'nav.lessons': 'Уроки', 'nav.calendar': 'Календарь', 'nav.classes': 'Классы', 'nav.presentations': 'Презентации', 'nav.tests': 'Тесты и игры', 'nav.ksp': 'КСП', 'nav.homework': 'Домашние задания', 'nav.guide': 'Инструкция', 'nav.plan': 'Подписка', 'nav.create': 'Создать урок', 'nav.start': 'Начать урок', 'nav.free': 'бесплатно', 'nav.teacher': 'Учитель', 'nav.guest': 'Гость', 'nav.menu': 'Меню', 'nav.lang': 'Язык интерфейса' },
+  kk: { 'nav.home': 'Басты бет', 'nav.lessons': 'Сабақтар', 'nav.calendar': 'Күнтізбе', 'nav.classes': 'Сыныптар', 'nav.presentations': 'Презентациялар', 'nav.tests': 'Тест және ойын', 'nav.ksp': 'ҚМЖ', 'nav.homework': 'Үй тапсырмасы', 'nav.guide': 'Нұсқаулық', 'nav.plan': 'Жазылым', 'nav.create': 'Сабақ құру', 'nav.start': 'Сабақты бастау', 'nav.free': 'тегін', 'nav.teacher': 'Мұғалім', 'nav.guest': 'Қонақ', 'nav.menu': 'Мәзір', 'nav.lang': 'Интерфейс тілі' },
+  en: { 'nav.home': 'Home', 'nav.lessons': 'Lessons', 'nav.calendar': 'Calendar', 'nav.classes': 'Classes', 'nav.presentations': 'Presentations', 'nav.tests': 'Tests & games', 'nav.ksp': 'Lesson plan', 'nav.homework': 'Homework', 'nav.guide': 'Guide', 'nav.plan': 'Subscription', 'nav.create': 'Create lesson', 'nav.start': 'Start lesson', 'nav.free': 'free', 'nav.teacher': 'Teacher', 'nav.guest': 'Guest', 'nav.menu': 'Menu', 'nav.lang': 'Interface language' }
 });
 
 const ITEMS = ['home', 'lessons', 'calendar', 'classes', 'presentations', 'tests', 'ksp', 'homework'];
@@ -26,6 +26,7 @@ export async function renderSidebar(el, active) {
   el.innerHTML = html`
     <a class="logo" href="#/home" aria-label="alaqai">alaqai<span class="logo-dot"></span></a>
     <a class="sb-create" href="#/new">${icon('plus')}${t('nav.create')}</a>
+    <a class="sb-start" href="#/lesson/file">${icon('play', 13)}${t('nav.start')}</a>
     <nav aria-label="${t('nav.menu')}">
       ${ITEMS.map(id => item(id, counts[id] ? html`<span class="sb-count">${counts[id]}</span>` : ''))}
     </nav>

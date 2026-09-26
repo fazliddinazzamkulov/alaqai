@@ -1,6 +1,7 @@
 /* Screen 5 · Classes — students with average grade, lesson points, attendance and trend. */
 import { add, t, num } from '../i18n.js';
-import { html, icon, segmented, openModal, toast } from '../ui.js';
+import { html, raw, icon, segmented, openModal, toast, confirmModal } from '../ui.js';
+import { subjectField, bindSubject } from '../gen/materials.js';
 import { db } from '../data/store.js';
 import { loadAll, studentStats, groupStats, homeworkOnTime, periodRange, inRange, pct } from '../stats.js';
 import { today, addDays, shortDate } from '../school.js';
@@ -130,7 +131,7 @@ function classModal(cls, kids, done) {
   const body = html`<div class="fields">
     <div class="fields two">
       <label class="field">${t('cls.name')}<input name="name" required maxlength="40" placeholder="${t('cls.namePh')}" value="${cls ? cls.name : ''}"></label>
-      <label class="field">${t('cls.subject')}<input name="subject" maxlength="60" placeholder="${t('cls.subjectPh')}" value="${cls ? cls.subject || '' : ''}"></label>
+      ${raw(subjectField(cls ? cls.subject || '' : '', t('cls.subject'), 'field'))}
     </div>
     ${kids.length ? html`<div class="field">${t('cls.students')} · ${kids.length}
       <div class="stud-list">${kids.map(s => html`<div class="stud-row" data-sid="${s.id}"><input name="s-${s.id}" value="${s.name}" maxlength="80"><button type="button" class="icon-btn" data-remove aria-label="${t('cls.removeStudent')}">${icon('close', 14)}</button></div>`)}</div></div>` : ''}
@@ -159,12 +160,13 @@ function classModal(cls, kids, done) {
     }
   });
   const modal = document.querySelector('.modal-back:last-child');
+  bindSubject(modal);
   modal.querySelectorAll('[data-remove]').forEach(b => b.addEventListener('click', () => {
     const r = b.closest('.stud-row'); removed.add(r.dataset.sid); r.remove();
   }));
   const del = modal.querySelector('[data-delete]');
   if (del) del.addEventListener('click', async () => {
-    if (!confirm(t('cls.deleteConfirm', { name: cls.name }))) return;
+    if (!(await confirmModal(t('cls.deleteConfirm', { name: cls.name })))) return;
     await db.students.removeWhere({ classId: cls.id });
     await db.marks.removeWhere({ classId: cls.id });
     await db.lessons.removeWhere({ classId: cls.id });

@@ -1,13 +1,13 @@
 /* Screen 3 · Lessons — the list of lessons and one ready lesson as a set of parts. */
 import { add, t } from '../i18n.js';
-import { html, icon, segmented, openModal, toast } from '../ui.js';
+import { html, icon, segmented, openModal, toast, confirmModal } from '../ui.js';
 import { db } from '../data/store.js';
 import { shortDate, DEFAULT_BELLS, today } from '../school.js';
 import { onJob } from '../gen/lesson.js';
 
 add({
   ru: {
-    'les.title': 'Уроки', 'les.all': 'Все', 'les.ready': 'Готовы', 'les.done': 'Проведены', 'les.create': 'Создать урок',
+    'les.title': 'Уроки', 'les.filter': 'Фильтр', 'les.all': 'Все', 'les.ready': 'Готовы', 'les.done': 'Проведены', 'les.create': 'Создать урок',
     'les.st.ready': 'Готов', 'les.st.done': 'Проведён', 'les.st.planned': 'Не подготовлен', 'les.st.generating': 'Создаётся…',
     'les.noDate': 'не в расписании', 'les.slot': '{n} урок', 'les.emptyTitle': 'Уроков пока нет', 'les.emptyText': 'Напишите тему — alaqai соберёт КСП, презентацию, игры, тест и домашнее задание одним набором.',
     'les.notFound': 'Урок не найден', 'les.back': 'Все уроки', 'les.share': 'Поделиться', 'les.start': 'Начать урок',
@@ -22,7 +22,7 @@ add({
     'les.date': 'Дата', 'les.lessonNo': 'Урок', 'les.busy': 'У класса в это время уже есть урок', 'les.generating': 'Урок ещё создаётся — части появятся здесь по мере готовности.'
   },
   kk: {
-    'les.title': 'Сабақтар', 'les.all': 'Барлығы', 'les.ready': 'Дайын', 'les.done': 'Өткізілген', 'les.create': 'Сабақ құру',
+    'les.title': 'Сабақтар', 'les.filter': 'Сүзгі', 'les.all': 'Барлығы', 'les.ready': 'Дайын', 'les.done': 'Өткізілген', 'les.create': 'Сабақ құру',
     'les.st.ready': 'Дайын', 'les.st.done': 'Өткізілді', 'les.st.planned': 'Дайындалмаған', 'les.st.generating': 'Құрылып жатыр…',
     'les.noDate': 'кестеде жоқ', 'les.slot': '{n}-сабақ', 'les.emptyTitle': 'Әзірге сабақ жоқ', 'les.emptyText': 'Тақырыпты жазыңыз — alaqai ҚМЖ, презентация, ойындар, тест және үй тапсырмасын бір жиынтықпен дайындайды.',
     'les.notFound': 'Сабақ табылмады', 'les.back': 'Барлық сабақтар', 'les.share': 'Бөлісу', 'les.start': 'Сабақты бастау',
@@ -37,7 +37,7 @@ add({
     'les.date': 'Күні', 'les.lessonNo': 'Сабақ', 'les.busy': 'Сыныптың бұл уақытта сабағы бар', 'les.generating': 'Сабақ әлі құрылып жатыр — бөліктер дайын болған сайын осында шығады.'
   },
   en: {
-    'les.title': 'Lessons', 'les.all': 'All', 'les.ready': 'Ready', 'les.done': 'Taught', 'les.create': 'Create lesson',
+    'les.title': 'Lessons', 'les.filter': 'Filter', 'les.all': 'All', 'les.ready': 'Ready', 'les.done': 'Taught', 'les.create': 'Create lesson',
     'les.st.ready': 'Ready', 'les.st.done': 'Taught', 'les.st.planned': 'Not prepared', 'les.st.generating': 'Creating…',
     'les.noDate': 'not scheduled', 'les.slot': 'lesson {n}', 'les.emptyTitle': 'No lessons yet', 'les.emptyText': 'Type a topic — alaqai builds the lesson plan, slides, games, a test and homework as one set.',
     'les.notFound': 'Lesson not found', 'les.back': 'All lessons', 'les.share': 'Share', 'les.start': 'Start lesson',
@@ -54,6 +54,7 @@ add({
 });
 
 let filter = 'all';
+let filterOpen = false;
 
 export async function render(main, { query }) {
   if (query.id) {
@@ -72,10 +73,11 @@ export async function render(main, { query }) {
     <div class="page-head center">
       <div class="head-left">
         <h1 class="title title-md">${t('les.title')}</h1>
-        ${segmented('filter', [{ id: 'all', label: t('les.all') }, { id: 'ready', label: t('les.ready') }, { id: 'done', label: t('les.done') }], filter)}
+        <button type="button" class="tool-toggle${filterOpen || filter !== 'all' ? ' on' : ''}" data-filtertoggle aria-expanded="${filterOpen || filter !== 'all'}">${icon('M4 6h16M7 12h10M10 18h4', 16)}${t('les.filter')}${filter !== 'all' ? ': ' + t('les.' + filter) : ''}</button>
+        ${filterOpen || filter !== 'all' ? segmented('filter', [{ id: 'all', label: t('les.all') }, { id: 'ready', label: t('les.ready') }, { id: 'done', label: t('les.done') }], filter) : ''}
         ${query.class ? html`<a class="chip-x" href="#/lessons">${clsName.get(query.class) || ''} ${icon('close', 12)}</a>` : ''}
       </div>
-      <a class="btn-k" href="#/new">${icon('plus', 14)}${t('les.create')}</a>
+      <div class="head-right"><a class="btn-o btn-md" href="#/lesson/file">${icon('play', 12)}${t('nav.start')}</a><a class="btn-k btn-md" href="#/new">${icon('plus', 14)}${t('les.create')}</a></div>
     </div>
     ${list.length ? html`<div class="les-grid">${list.map(l => html`
       <a class="card les-card" href="#/lessons?id=${l.id}">
@@ -87,6 +89,7 @@ export async function render(main, { query }) {
     : html`<div class="empty"><h2>${t('les.emptyTitle')}</h2><p>${t('les.emptyText')}</p><div class="row"><a class="btn-k" href="#/new">${t('les.create')}</a></div></div>`}`;
 
   main.querySelectorAll('[data-seg="filter"]').forEach(b => b.addEventListener('click', () => { filter = b.dataset.id; render(main, { query }); }));
+  main.querySelector('[data-filtertoggle]').addEventListener('click', () => { filterOpen = !(filterOpen || filter !== 'all'); if (!filterOpen) filter = 'all'; render(main, { query }); });
 }
 
 function partTags(l) {
@@ -159,7 +162,7 @@ async function detail(main, id) {
     </div>`;
 
   main.querySelector('[data-delete]').addEventListener('click', async () => {
-    if (!confirm(t('les.deleteConfirm', { name: lesson.topic || '' }))) return;
+    if (!(await confirmModal(t('les.deleteConfirm', { name: lesson.topic || '' })))) return;
     for (const c of ['presentations', 'tests', 'games', 'ksp', 'homework']) await db[c].removeWhere({ lessonId: lesson.id });
     await db.lessons.remove(lesson.id);
     toast(t('les.deleted'));
