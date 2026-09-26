@@ -84,9 +84,9 @@ export async function generateJSON(prompt, { files = [], temperature = 0.7 } = {
 }
 
 /** Stock photo URL for an English query (Pexels → Unsplash → Pixabay on the server), or null. */
-export async function searchImage(query) {
+export async function searchImage(query, page = 1) {
   try {
-    const res = await fetch(base() + '/api/images/search?q=' + encodeURIComponent(query), { credentials: 'include' });
+    const res = await fetch(base() + '/api/images/search?q=' + encodeURIComponent(query) + '&page=' + page, { credentials: 'include' });
     if (!res.ok) return null;
     const data = await res.json();
     return data && data.url || null;

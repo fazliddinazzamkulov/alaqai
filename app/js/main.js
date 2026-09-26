@@ -18,7 +18,8 @@ const ROUTES = {
   classes: ['./views/classes.js', 'classes'],
   lessons: ['./views/lessons.js', 'lessons'],
   new: ['./views/newlesson.js', null],
-  presentations: ['./views/soon.js', 'presentations'],
+  presentations: ['./views/presentations.js', 'presentations'],
+  editor: ['./views/editor.js', 'presentations', 'bare'],
   tests: ['./views/soon.js', 'tests'],
   ksp: ['./views/soon.js', 'ksp'],
   homework: ['./views/soon.js', 'homework'],
@@ -50,6 +51,7 @@ async function render() {
   renderSidebar(sidebar, menuId);
   if (cleanup) { try { cleanup(); } catch (e) { console.error(e); } cleanup = null; }
   main.className = 'main' + (layout ? ' ' + layout : '');
+  shell.classList.toggle('is-bare', layout === 'bare');
   const mod = await import(modPath);
   if (current.route !== route) return; // navigated away while loading
   main.innerHTML = '';
