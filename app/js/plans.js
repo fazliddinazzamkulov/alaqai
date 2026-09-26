@@ -23,8 +23,11 @@ export const DEFAULT_PLANS = {
 
 export async function currentPlan() {
   const s = await db.settings.get();
-  const id = s.plan || 'basic';
   const plans = { ...DEFAULT_PLANS, ...(s.plans || {}) };
+  // Signed in: the server's record decides the plan ('free' is the server's old name for Basic).
+  const u = window.Alaqai && window.Alaqai.getCachedUser && window.Alaqai.getCachedUser();
+  const fromServer = u && u.subscriptionStatus !== 'expired' ? ({ free: 'basic' }[u.subscriptionPlan] || u.subscriptionPlan) : null;
+  const id = fromServer && plans[fromServer] ? fromServer : s.plan || 'basic';
   return { id, name: t('plan.' + id), ...plans[id] };
 }
 

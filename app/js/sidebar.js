@@ -40,7 +40,7 @@ export async function renderSidebar(el, active) {
       ${[['kk', 'ҚАЗ'], ['ru', 'РУС'], ['en', 'ENG']].map(([id, label]) => html`<button type="button" data-lang="${id}" lang="${id}" aria-pressed="${id === lang()}">${label}</button>`)}
     </div>
     <a class="sb-profile" href="#/account">
-      <span class="avatar">${initials(name)}</span>
+      <span class="avatar">${settings.profile && settings.profile.photo ? html`<img src="${settings.profile.photo}" alt="">` : initials(name)}</span>
       <span class="who"><b>${name}</b><span>${user ? t('nav.teacher') : t('nav.guest')}</span></span>
       ${icon('chevronRight')}
     </a>`;

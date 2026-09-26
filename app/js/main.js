@@ -27,8 +27,10 @@ const ROUTES = {
   s: ['./views/student.js', null, 'bare'],
   guide: ['./views/guide.js', 'guide'],
   plan: ['./views/subscription.js', 'plan'],
-  checkout: ['./views/soon.js', 'plan'],
-  account: ['./views/soon.js', 'account'],
+  checkout: ['./views/checkout.js', 'plan', 'bare'],
+  account: ['./views/account.js', 'account'],
+  login: ['./views/login.js', null, 'bare'],
+  preview: ['./views/preview.js', null, 'bare'],
   lesson: ['./views/lessonmode.js', 'lessons', 'bare'],
   results: ['./views/results.js', 'lessons']
 };
