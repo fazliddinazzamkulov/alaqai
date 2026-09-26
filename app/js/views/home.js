@@ -1,6 +1,6 @@
 /* Screen 1 · Home — statistics. */
 import { add, t, num, lang } from '../i18n.js';
-import { html, raw, segmented, toast } from '../ui.js';
+import { html, raw, icon, segmented, toast } from '../ui.js';
 import { db } from '../data/store.js';
 import { loadAll, periodRange, inRange, groupStats, studentStats, weeklyQuality, homeworkOnTime, pct } from '../stats.js';
 import { today, longDate, quarterLabel, addDays, DEFAULT_BELLS } from '../school.js';
@@ -96,7 +96,8 @@ export async function render(main) {
   const head = html`
     <div class="page-head">
       <div><div class="subtle">${longDate(day)} · ${q.quarter}</div><h1 class="title">${greeting(name)}</h1></div>
-      ${classes.length ? segmented('period', [{ id: 'week', label: t('home.week') }, { id: 'month', label: t('home.month') }, { id: 'quarter', label: t('home.quarter') }], period) : ''}
+      <div class="head-right">${classes.length ? segmented('period', [{ id: 'week', label: t('home.week') }, { id: 'month', label: t('home.month') }, { id: 'quarter', label: t('home.quarter') }], period) : ''}
+        <a class="btn-k btn-md" href="#/lesson/file">${icon('play', 12)}${t('nav.start')}</a></div>
     </div>`;
 
   if (!classes.length) {

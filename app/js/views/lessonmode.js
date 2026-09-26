@@ -17,6 +17,7 @@ import { openFile } from '../lesson/files.js';
 
 add({
   ru: {
+    'lm.startTitle': 'Начать урок', 'lm.startText': 'Загрузите свою презентацию или откройте готовый урок. Журнал, таймер, колесо, группы, шумомер и доска внизу работают и без файла.', 'lm.drop': 'Загрузить свою презентацию', 'lm.dropHint': 'PDF, PowerPoint (PPTX), Word или картинка · можно перетащить сюда', 'lm.classFor': 'Класс', 'lm.noClassPick': 'Без класса', 'lm.myLessons': 'Мои уроки', 'lm.myDecks': 'Мои презентации', 'lm.opening': 'Открываю файл…', 'lm.s.ai': 'ИИ', 'lm.s.timer': 'Таймер', 'lm.s.picker': 'Ученик', 'lm.s.noise': 'Шум', 'lm.s.journal': 'Журнал', 'lm.s.groups': 'Группы', 'lm.s.board': 'Доска', 'lm.s.dark': 'Экран', 'lm.s.upload': 'Файл', 'lm.material': 'Материал',
     'lm.slides': 'Презентация', 'lm.game': 'Игра', 'lm.quiz': 'Викторина', 'lm.test': 'Тест', 'lm.hw': 'ДЗ', 'lm.file': 'Файл', 'lm.upload': 'Открыть свой файл (PDF, PPTX, DOCX)',
     'lm.prev': 'Назад', 'lm.next': 'Вперёд', 'lm.finish': 'Завершить', 'lm.exit': 'Выйти из урока',
     'lm.t.ai': 'ИИ-чат', 'lm.t.timer': 'Таймер', 'lm.t.picker': 'Выбор ученика', 'lm.t.noise': 'Шумомер', 'lm.t.journal': 'Журнал и посещаемость', 'lm.t.groups': 'Группы', 'lm.t.board': 'Доска', 'lm.t.dark': 'Затемнить экран',
@@ -36,6 +37,7 @@ add({
     'lm.answering': 'Отвечает', 'lm.nobody': '—'
   },
   kk: {
+    'lm.startTitle': 'Сабақты бастау', 'lm.startText': 'Өз презентацияңызды жүктеңіз немесе дайын сабақты ашыңыз. Төмендегі журнал, таймер, дөңгелек, топтар, шуөлшегіш және тақта файлсыз да жұмыс істейді.', 'lm.drop': 'Өз презентацияңызды жүктеу', 'lm.dropHint': 'PDF, PowerPoint (PPTX), Word немесе сурет · осында сүйреп әкелуге болады', 'lm.classFor': 'Сынып', 'lm.noClassPick': 'Сыныпсыз', 'lm.myLessons': 'Менің сабақтарым', 'lm.myDecks': 'Менің презентацияларым', 'lm.opening': 'Файлды ашып жатырмын…', 'lm.s.ai': 'ЖИ', 'lm.s.timer': 'Таймер', 'lm.s.picker': 'Оқушы', 'lm.s.noise': 'Шу', 'lm.s.journal': 'Журнал', 'lm.s.groups': 'Топтар', 'lm.s.board': 'Тақта', 'lm.s.dark': 'Экран', 'lm.s.upload': 'Файл', 'lm.material': 'Материал',
     'lm.slides': 'Презентация', 'lm.game': 'Ойын', 'lm.quiz': 'Викторина', 'lm.test': 'Тест', 'lm.hw': 'ҮТ', 'lm.file': 'Файл', 'lm.upload': 'Өз файлыңызды ашу (PDF, PPTX, DOCX)',
     'lm.prev': 'Артқа', 'lm.next': 'Алға', 'lm.finish': 'Аяқтау', 'lm.exit': 'Сабақтан шығу',
     'lm.t.ai': 'ЖИ-чат', 'lm.t.timer': 'Таймер', 'lm.t.picker': 'Оқушы таңдау', 'lm.t.noise': 'Шуөлшегіш', 'lm.t.journal': 'Журнал және қатысу', 'lm.t.groups': 'Топтар', 'lm.t.board': 'Тақта', 'lm.t.dark': 'Экранды қарайту',
@@ -55,6 +57,7 @@ add({
     'lm.answering': 'Жауап береді', 'lm.nobody': '—'
   },
   en: {
+    'lm.startTitle': 'Start a lesson', 'lm.startText': 'Upload your own slides or open a ready lesson. The register, timer, wheel, groups, noise meter and board below work without a file too.', 'lm.drop': 'Upload your own slides', 'lm.dropHint': 'PDF, PowerPoint (PPTX), Word or an image · you can drag it here', 'lm.classFor': 'Class', 'lm.noClassPick': 'No class', 'lm.myLessons': 'My lessons', 'lm.myDecks': 'My presentations', 'lm.opening': 'Opening the file…', 'lm.s.ai': 'AI', 'lm.s.timer': 'Timer', 'lm.s.picker': 'Student', 'lm.s.noise': 'Noise', 'lm.s.journal': 'Register', 'lm.s.groups': 'Groups', 'lm.s.board': 'Board', 'lm.s.dark': 'Screen', 'lm.s.upload': 'File', 'lm.material': 'Material',
     'lm.slides': 'Slides', 'lm.game': 'Game', 'lm.quiz': 'Quiz', 'lm.test': 'Test', 'lm.hw': 'Homework', 'lm.file': 'File', 'lm.upload': 'Open your own file (PDF, PPTX, DOCX)',
     'lm.prev': 'Back', 'lm.next': 'Next', 'lm.finish': 'Finish', 'lm.exit': 'Leave the lesson',
     'lm.t.ai': 'AI chat', 'lm.t.timer': 'Timer', 'lm.t.picker': 'Student picker', 'lm.t.noise': 'Noise meter', 'lm.t.journal': 'Register and attendance', 'lm.t.groups': 'Groups', 'lm.t.board': 'Board', 'lm.t.dark': 'Black out the screen',
@@ -107,7 +110,7 @@ export async function render(main, { args, query }) {
   ]);
   const live = (lesson && lesson.live) || {};
   S = {
-    main, lesson, deck, games, quiz, test, hw, classes, settings,
+    main, lesson, deck, games, quiz, test, hw, classes, settings, quick: !lesson && !deck && !test,
     classId: (lesson && lesson.classId) || live.classId || null, students: [], journal: new Map(),
     material: query.test ? 'test' : live.material || (deck ? 'slides' : games.length ? 'game' : test ? 'test' : 'file'),
     page: live.page || 0, gameIdx: 0, panel: null, tab: 'journal', file: null, filePage: 0,
@@ -209,22 +212,44 @@ function wings(right) {
 function dock(compact) {
   const mats = ['slides', 'game', 'quiz', 'test', 'hw', ...(S.file ? ['file'] : [])];
   const pageInfo = pager();
+  const btn = (attrs, d, label, on = '') => `<button type="button" class="dk-ic${on}" ${attrs} aria-label="${esc(label)}" title="${esc(label)}">${icon(d, 22).__raw}<span>${esc(label)}</span></button>`;
   return `
-    <div class="dk">${compact
-      ? `<select class="dk-sel" data-matsel aria-label="${esc(t('lm.slides'))}">${mats.map(x => `<option value="${x}" ${x === S.material ? 'selected' : ''}>${esc(t('lm.' + x))}</option>`).join('')}</select>`
-      : mats.map(x => `<button type="button" class="dk-mat${x === S.material ? ' on' : ''}${matAvailable(x) ? '' : ' off'}" data-mat="${x}">${esc(t('lm.' + x))}</button>`).join('')}
-      <button type="button" class="dk-ic" data-upload aria-label="${esc(t('lm.upload'))}" title="${esc(t('lm.upload'))}">${icon('M12 16V4M7 9l5-5 5 5M4 16v4h16v-4', 17).__raw}</button>
+    <div class="dk dk-mats${compact ? ' compact' : ''}">
+      <span class="dk-mats-btns">${mats.map(x => `<button type="button" class="dk-mat${x === S.material ? ' on' : ''}${matAvailable(x) ? '' : ' off'}" data-mat="${x}">${esc(t('lm.' + x))}</button>`).join('')}</span>
+      <select class="dk-sel" data-matsel aria-label="${esc(t('lm.material'))}">${mats.map(x => `<option value="${x}" ${x === S.material ? 'selected' : ''}>${esc(t('lm.' + x))}</option>`).join('')}</select>
+      ${btn('data-upload', 'M12 16V4M7 9l5-5 5 5M4 16v4h16v-4', t('lm.s.upload'))}
     </div>
-    <div class="dk">
-      <button type="button" class="dk-ic" data-prev aria-label="${esc(t('lm.prev'))}">${icon('chevronLeft', 17).__raw}</button>
+    <div class="dk dk-pager">
+      <button type="button" class="dk-nav" data-prev aria-label="${esc(t('lm.prev'))}">${icon('chevronLeft', 24).__raw}</button>
       <span class="dk-page">${pageInfo ? `${pageInfo.i} / ${pageInfo.n}` : '—'}</span>
-      <button type="button" class="dk-ic" data-next aria-label="${esc(t('lm.next'))}">${icon('chevronRight', 17).__raw}</button>
+      <button type="button" class="dk-nav" data-next aria-label="${esc(t('lm.next'))}">${icon('chevronRight', 24).__raw}</button>
     </div>
-    <div class="dk">${TOOLS.map(([id, d]) => `<button type="button" class="dk-ic${S.panel === id || (id === 'groups' && S.panel === 'journal' && S.tab === 'groups') ? ' on' : ''}" data-tool="${id}" aria-label="${esc(t('lm.t.' + id))}" title="${esc(t('lm.t.' + id))}">${icon(d, 18).__raw}</button>`).join('')}</div>
+    <div class="dk dk-tools">${TOOLS.map(([id, d]) => `<button type="button" class="dk-ic${S.panel === id || (id === 'groups' && S.panel === 'journal' && S.tab === 'groups') ? ' on' : ''}" data-tool="${id}" aria-label="${esc(t('lm.t.' + id))}" title="${esc(t('lm.t.' + id))}">${icon(d, 22).__raw}<span>${esc(t('lm.s.' + id))}</span></button>`).join('')}</div>
     <div class="dk-right">
       <span class="dk-clock" data-clock>${clockText()}</span>
       <button type="button" class="dk-finish" data-finish>${esc(t('lm.finish'))}</button>
     </div>`;
+}
+
+/** The first screen of "Start lesson" without a prepared lesson: own file + class. */
+function startCard(el) {
+  el.parentElement.classList.add('free');
+  el.innerHTML = `<div class="lm-start">
+    <h2>${esc(t('lm.startTitle'))}</h2><p>${esc(t('lm.startText'))}</p>
+    <button type="button" class="lm-drop" data-upload2>${icon('M12 16V4M7 9l5-5 5 5M4 16v4h16v-4', 30).__raw}<b>${esc(t('lm.drop'))}</b><span>${esc(t('lm.dropHint'))}</span></button>
+    ${S.classes.length ? `<div class="lm-start-row"><span class="k">${esc(t('lm.classFor'))}</span>${S.classes.map(c => `<button type="button" class="lm-chip${c.id === S.classId ? ' on' : ''}" data-startclass="${c.id}">${esc(c.name)}</button>`).join('')}<button type="button" class="lm-chip${S.classId ? '' : ' on'}" data-startclass="">${esc(t('lm.noClassPick'))}</button></div>` : ''}
+    <div class="lm-start-row links"><a href="#/lessons">${esc(t('lm.myLessons'))} →</a><a href="#/presentations?list=1">${esc(t('lm.myDecks'))} →</a></div>
+  </div>`;
+  el.querySelector('[data-upload2]').onclick = () => S.main.querySelector('[data-fileinput]').click();
+  el.querySelectorAll('[data-startclass]').forEach(b => b.onclick = async () => { await loadClass(b.dataset.startclass || null); drawContent(); if (S.panel) drawPanel(); });
+}
+
+async function loadOwnFile(f) {
+  if (!f) return;
+  const el = S.main.querySelector('[data-content]');
+  if (el && !S.file) el.innerHTML = `<div class="lm-none"><span class="np-dot run"></span><p>${esc(t('lm.opening'))}</p></div>`;
+  try { S.file = await openFile(f); S.filePage = 0; S.material = 'file'; draw(); }
+  catch (err) { console.error(err); toast(t('lm.fileErr')); drawContent(); }
 }
 
 function pager() {
@@ -238,7 +263,9 @@ function drawContent() {
   const el = S.main.querySelector('[data-content]');
   const box = S.main.querySelector('.lm-fit');
   el.className = 'lm-content mat-' + S.material;
+  el.parentElement.classList.remove('free');
   const none = () => {
+    if (S.material === 'file' && S.quick) return startCard(el);
     const make = { slides: '#/presentations', game: '#/tests?tab=games', quiz: '#/tests?tab=games', test: '#/tests?new=1', hw: '#/homework' }[S.material];
     el.innerHTML = `<div class="lm-none"><p>${esc(t('lm.none.' + S.material))}</p>${S.material === 'file'
       ? `<button type="button" class="btn-k btn-md" data-upload2>${esc(t('lm.chooseFile'))}</button>`
@@ -422,14 +449,13 @@ function bindDock() {
   m.querySelectorAll('[data-tool]').forEach(b => b.onclick = () => tool(b.dataset.tool));
   m.querySelector('[data-finish]').onclick = finish;
   m.querySelector('[data-upload]').onclick = () => m.querySelector('[data-fileinput]').click();
-  m.querySelector('[data-fileinput]').onchange = async e => {
-    const f = e.target.files[0]; if (!f) return;
-    try { S.file = await openFile(f); S.filePage = 0; S.material = 'file'; draw(); }
-    catch (err) { console.error(err); toast(t('lm.fileErr')); }
-  };
+  m.querySelector('[data-fileinput]').onchange = e => loadOwnFile(e.target.files[0]);
   const pp = m.querySelector('[data-pluspicked]'); if (pp) pp.onclick = () => { addPoint([S.lastPicked], 1); pp.disabled = true; };
   // Swipe on the slide (interactive whiteboards and tablets)
   const stage = m.querySelector('[data-stage]');
+  stage.addEventListener('dragover', e => { e.preventDefault(); stage.classList.add('dropping'); });
+  stage.addEventListener('dragleave', () => stage.classList.remove('dropping'));
+  stage.addEventListener('drop', e => { e.preventDefault(); stage.classList.remove('dropping'); loadOwnFile(e.dataTransfer.files[0]); });
   let x0 = null;
   stage.addEventListener('pointerdown', e => { if (!S.board) x0 = e.clientX; });
   stage.addEventListener('pointerup', e => { if (x0 != null && Math.abs(e.clientX - x0) > 80 && !e.target.closest('button, input, .lm-card')) go(e.clientX < x0 ? 1 : -1); x0 = null; });

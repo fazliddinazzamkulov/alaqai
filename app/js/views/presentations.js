@@ -1,6 +1,6 @@
 /* Screen 6 · New presentation, plus "My presentations". */
 import { add, t, lang } from '../i18n.js';
-import { html, raw, icon, toast } from '../ui.js';
+import { html, raw, icon, toast, confirmModal, promptModal, moreBox } from '../ui.js';
 import { db } from '../data/store.js';
 import { fileToPart, AiError } from '../ai.js';
 import { weeklyUsage } from '../plans.js';
@@ -11,7 +11,7 @@ import { shortDate } from '../school.js';
 
 add({
   ru: {
-    'pr.new': 'Новая презентация', 'pr.mine': 'Мои презентации · {n}', 'pr.topic': 'Тема урока', 'pr.topicPh': 'Например: Закон Ома для участка цепи. 8 класс, физика.',
+    'pr.new': 'Новая презентация', 'pr.settings': 'Язык, формат и оформление', 'pr.nSlides': '{n} слайдов', 'pr.mine': 'Мои презентации · {n}', 'pr.topic': 'Тема урока', 'pr.topicPh': 'Например: Закон Ома для участка цепи. 8 класс, физика.',
     'pr.material': 'Материал (необязательно)', 'pr.materialText': 'Учебник, конспект или фото страницы', 'pr.materialTypes': 'PDF, DOCX, PPTX, JPG', 'pr.choose': 'Выбрать',
     'pr.lang': 'Язык слайдов', 'pr.other': 'Другой…', 'pr.otherPrompt': 'На каком языке сделать слайды?', 'pr.ratio': 'Формат', 'pr.count': 'Слайдов',
     'pr.theme': 'Цветовая тема · {name}', 'th.lime': 'Лайм', 'th.coral': 'Коралл', 'th.sky': 'Небо', 'th.lilac': 'Сирень', 'th.sun': 'Солнце',
@@ -24,7 +24,7 @@ add({
     'pr.fileErr': 'Не удалось прочитать файл {name}'
   },
   kk: {
-    'pr.new': 'Жаңа презентация', 'pr.mine': 'Менің презентацияларым · {n}', 'pr.topic': 'Сабақ тақырыбы', 'pr.topicPh': 'Мысалы: Тізбек бөлігі үшін Ом заңы. 8-сынып, физика.',
+    'pr.new': 'Жаңа презентация', 'pr.settings': 'Тіл, формат және безендіру', 'pr.nSlides': '{n} слайд', 'pr.mine': 'Менің презентацияларым · {n}', 'pr.topic': 'Сабақ тақырыбы', 'pr.topicPh': 'Мысалы: Тізбек бөлігі үшін Ом заңы. 8-сынып, физика.',
     'pr.material': 'Материал (міндетті емес)', 'pr.materialText': 'Оқулық, конспект немесе бет суреті', 'pr.materialTypes': 'PDF, DOCX, PPTX, JPG', 'pr.choose': 'Таңдау',
     'pr.lang': 'Слайд тілі', 'pr.other': 'Басқа…', 'pr.otherPrompt': 'Слайдтарды қай тілде жасау керек?', 'pr.ratio': 'Формат', 'pr.count': 'Слайд саны',
     'pr.theme': 'Түс тақырыбы · {name}', 'th.lime': 'Лайм', 'th.coral': 'Маржан', 'th.sky': 'Аспан', 'th.lilac': 'Сирень', 'th.sun': 'Күн',
@@ -37,7 +37,7 @@ add({
     'pr.fileErr': '{name} файлын оқу мүмкін болмады'
   },
   en: {
-    'pr.new': 'New presentation', 'pr.mine': 'My presentations · {n}', 'pr.topic': 'Lesson topic', 'pr.topicPh': 'For example: Ohm’s law for a circuit section. Grade 8, physics.',
+    'pr.new': 'New presentation', 'pr.settings': 'Language, format and look', 'pr.nSlides': '{n} slides', 'pr.mine': 'My presentations · {n}', 'pr.topic': 'Lesson topic', 'pr.topicPh': 'For example: Ohm’s law for a circuit section. Grade 8, physics.',
     'pr.material': 'Material (optional)', 'pr.materialText': 'Textbook, notes or a page photo', 'pr.materialTypes': 'PDF, DOCX, PPTX, JPG', 'pr.choose': 'Choose',
     'pr.lang': 'Slide language', 'pr.other': 'Other…', 'pr.otherPrompt': 'Which language should the slides be in?', 'pr.ratio': 'Format', 'pr.count': 'Slides',
     'pr.theme': 'Colour theme · {name}', 'th.lime': 'Lime', 'th.coral': 'Coral', 'th.sky': 'Sky', 'th.lilac': 'Lilac', 'th.sun': 'Sun',
@@ -79,6 +79,7 @@ export async function render(main, { query }) {
             <span class="grow">${form.fileNames.length ? form.fileNames.join(', ') : html`${t('pr.materialText')}<br><span class="small">${t('pr.materialTypes')}</span>`}</span>
             <span class="btn-o btn-sm">${t('pr.choose')}</span></label>
         </div>
+        ${moreBox('pr-settings', html`
         <div class="field muted">${t('pr.lang')}
           <div class="chips">${SLIDE_LANGS.map(l => html`<button type="button" class="chip sq${form.lang === l && !form.langText ? ' on dark' : ''}" data-lang-pick="${l}">${langLabel(l).replace(' (', ' · ').replace(')', '')}</button>`)}
             <button type="button" class="chip sq dashed${form.langText ? ' on dark' : ''}" data-lang-other>${form.langText || t('pr.other')}</button></div>
@@ -96,6 +97,7 @@ export async function render(main, { query }) {
             ${chip(form.options.aiImages, t('pr.ai'), 'data-opt="aiImages"')}${chip(form.options.questions, t('pr.questions'), 'data-opt="questions"')}
           </div>
         </div>
+        `.toString(), [form.langText || langLabel(form.lang), form.ratio, t('pr.nSlides', { n: form.count }), t('th.' + form.theme)].join(' · '), t('pr.settings'))}
         <div class="grow"></div>
         <button type="submit" class="btn-k btn-xl" ${busy ? 'disabled' : ''}>${icon('sparkle', 16, 'style="color:var(--lime)"')}${t('pr.generate')}${usage.max ? ' · ' + t('pr.fromLimit') : ''}</button>
       </form>
@@ -105,8 +107,8 @@ export async function render(main, { query }) {
   const f = main.querySelector('form');
   f.topic.addEventListener('input', () => { form.topic = f.topic.value; });
   main.querySelectorAll('[data-lang-pick]').forEach(b => b.addEventListener('click', () => { form.lang = b.dataset.langPick; form.langText = ''; render(main, { query }); }));
-  main.querySelector('[data-lang-other]').addEventListener('click', () => {
-    const v = prompt(t('pr.otherPrompt'), form.langText || '');
+  main.querySelector('[data-lang-other]').addEventListener('click', async () => {
+    const v = await promptModal(t('pr.otherPrompt'), form.langText || '');
     if (v != null) { form.langText = v.trim(); render(main, { query }); }
   });
   main.querySelectorAll('[data-ratio]').forEach(b => b.addEventListener('click', () => { form.ratio = b.dataset.ratio; render(main, { query }); }));
@@ -186,7 +188,7 @@ async function list(main) {
     : html`<div class="empty"><p>${t('pr.none')}</p><div class="row"><a class="btn-k" href="#/presentations">${t('pr.newBtn')}</a></div></div>`}`;
   main.querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', async () => {
     const d = decks.find(x => x.id === b.dataset.del);
-    if (!confirm(t('pr.deleteConfirm', { name: d.title }))) return;
+    if (!(await confirmModal(t('pr.deleteConfirm', { name: d.title })))) return;
     await db.presentations.remove(d.id);
     if (d.lessonId) { const l = await db.lessons.get(d.lessonId); if (l) await db.lessons.update(l.id, { parts: { ...l.parts, presentationId: null } }); }
     toast(t('pr.deleted'));

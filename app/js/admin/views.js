@@ -1,6 +1,6 @@
 /* Admin screens 29–32 (+ payments, AI keys, administrators, activity log). */
 import { add, t, lang } from '../i18n.js';
-import { html, raw, icon, toast, openModal, initials, segmented } from '../ui.js';
+import { html, raw, icon, toast, openModal, initials, segmented, confirmModal, moreBox } from '../ui.js';
 import * as S from './source.js';
 
 add({
@@ -10,7 +10,7 @@ add({
     'av.revenueDays': 'Выручка по дням', 'av.byPlan': 'Пользователи по тарифам', 'av.methods': 'Оплаты: {list}', 'av.lastPays': 'Последние платежи', 'av.all': 'Все', 'av.attention': 'Требует внимания',
     'av.a.failed': 'Неудачные платежи — повторить списание', 'av.a.schools': 'Заявки от школ ждут ответа', 'av.a.noKey': 'Нет активного ключа Gemini — ИИ не работает', 'av.a.suspended': 'Приостановленные аккаунты', 'av.a.none': 'Всё спокойно.',
     'av.soonPay': 'Появится после подключения платёжного шлюза и Kaspi.', 'av.soonDb': 'Появится после переноса данных учителей в базу на сервере.',
-    'av.t.users': 'Пользователи', 'av.t.lessons': 'Уроки', 'av.t.subs': 'Подписки', 'av.t.pays': 'Платежи', 'av.t.schools': 'Школы', 'av.search': 'Имя, телефон, email или школа',
+    'av.t.users': 'Пользователи', 'av.t.lessons': 'Уроки', 'av.t.subs': 'Подписки', 'av.t.pays': 'Платежи', 'av.t.schools': 'Школы', 'av.filters': 'Поиск и фильтры', 'av.search': 'Имя, телефон, email или школа',
     'av.f.plan': 'Тариф', 'av.f.status': 'Статус', 'av.f.via': 'Вход', 'av.f.all': 'все', 'av.c.user': 'Пользователь', 'av.c.via': 'Вход', 'av.c.school': 'Школа', 'av.c.plan': 'Тариф', 'av.c.status': 'Статус', 'av.c.ai': 'ИИ/нед', 'av.c.since': 'С нами с', 'av.c.last': 'Активность',
     'av.c.lessons': 'Уроков', 'av.c.until': 'До', 'av.c.renew': 'Продление', 'av.c.date': 'Дата', 'av.c.what': 'Что', 'av.c.how': 'Способ', 'av.c.sum': 'Сумма', 'av.c.teachers': 'Учителей', 'av.c.req': 'Заявка',
     'av.range': '{a}–{b} из {n}', 'av.prev': 'Назад', 'av.next': 'Дальше', 'av.none': 'Ничего не найдено', 'av.on': 'вкл.', 'av.off': 'выкл.', 'av.new': 'новая',
@@ -37,7 +37,7 @@ add({
     'av.revenueDays': 'Күндер бойынша түсім', 'av.byPlan': 'Тарифтер бойынша пайдаланушылар', 'av.methods': 'Төлемдер: {list}', 'av.lastPays': 'Соңғы төлемдер', 'av.all': 'Барлығы', 'av.attention': 'Назар керек',
     'av.a.failed': 'Сәтсіз төлемдер — қайта шегеру', 'av.a.schools': 'Мектеп өтінімдері жауап күтуде', 'av.a.noKey': 'Белсенді Gemini кілті жоқ — ЖИ жұмыс істемейді', 'av.a.suspended': 'Тоқтатылған аккаунттар', 'av.a.none': 'Бәрі тыныш.',
     'av.soonPay': 'Төлем шлюзі мен Kaspi қосылғаннан кейін шығады.', 'av.soonDb': 'Мұғалімдер деректері сервердегі дерекқорға көшкеннен кейін шығады.',
-    'av.t.users': 'Пайдаланушылар', 'av.t.lessons': 'Сабақтар', 'av.t.subs': 'Жазылымдар', 'av.t.pays': 'Төлемдер', 'av.t.schools': 'Мектептер', 'av.search': 'Аты, телефон, email немесе мектеп',
+    'av.t.users': 'Пайдаланушылар', 'av.t.lessons': 'Сабақтар', 'av.t.subs': 'Жазылымдар', 'av.t.pays': 'Төлемдер', 'av.t.schools': 'Мектептер', 'av.filters': 'Іздеу және сүзгілер', 'av.search': 'Аты, телефон, email немесе мектеп',
     'av.f.plan': 'Тариф', 'av.f.status': 'Күйі', 'av.f.via': 'Кіру', 'av.f.all': 'барлығы', 'av.c.user': 'Пайдаланушы', 'av.c.via': 'Кіру', 'av.c.school': 'Мектеп', 'av.c.plan': 'Тариф', 'av.c.status': 'Күйі', 'av.c.ai': 'ЖИ/апта', 'av.c.since': 'Бізбен бірге', 'av.c.last': 'Белсенділік',
     'av.c.lessons': 'Сабақ', 'av.c.until': 'Дейін', 'av.c.renew': 'Ұзарту', 'av.c.date': 'Күні', 'av.c.what': 'Не', 'av.c.how': 'Тәсіл', 'av.c.sum': 'Сома', 'av.c.teachers': 'Мұғалім', 'av.c.req': 'Өтінім',
     'av.range': '{n} ішінен {a}–{b}', 'av.prev': 'Артқа', 'av.next': 'Әрі қарай', 'av.none': 'Ештеңе табылмады', 'av.on': 'қосулы', 'av.off': 'өшірулі', 'av.new': 'жаңа',
@@ -64,7 +64,7 @@ add({
     'av.revenueDays': 'Revenue by day', 'av.byPlan': 'Users by plan', 'av.methods': 'Payments: {list}', 'av.lastPays': 'Latest payments', 'av.all': 'All', 'av.attention': 'Needs attention',
     'av.a.failed': 'Failed payments — retry the charge', 'av.a.schools': 'School requests waiting for a reply', 'av.a.noKey': 'No active Gemini key — AI is off', 'av.a.suspended': 'Suspended accounts', 'av.a.none': 'All quiet.',
     'av.soonPay': 'Appears once the payment gateway and Kaspi are connected.', 'av.soonDb': 'Appears once teachers’ data moves to the server database.',
-    'av.t.users': 'Users', 'av.t.lessons': 'Lessons', 'av.t.subs': 'Subscriptions', 'av.t.pays': 'Payments', 'av.t.schools': 'Schools', 'av.search': 'Name, phone, email or school',
+    'av.t.users': 'Users', 'av.t.lessons': 'Lessons', 'av.t.subs': 'Subscriptions', 'av.t.pays': 'Payments', 'av.t.schools': 'Schools', 'av.filters': 'Search and filters', 'av.search': 'Name, phone, email or school',
     'av.f.plan': 'Plan', 'av.f.status': 'Status', 'av.f.via': 'Sign-in', 'av.f.all': 'all', 'av.c.user': 'User', 'av.c.via': 'Sign-in', 'av.c.school': 'School', 'av.c.plan': 'Plan', 'av.c.status': 'Status', 'av.c.ai': 'AI/wk', 'av.c.since': 'Joined', 'av.c.last': 'Active',
     'av.c.lessons': 'Lessons', 'av.c.until': 'Until', 'av.c.renew': 'Renewal', 'av.c.date': 'Date', 'av.c.what': 'What', 'av.c.how': 'Method', 'av.c.sum': 'Amount', 'av.c.teachers': 'Teachers', 'av.c.req': 'Request',
     'av.range': '{a}–{b} of {n}', 'av.prev': 'Previous', 'av.next': 'Next', 'av.none': 'Nothing found', 'av.on': 'on', 'av.off': 'off', 'av.new': 'new',
@@ -195,8 +195,8 @@ export async function database(main, { query }) {
     main.innerHTML = html`
       <div class="page-head center"><div class="av-h"><h1 class="title title-md">${t('ad.db')}</h1>${demoPill()}</div><div class="head-right"><button type="button" class="btn-o btn-md" data-export>${t('av.exportCsv')}</button></div></div>
       <div class="av-tabs">${['users', 'lessons', 'subs', 'pays', 'schools'].map(id => html`<button type="button" data-tab="${id}" class="${tab === id ? 'on' : ''}">${t('av.t.' + id)} <span>${counts[id] == null ? '' : numF(counts[id])}</span></button>`)}</div>
-      ${tab === 'users' || tab === 'subs' ? html`<div class="av-filters"><label class="av-search">${icon('M11 4a7 7 0 1 0 0 14a7 7 0 1 0 0-14M20 20l-4-4', 16)}<input name="q" value="${q}" placeholder="${t('av.search')}" aria-label="${t('av.search')}"></label>
-        ${[['plan', ['basic', 'standard', 'max', 'school'], planName], ['status', ['active', 'debt', 'blocked', 'free'], x => t('av.s.' + x)], ['via', ['google', 'phone'], x => t('av.via.' + x)]].map(([k, opts, lab]) => html`<select data-f="${k}" aria-label="${t('av.f.' + k)}"><option value="">${t('av.f.' + k)}: ${t('av.f.all')}</option>${opts.map(o => html`<option value="${o}" ${F[k] === o ? raw('selected') : ''}>${t('av.f.' + k)}: ${lab(o)}</option>`)}</select>`)}</div>` : ''}
+      ${tab === 'users' || tab === 'subs' ? moreBox('adm-filters', html`<div class="av-filters"><label class="av-search">${icon('M11 4a7 7 0 1 0 0 14a7 7 0 1 0 0-14M20 20l-4-4', 16)}<input name="q" value="${q}" placeholder="${t('av.search')}" aria-label="${t('av.search')}"></label>
+        ${[['plan', ['basic', 'standard', 'max', 'school'], planName], ['status', ['active', 'debt', 'blocked', 'free'], x => t('av.s.' + x)], ['via', ['google', 'phone'], x => t('av.via.' + x)]].map(([k, opts, lab]) => html`<select data-f="${k}" aria-label="${t('av.f.' + k)}"><option value="">${t('av.f.' + k)}: ${t('av.f.all')}</option>${opts.map(o => html`<option value="${o}" ${F[k] === o ? raw('selected') : ''}>${t('av.f.' + k)}: ${lab(o)}</option>`)}</select>`)}</div>`.toString(), [q, F.plan && planName(F.plan), F.status && t('av.s.' + F.status), F.via && t('av.via.' + F.via)].filter(Boolean).join(' · '), t('av.filters')) : ''}
       <div class="card av-table">
         ${body || html`${head.length ? html`<div class="av-tr h ${tab}">${head.map(h => html`<span>${h}</span>`)}</div>` : ''}${rows.length ? rows : html`<p class="muted-note av-empty">${t('av.none')}</p>`}
         ${total > PER ? html`<div class="av-pager"><span>${t('av.range', { a: page * PER + 1, b: Math.min(total, page * PER + PER), n: numF(total) })}</span><span><button type="button" class="icon-btn" data-page="-1" aria-label="${t('av.prev')}" ${page === 0 ? raw('disabled') : ''}>${icon('chevronLeft')}</button><button type="button" class="icon-btn" data-page="1" aria-label="${t('av.next')}" ${(page + 1) * PER >= total ? raw('disabled') : ''}>${icon('chevronRight')}</button></span></div>` : ''}`}
@@ -367,10 +367,11 @@ export async function aiPage(main) {
     main.querySelector('.av-keyform').onsubmit = async e => {
       e.preventDefault();
       const f = e.target;
+      if (S.getMode() === 'demo') { f.value.value = ''; toast(t('av.savedDemo')); return; }
       try { await S.saveKey({ provider: f.provider.value, slot: Number(f.slot.value), label: f.label.value.trim(), value: f.value.value.trim() }); toast(t('av.keySaved')); Object.assign(data, await S.keys()); draw(); } catch (err) { toast(err.message); }
     };
     main.querySelectorAll('[data-toggle]').forEach(c => c.onchange = async () => { try { await S.toggleKey(c.dataset.toggle, c.checked); } catch (err) { toast(err.message); } });
-    main.querySelectorAll('[data-delkey]').forEach(b => b.onclick = async () => { if (!confirm(t('ui.confirmDelete'))) return; try { await S.deleteKey(b.dataset.delkey); Object.assign(data, await S.keys()); draw(); } catch (err) { toast(err.message); } });
+    main.querySelectorAll('[data-delkey]').forEach(b => b.onclick = async () => { if (!(await confirmModal(t('ui.confirmDelete')))) return; try { await S.deleteKey(b.dataset.delkey); Object.assign(data, await S.keys()); draw(); } catch (err) { toast(err.message); } });
   };
   draw();
 }

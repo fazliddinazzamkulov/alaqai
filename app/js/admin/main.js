@@ -6,6 +6,7 @@ import { html, icon, initials } from '../ui.js';
 import { me, getMode, setMode, savedMode } from './source.js';
 import { renderGoogle, googleConfigured } from '../auth.js';
 import * as V from './views.js';
+import { watchControls } from '../controls.js';
 
 add({
   ru: { 'ad.title': 'alaqai — админка', 'ad.overview': 'Обзор', 'ad.db': 'База данных', 'ad.user': 'Аккаунты', 'ad.plans': 'Подписки и тарифы', 'ad.payments': 'Платежи', 'ad.ai': 'ИИ: ключи и расходы', 'ad.admins': 'Администраторы', 'ad.log': 'Журнал действий',
@@ -107,4 +108,5 @@ document.getElementById('menu-toggle').innerHTML = icon('menu', 18);
 document.getElementById('menu-toggle').addEventListener('click', () => shell.classList.toggle('menu-open'));
 document.addEventListener('click', e => { if (shell.classList.contains('menu-open') && !e.target.closest('#sidebar, #menu-toggle')) shell.classList.remove('menu-open'); });
 
+watchControls();
 start();

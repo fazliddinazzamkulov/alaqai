@@ -143,3 +143,50 @@ export async function copyText(text) {
     ta.remove(); return ok;
   }
 }
+
+/* ---------- our own confirm / prompt (never the device's dialogs) ---------- */
+
+add({
+  ru: { 'ui.yes': 'Да, удалить', 'ui.ok': 'Готово', 'ui.more': 'Дополнительно' },
+  kk: { 'ui.yes': 'Иә, жою', 'ui.ok': 'Дайын', 'ui.more': 'Қосымша' },
+  en: { 'ui.yes': 'Yes, delete', 'ui.ok': 'Done', 'ui.more': 'More options' }
+});
+
+/** Resolves true when confirmed. */
+export function confirmModal(text, { yes } = {}) {
+  return new Promise(res => {
+    let done = false;
+    const close = openModal({ title: text, body: '', submitLabel: yes || t('ui.yes'), onSubmit: () => { done = true; res(true); } });
+    const back = document.querySelector('.modal-back:last-child');
+    back.classList.add('confirm');
+    new MutationObserver((m, obs) => { if (!back.isConnected) { obs.disconnect(); if (!done) res(false); } }).observe(document.body, { childList: true });
+    return close;
+  });
+}
+
+/** Resolves with the typed text, or null when cancelled. */
+export function promptModal(title, value = '', { placeholder = '' } = {}) {
+  return new Promise(res => {
+    let done = false;
+    openModal({ title, body: `<label class="field"><input name="v" value="${esc(value)}" placeholder="${esc(placeholder)}" maxlength="80" autocomplete="off"></label>`, submitLabel: t('ui.ok'), onSubmit: f => { done = true; res(f.v.value); } });
+    const back = document.querySelector('.modal-back:last-child');
+    new MutationObserver((m, obs) => { if (!back.isConnected) { obs.disconnect(); if (!done) res(null); } }).observe(document.body, { childList: true });
+  });
+}
+
+/* ---------- a folded "More options" block; stays open/closed while the teacher works ---------- */
+
+const MORE_KEY = 'alaqai_more_open';
+const moreOpen = () => { try { return JSON.parse(sessionStorage.getItem(MORE_KEY) || '{}'); } catch (e) { return {}; } };
+document.addEventListener('toggle', e => {
+  const d = e.target;
+  if (!(d instanceof HTMLElement) || !d.matches('details[data-more]')) return;
+  const s = moreOpen(); s[d.dataset.more] = d.open;
+  try { sessionStorage.setItem(MORE_KEY, JSON.stringify(s)); } catch (err) { /* private mode */ }
+}, true);
+
+/** id — remembers the state; summary — short line of the current choices shown while folded. */
+export function moreBox(id, inner, summary = '', label = '') {
+  const open = !!moreOpen()[id];
+  return raw(`<details class="more" data-more="${esc(id)}" ${open ? 'open' : ''}><summary><span class="more-l">${esc(label || t('ui.more'))}</span><span class="more-s">${esc(summary)}</span>${icon('M6 9l6 6 6-6', 16).__raw}</summary><div class="more-body">${inner}</div></details>`);
+}

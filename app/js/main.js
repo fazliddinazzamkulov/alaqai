@@ -4,6 +4,7 @@ import { add, t, onChange } from './i18n.js';
 import { db } from './data/store.js';
 import { renderSidebar } from './sidebar.js';
 import { icon } from './ui.js';
+import { watchControls } from './controls.js';
 
 add({
   ru: { 'app.title': 'alaqai — платформа для учителей' },
@@ -53,6 +54,7 @@ async function render() {
   current = { route, args, query };
   document.title = t('app.title');
   shell.classList.remove('menu-open');
+  document.querySelectorAll('.modal-back, .dd-menu, .dd-back').forEach(el => el.remove());
   renderSidebar(sidebar, menuId);
   if (cleanup) { try { cleanup(); } catch (e) { console.error(e); } cleanup = null; }
   main.className = 'main' + (layout ? ' ' + layout : '');
@@ -86,6 +88,7 @@ document.addEventListener('click', e => {
   if (shell.classList.contains('menu-open') && !e.target.closest('#sidebar, #menu-toggle')) shell.classList.remove('menu-open');
 });
 
+watchControls();
 render();
 
 /** Re-render the open screen (used by views after they change data). */

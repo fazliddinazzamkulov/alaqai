@@ -1,6 +1,7 @@
 /* Languages of lesson materials, subjects and slide formats shared by
  * "Create lesson", presentations and tests. */
 import { add, t } from '../i18n.js';
+import { enhance } from '../controls.js';
 
 add({
   ru: { 'mat.en+ru': 'English + пояснения на русском', 'mat.en+kk': 'English + пояснения на казахском' },
@@ -34,9 +35,68 @@ export function defaultMaterialLang(subject, uiLang) {
 
 export const RATIOS = ['16:9', '4:3'];
 
-add({
-  ru: { 'subjects': 'Английский язык|Русский язык|Казахский язык|Математика|Алгебра|Геометрия|Физика|Химия|Биология|География|История Казахстана|Всемирная история|Литература|Информатика|Естествознание|Познание мира|Самопознание' },
-  kk: { 'subjects': 'Ағылшын тілі|Орыс тілі|Қазақ тілі|Математика|Алгебра|Геометрия|Физика|Химия|Биология|География|Қазақстан тарихы|Дүниежүзі тарихы|Әдебиет|Информатика|Жаратылыстану|Дүниетану|Өзін-өзі тану' },
-  en: { 'subjects': 'English|Russian|Kazakh|Mathematics|Algebra|Geometry|Physics|Chemistry|Biology|Geography|History of Kazakhstan|World history|Literature|Computer science|Natural science|World around us|Self-knowledge' }
-});
+// School subjects of the updated Kazakhstan curriculum (grades 1–11).
+const ALL_SUBJECTS_INIT = {};
+const SUBJECT_TEXTS = {
+  ru: { 'subjects': 'Казахский язык|Казахская литература|Казахский язык и литература|Русский язык|Русская литература|Английский язык|Обучение грамоте|Литературное чтение|Математика|Алгебра|Геометрия|Алгебра и начала анализа|Информатика|Цифровая грамотность|Познание мира|Естествознание|Физика|Химия|Биология|География|История Казахстана|Всемирная история|Основы права|Самопознание|Художественный труд|Графика и проектирование|Музыка|Физическая культура|Начальная военная и технологическая подготовка',
+        'subj.pick': 'Выберите предмет', 'subj.manual': 'Ввести предмет вручную', 'subj.manualPh': 'Название предмета' },
+  kk: { 'subjects': 'Қазақ тілі|Қазақ әдебиеті|Қазақ тілі мен әдебиеті|Орыс тілі|Орыс әдебиеті|Ағылшын тілі|Сауат ашу|Әдебиеттік оқу|Математика|Алгебра|Геометрия|Алгебра және анализ бастамалары|Информатика|Цифрлық сауаттылық|Дүниетану|Жаратылыстану|Физика|Химия|Биология|География|Қазақстан тарихы|Дүниежүзі тарихы|Құқық негіздері|Өзін-өзі тану|Көркем еңбек|Графика және жобалау|Музыка|Дене шынықтыру|Алғашқы әскери және технологиялық дайындық',
+        'subj.pick': 'Пәнді таңдаңыз', 'subj.manual': 'Пәнді қолмен енгізу', 'subj.manualPh': 'Пән атауы' },
+  en: { 'subjects': 'Kazakh language|Kazakh literature|Kazakh language and literature|Russian language|Russian literature|English|Literacy|Literary reading|Mathematics|Algebra|Geometry|Algebra and calculus|Computer science|Digital literacy|World around us|Natural science|Physics|Chemistry|Biology|Geography|History of Kazakhstan|World history|Basics of law|Self-knowledge|Arts and crafts|Graphics and design|Music|Physical education|Basic military and technological training',
+        'subj.pick': 'Choose a subject', 'subj.manual': 'Type the subject myself', 'subj.manualPh': 'Subject name' }
+};
+add(SUBJECT_TEXTS);
+for (const l of Object.keys(SUBJECT_TEXTS)) ALL_SUBJECTS_INIT[l] = SUBJECT_TEXTS[l].subjects.split('|');
 export function subjects() { return t('subjects').split('|'); }
+
+/** The same subject in the interface language ("Ағылшын тілі" → "Английский язык"), or the value as typed. */
+const ALL_SUBJECTS = ALL_SUBJECTS_INIT;
+export function localSubject(value) {
+  if (!value) return value;
+  const list = subjects();
+  if (list.includes(value)) return value;
+  for (const l of ['ru', 'kk', 'en']) {
+    const other = ALL_SUBJECTS[l] || [];
+    const i = other.findIndex(x => x.toLowerCase() === String(value).toLowerCase());
+    if (i >= 0) return list[i] || value;
+  }
+  return value;
+}
+
+const escA = v => String(v ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+/**
+ * Subject chooser: a list of ready subjects, or — with the check box on — a
+ * field to type one. The value lives in <input name="subject">.
+ */
+export function subjectField(value, label, cls = 'field muted') {
+  const list = subjects();
+  value = localSubject(value);
+  const manual = !!value && !list.includes(value);
+  return `<div class="${cls} subj" data-subject>${escA(label)}
+    <select data-subj-pick ${manual ? 'disabled' : ''}><option value="">${escA(t('subj.pick'))}</option>${list.map(s => `<option ${s === value ? 'selected' : ''}>${escA(s)}</option>`).join('')}</select>
+    <input name="subject" value="${escA(value || '')}" maxlength="60" placeholder="${escA(t('subj.manualPh'))}" autocomplete="off" ${manual ? '' : 'hidden'}>
+    <label class="subj-manual"><input type="checkbox" data-subj-manual ${manual ? 'checked' : ''}><span>${escA(t('subj.manual'))}</span></label></div>`;
+}
+
+export function bindSubject(root) {
+  root.querySelectorAll('[data-subject]').forEach(box => {
+    const pick = box.querySelector('[data-subj-pick]');
+    const input = box.querySelector('input[name="subject"]');
+    const manual = box.querySelector('[data-subj-manual]');
+    const btn = () => pick.nextElementSibling && pick.nextElementSibling.classList.contains('dd') ? pick.nextElementSibling : null;
+    const sync = () => {
+      input.hidden = !manual.checked;
+      pick.disabled = manual.checked;
+      const b = btn(); if (b) { b.hidden = manual.checked; b.disabled = manual.checked; }
+    };
+    pick.addEventListener('change', () => { input.value = pick.value; input.dispatchEvent(new Event('input', { bubbles: true })); });
+    manual.addEventListener('change', () => {
+      if (manual.checked) { input.value = ''; sync(); input.focus(); }
+      else { input.value = pick.value; sync(); }
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+    enhance(box);
+    sync();
+  });
+}

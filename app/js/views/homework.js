@@ -2,7 +2,7 @@
  * of one assignment (online test results, or notebook photos checked with AI
  * help and graded by the teacher). */
 import { add, t, lang, num } from '../i18n.js';
-import { html, raw, esc, icon, segmented, toast, openModal, copyText } from '../ui.js';
+import { html, raw, esc, icon, segmented, toast, openModal, copyText, confirmModal, moreBox } from '../ui.js';
 import { db } from '../data/store.js';
 import { today, addDays, shortDate } from '../school.js';
 import { hwLink, hwStudents, hwCounts, isOpen, qrSvg, saveHwMark, questionStats } from '../hw.js';
@@ -21,7 +21,7 @@ add({
     'hw.material': 'Материал', 'hw.pick': 'Выберите тест', 'hw.m.test': 'Тест: {t}', 'hw.m.hw': 'ДЗ урока: {t}', 'hw.m.none': 'Нет готовых тестов — создайте в «Тестах»', 'hw.makeTest': 'Создать тест',
     'hw.task': 'Задание', 'hw.taskPh': 'Например: задачи §12, № 1–4', 'hw.instr': 'Что сделать', 'hw.instrPh': 'Коротко для ученика: что решить и как прислать фото',
     'hw.to': 'Кому', 'hw.pickStudents': 'Выбрать учеников', 'hw.nStudents': 'Учеников: {n}', 'hw.noClasses': 'Сначала добавьте класс', 'hw.due': 'Срок сдачи', 'hw.checker': 'Кто проверяет', 'hw.k.auto': 'Автоматически', 'hw.k.ai': 'ИИ + я', 'hw.k.self': 'Сам',
-    'hw.showAnswers': 'Показать ответы после сдачи', 'hw.shuffle': 'Перемешать вопросы', 'hw.sendBtn': 'Отправить ученикам', 'hw.saveDraft': 'Сохранить черновик', 'hw.link': 'Ссылка для класса', 'hw.linkAfter': 'появится после отправки', 'hw.qr': 'QR-код', 'hw.copy': 'Копировать', 'hw.copied': 'Ссылка скопирована',
+    'hw.settings': 'Проверка и настройки', 'hw.showShort': 'ответы после сдачи', 'hw.shuffleShort': 'вопросы вперемешку', 'hw.showAnswers': 'Показать ответы после сдачи', 'hw.shuffle': 'Перемешать вопросы', 'hw.sendBtn': 'Отправить ученикам', 'hw.saveDraft': 'Сохранить черновик', 'hw.link': 'Ссылка для класса', 'hw.linkAfter': 'появится после отправки', 'hw.qr': 'QR-код', 'hw.copy': 'Копировать', 'hw.copied': 'Ссылка скопирована',
     'hw.err.class': 'Выберите класс', 'hw.err.material': 'Выберите тест для онлайн-задания', 'hw.err.task': 'Напишите задание', 'hw.err.students': 'Выберите хотя бы одного ученика', 'hw.sent': 'Задание отправлено — поделитесь ссылкой с классом', 'hw.saved': 'Черновик сохранён',
     'hw.qrTitle': 'QR-код для класса', 'hw.qrNote': 'Покажите на экране — ученики откроют задание с телефона.', 'hw.studentsTitle': 'Кому отправить', 'hw.all': 'Весь класс', 'hw.local': 'Пока данные хранятся в этом браузере, ссылка работает на этом устройстве. После подключения базы — у всех учеников.',
     'hw.crumb': 'Проверка', 'hw.st.handed': 'Сдали', 'hw.st.checked': 'Проверено', 'hw.st.left': 'осталось {n}', 'hw.st.avg': 'Средняя оценка', 'hw.st.of5': 'из 5', 'hw.st.hardest': 'Труднее всего', 'hw.st.of': 'из {n}',
@@ -43,7 +43,7 @@ add({
     'hw.material': 'Материал', 'hw.pick': 'Тестті таңдаңыз', 'hw.m.test': 'Тест: {t}', 'hw.m.hw': 'Сабақтың ҮТ: {t}', 'hw.m.none': 'Дайын тест жоқ — «Тестер» бөлімінде құрыңыз', 'hw.makeTest': 'Тест құру',
     'hw.task': 'Тапсырма', 'hw.taskPh': 'Мысалы: §12 есептер, № 1–4', 'hw.instr': 'Не істеу керек', 'hw.instrPh': 'Оқушыға қысқаша: не шешу керек және фотоны қалай жіберу керек',
     'hw.to': 'Кімге', 'hw.pickStudents': 'Оқушыларды таңдау', 'hw.nStudents': 'Оқушылар: {n}', 'hw.noClasses': 'Алдымен сынып қосыңыз', 'hw.due': 'Тапсыру мерзімі', 'hw.checker': 'Кім тексереді', 'hw.k.auto': 'Автоматты', 'hw.k.ai': 'ЖИ + мен', 'hw.k.self': 'Өзім',
-    'hw.showAnswers': 'Тапсырғаннан кейін жауаптарды көрсету', 'hw.shuffle': 'Сұрақтарды араластыру', 'hw.sendBtn': 'Оқушыларға жіберу', 'hw.saveDraft': 'Жобаны сақтау', 'hw.link': 'Сыныпқа сілтеме', 'hw.linkAfter': 'жібергеннен кейін пайда болады', 'hw.qr': 'QR-код', 'hw.copy': 'Көшіру', 'hw.copied': 'Сілтеме көшірілді',
+    'hw.settings': 'Тексеру және баптаулар', 'hw.showShort': 'тапсырғаннан кейін жауаптар', 'hw.shuffleShort': 'сұрақтар араласқан', 'hw.showAnswers': 'Тапсырғаннан кейін жауаптарды көрсету', 'hw.shuffle': 'Сұрақтарды араластыру', 'hw.sendBtn': 'Оқушыларға жіберу', 'hw.saveDraft': 'Жобаны сақтау', 'hw.link': 'Сыныпқа сілтеме', 'hw.linkAfter': 'жібергеннен кейін пайда болады', 'hw.qr': 'QR-код', 'hw.copy': 'Көшіру', 'hw.copied': 'Сілтеме көшірілді',
     'hw.err.class': 'Сыныпты таңдаңыз', 'hw.err.material': 'Онлайн-тапсырма үшін тестті таңдаңыз', 'hw.err.task': 'Тапсырманы жазыңыз', 'hw.err.students': 'Кемінде бір оқушыны таңдаңыз', 'hw.sent': 'Тапсырма жіберілді — сілтемені сыныппен бөлісіңіз', 'hw.saved': 'Жоба сақталды',
     'hw.qrTitle': 'Сыныпқа арналған QR-код', 'hw.qrNote': 'Экранға шығарыңыз — оқушылар тапсырманы телефоннан ашады.', 'hw.studentsTitle': 'Кімге жіберу', 'hw.all': 'Бүкіл сынып', 'hw.local': 'Әзірге деректер осы браузерде сақталады, сілтеме осы құрылғыда ашылады. Дерекқор қосылғаннан кейін — барлық оқушыда.',
     'hw.crumb': 'Тексеру', 'hw.st.handed': 'Тапсырды', 'hw.st.checked': 'Тексерілді', 'hw.st.left': '{n} қалды', 'hw.st.avg': 'Орташа баға', 'hw.st.of5': '/ 5', 'hw.st.hardest': 'Ең қиыны', 'hw.st.of': '/ {n}',
@@ -65,7 +65,7 @@ add({
     'hw.material': 'Material', 'hw.pick': 'Choose a test', 'hw.m.test': 'Test: {t}', 'hw.m.hw': 'Lesson homework: {t}', 'hw.m.none': 'No tests yet — make one in “Tests”', 'hw.makeTest': 'Make a test',
     'hw.task': 'Task', 'hw.taskPh': 'For example: problems §12, № 1–4', 'hw.instr': 'What to do', 'hw.instrPh': 'Briefly for the student: what to solve and how to send the photo',
     'hw.to': 'To', 'hw.pickStudents': 'Choose students', 'hw.nStudents': 'Students: {n}', 'hw.noClasses': 'Add a class first', 'hw.due': 'Deadline', 'hw.checker': 'Who checks', 'hw.k.auto': 'Automatic', 'hw.k.ai': 'AI + me', 'hw.k.self': 'Me',
-    'hw.showAnswers': 'Show answers after handing in', 'hw.shuffle': 'Shuffle questions', 'hw.sendBtn': 'Send to students', 'hw.saveDraft': 'Save draft', 'hw.link': 'Class link', 'hw.linkAfter': 'appears after sending', 'hw.qr': 'QR code', 'hw.copy': 'Copy', 'hw.copied': 'Link copied',
+    'hw.settings': 'Checking and options', 'hw.showShort': 'answers after handing in', 'hw.shuffleShort': 'shuffled questions', 'hw.showAnswers': 'Show answers after handing in', 'hw.shuffle': 'Shuffle questions', 'hw.sendBtn': 'Send to students', 'hw.saveDraft': 'Save draft', 'hw.link': 'Class link', 'hw.linkAfter': 'appears after sending', 'hw.qr': 'QR code', 'hw.copy': 'Copy', 'hw.copied': 'Link copied',
     'hw.err.class': 'Choose a class', 'hw.err.material': 'Choose a test for online homework', 'hw.err.task': 'Write the task', 'hw.err.students': 'Choose at least one student', 'hw.sent': 'Homework sent — share the link with the class', 'hw.saved': 'Draft saved',
     'hw.qrTitle': 'QR code for the class', 'hw.qrNote': 'Show it on the screen — students open the homework on their phones.', 'hw.studentsTitle': 'Send to', 'hw.all': 'Whole class', 'hw.local': 'Data is stored in this browser for now, so the link works on this device. Once the database is connected, it works for every student.',
     'hw.crumb': 'Review', 'hw.st.handed': 'Handed in', 'hw.st.checked': 'Checked', 'hw.st.left': '{n} left', 'hw.st.avg': 'Average grade', 'hw.st.of5': 'of 5', 'hw.st.hardest': 'Hardest', 'hw.st.of': 'of {n}',
@@ -174,12 +174,14 @@ async function list(main, query) {
               ${classes.length ? html`<button type="button" class="chip sq${F.studentIds ? ' on dark' : ''}" data-pick>${F.studentIds ? t('hw.nStudents', { n: F.studentIds.length }) : t('hw.pickStudents')}</button>` : ''}</div>
           </div>
           <div class="field muted">${t('hw.due')}<div class="hw-due-row"><input type="date" name="dueDate" value="${F.dueDate}" min="${today()}"><input type="time" name="dueTime" value="${F.dueTime}"></div></div>
+          ${moreBox('hw-settings', html`
           <div class="field muted">${t('hw.checker')}
             <div class="seg2">${(F.kind === 'online' ? ['auto', 'self'] : ['ai', 'self']).map(k => html`<button type="button" data-checker="${k}" aria-pressed="${F.checker === k}">${t('hw.k.' + k)}</button>`)}</div>
           </div>
           ${F.kind === 'online' ? html`
             <label class="pk-toggle hw-tg"><span>${t('hw.showAnswers')}</span><input type="checkbox" name="showAnswers" ${F.showAnswers ? raw('checked') : ''}><i></i></label>
             <label class="pk-toggle hw-tg"><span>${t('hw.shuffle')}</span><input type="checkbox" name="shuffle" ${F.shuffle ? raw('checked') : ''}><i></i></label>` : ''}
+          `.toString(), [t('hw.k.' + F.checker), F.kind === 'online' && F.showAnswers ? t('hw.showShort') : '', F.kind === 'online' && F.shuffle ? t('hw.shuffleShort') : ''].filter(Boolean).join(' · '), t('hw.settings'))}
           <span class="grow"></span>
           <button type="submit" class="btn-k hw-send">${t('hw.sendBtn')}</button>
           ${F.id ? html`<button type="button" class="link-btn" data-savedraft>${t('hw.saveDraft')}</button>` : ''}
@@ -402,7 +404,7 @@ async function review(main, id, query) {
     main.querySelector('[data-copylink]').onclick = async () => { await copyText(hwLink(hw.id)); toast(t('hw.copied')); };
     main.querySelector('[data-qr]').onclick = () => showQr(hw.id);
     main.querySelector('[data-del]').onclick = async () => {
-      if (!confirm(t('ui.confirmDelete'))) return;
+      if (!(await confirmModal(t('ui.confirmDelete')))) return;
       await db.submissions.removeWhere({ homeworkId: hw.id });
       await db.marks.removeWhere({ homeworkId: hw.id });
       await db.homework.remove(hw.id);

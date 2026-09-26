@@ -135,10 +135,11 @@ export const revokeSession = id => api('/api/admin/sessions/' + id, { method: 'D
 
 /* API keys (the Gemini key and image search keys live only on the server). */
 export async function keys() {
-  if (mode === 'demo') return { providers: ['gemini', 'gemini_image', 'pexels', 'pixabay', 'unsplash'], maxSlots: 3, keys: [{ id: 1, provider: 'gemini', slot: 1, label: 'основной', preview: 'AIza…9f2c', active: 1, last_used_at: new Date().toISOString(), fail_count: 0 }, { id: 2, provider: 'pexels', slot: 1, label: '', preview: '563…a1', active: 1, last_used_at: null, fail_count: 0 }] };
+  // Example mode shows no keys at all: real keys exist only on the server, added by the owner.
+  if (mode === 'demo') return { providers: ['gemini', 'gemini_image', 'pexels', 'pixabay', 'unsplash'], maxSlots: 3, keys: [] };
   return api('/api/admin/keys');
 }
-export const saveKey = body => mode === 'demo' ? Promise.resolve() : api('/api/admin/keys', { method: 'POST', body });
+export const saveKey = body => mode === 'demo' ? Promise.reject(new Error('demo')) : api('/api/admin/keys', { method: 'POST', body });
 export const toggleKey = (id, active) => mode === 'demo' ? Promise.resolve() : api('/api/admin/keys/' + id, { method: 'PATCH', body: { active } });
 export const deleteKey = id => mode === 'demo' ? Promise.resolve() : api('/api/admin/keys/' + id, { method: 'DELETE' });
 
