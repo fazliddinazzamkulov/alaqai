@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>alaqai — платформа</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script>
+  window.ALAQAI_API_BASE = window.ALAQAI_API_BASE || "https://api.alaqai.online";
+  window.ALAQAI_GOOGLE_CLIENT_ID = window.ALAQAI_GOOGLE_CLIENT_ID || "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com";
+</script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="../assets/js/api.js" defer></script>
+<style>
+  :root{
+    --lime:#D6FF3B; --ink:#0F1115; --paper:#FFFFFF; --muted:#6B7280; --line:#E9EAEC; --panel:#F7F7F5; --danger:#E4432B;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--panel);}
+  a{color:inherit;text-decoration:none;}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px;}
+  header{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20;}
+  nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0;gap:14px;}
+  .brand{display:flex;align-items:center;gap:9px;font-family:'Poppins',sans-serif;font-weight:800;font-size:18px;}
+  .brand .mark{width:26px;height:26px;background:var(--ink);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .brand .mark svg{width:14px;height:14px;color:var(--lime);}
+  .nav-links{display:flex;gap:6px;}
+  .nav-links a{font-size:13px;font-weight:700;color:var(--muted);padding:8px 12px;border-radius:100px;}
+  .nav-links a:hover{background:var(--panel);color:var(--ink);}
+  .nav-actions{display:flex;align-items:center;gap:10px;}
+  .user-chip{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;}
+  .user-chip img{width:28px;height:28px;border-radius:50%;}
+  .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:100px;font-weight:700;font-size:13px;cursor:pointer;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-family:inherit;}
+  .btn:hover{border-color:var(--ink);}
+  .btn-lime{background:var(--lime);border-color:var(--lime);}
+  .btn-lime:hover{filter:brightness(.96);}
+  .btn-sm{padding:6px 12px;font-size:12px;}
+  .btn-danger-ghost{color:var(--danger);border-color:#F6D2CB;}
+  .btn-danger-ghost:hover{background:#FDEDEA;}
+
+  main{padding:32px 0 80px;}
+  .page-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;}
+  .page-head h1{font-size:24px;font-weight:800;letter-spacing:-.01em;}
+  .page-head p{color:var(--muted);font-size:13.5px;margin-top:4px;}
+
+  .gate{
+    background:#fff;border:1.5px dashed var(--line);border-radius:18px;padding:28px;text-align:center;margin-bottom:28px;
+  }
+  .gate h3{font-size:16px;margin-bottom:6px;}
+  .gate p{color:var(--muted);font-size:13.5px;margin-bottom:16px;}
+  #gsi-gate{display:flex;justify-content:center;}
+
+  .tool-tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:36px;}
+  @media (max-width:760px){ .tool-tiles{grid-template-columns:1fr;} }
+  .tool-tile{background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:10px;transition:.15s;}
+  .tool-tile:hover{border-color:var(--ink);transform:translateY(-2px);}
+  .tool-tile .ico{width:36px;height:36px;border-radius:10px;background:var(--panel);display:flex;align-items:center;justify-content:center;font-size:18px;}
+  .tool-tile h3{font-size:15px;font-weight:700;}
+  .tool-tile p{font-size:12.5px;color:var(--muted);line-height:1.5;flex:1;}
+  .tool-tile .go{font-size:12.5px;font-weight:800;}
+
+  section.block{margin-bottom:40px;}
+  .block-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+  .block-head h2{font-size:16px;font-weight:800;}
+
+  .class-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;}
+  .class-card{background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px;}
+  .class-card .cname{font-size:16px;font-weight:800;}
+  .class-card .ccount{font-size:12px;color:var(--muted);}
+  .class-card .crow{display:flex;gap:8px;}
+  .add-row{display:flex;gap:8px;margin-top:14px;}
+  .add-row input{flex:1;border:1.5px solid var(--line);border-radius:10px;padding:10px 14px;font-size:13.5px;font-family:inherit;}
+  .add-row input:focus{outline:none;border-color:var(--ink);}
+
+  .lib-list{display:flex;flex-direction:column;gap:8px;}
+  .lib-item{background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:12px;}
+  .lib-item .lt{flex:1;min-width:0;}
+  .lib-item .lt .ti{font-size:13.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .lib-item .lt .me{font-size:11.5px;color:var(--muted);}
+  .lib-badge{font-size:10px;font-weight:800;text-transform:uppercase;padding:3px 8px;border-radius:100px;background:var(--panel);color:var(--muted);flex-shrink:0;}
+  .empty-note{color:var(--muted);font-size:13px;padding:18px;text-align:center;background:#fff;border:1.5px dashed var(--line);border-radius:14px;}
+
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:100px;font-size:13px;font-weight:600;opacity:0;pointer-events:none;transition:.25s;z-index:99;}
+  .toast.show{opacity:1;transform:translate(-50%,-6px);}
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="wrap">
+    <a class="brand" href="../index.html">
+      <div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
+      alaqai
+    </a>
+    <div class="nav-links">
+      <a href="platform.html">Платформа</a>
+      <a href="presentation.html">Презентации</a>
+      <a href="tests.html">Тесты</a>
+    </div>
+    <div class="nav-actions" id="navActions">
+      <div id="gsi-nav"></div>
+    </div>
+  </nav>
+</header>
+
+<main class="wrap">
+  <div class="page-head">
+    <div>
+      <h1>Платформа</h1>
+      <p>Классы, презентации, тесты и всё для урока — в одном месте.</p>
+    </div>
+  </div>
+
+  <div class="gate" id="loginGate" style="display:none;">
+    <h3>Войдите через Google, чтобы создавать классы и материалы</h3>
+    <p>Просматривать платформу и инструменты можно без входа. Вход нужен для сохранения классов, презентаций и тестов на вашем аккаунте.</p>
+    <div id="gsi-gate"></div>
+  </div>
+
+  <div class="tool-tiles">
+    <a class="tool-tile" href="presentation.html">
+      <div class="ico">📊</div>
+      <h3>Генератор презентаций</h3>
+      <p>Тема урока → готовые слайды с фото, иконками и AI-изображениями. Можно готовить заранее или запускать прямо из урока.</p>
+      <span class="go">Открыть →</span>
+    </a>
+    <a class="tool-tile" href="tests.html">
+      <div class="ico">🧩</div>
+      <h3>Конструктор тестов и игр</h3>
+      <p>Викторина, кроссворд, мемори, сортировка и другие форматы — вручную или с помощью ИИ по теме.</p>
+      <span class="go">Открыть →</span>
+    </a>
+    <div class="tool-tile" style="cursor:default;">
+      <div class="ico">🏫</div>
+      <h3>Экран урока</h3>
+      <p>Откройте урок из карточки класса ниже — там же встроенные генераторы, свой PDF/DOCX/PPTX-ридер и AI-помощник.</p>
+    </div>
+  </div>
+
+  <section class="block">
+    <div class="block-head">
+      <h2>Мои классы</h2>
+    </div>
+    <div class="class-grid" id="classGrid"></div>
+    <div class="add-row">
+      <input type="text" id="newClassName" placeholder="Название класса, например 7А" maxlength="24">
+      <button class="btn btn-lime" id="addClassBtn">+ Добавить класс</button>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="block-head">
+      <h2>Библиотека — подготовлено заранее</h2>
+    </div>
+    <div class="lib-list" id="libList"></div>
+  </section>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const $ = (id) => document.getElementById(id);
+  function toast(msg){ const t=$('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 2200); }
+
+  let currentUser = null;
+
+  function renderNav(){
+    const navActions = $('navActions');
+    if(currentUser){
+      navActions.innerHTML = `
+        <div class="user-chip">${currentUser.picture ? `<img src="${currentUser.picture}" alt="">` : ''}<span>${escapeHtml(currentUser.name||currentUser.email)}</span></div>
+        ${['admin','owner'].includes(currentUser.role) ? '<a class="btn btn-sm" href="admin.html">Админ</a>' : ''}
+        <button class="btn btn-sm" id="logoutBtn">Выйти</button>
+      `;
+      $('logoutBtn').onclick = async () => { await Alaqai.logout(); location.reload(); };
+      $('loginGate').style.display = 'none';
+    } else {
+      navActions.innerHTML = `<div id="gsi-nav"></div>`;
+      Alaqai.renderGoogleButton('gsi-nav', { buttonConfig:{theme:'outline',size:'medium',shape:'pill',text:'signin'}, onSignIn: onLoggedIn });
+      $('loginGate').style.display = 'block';
+      Alaqai.renderGoogleButton('gsi-gate', { buttonConfig:{theme:'filled_black',size:'large',shape:'pill',text:'continue_with'}, onSignIn: onLoggedIn });
+    }
+  }
+  function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+  async function onLoggedIn(user){
+    currentUser = user;
+    renderNav();
+    await loadClasses();
+    await loadLibrary();
+  }
+
+  // ---------- classes ----------
+  async function loadClasses(){
+    const grid = $('classGrid');
+    if(!currentUser){ grid.innerHTML = `<div class="empty-note">Войдите, чтобы увидеть свои классы.</div>`; return; }
+    try{
+      const { classes } = await Alaqai.api('/api/classes');
+      if(!classes.length){ grid.innerHTML = `<div class="empty-note">Классов пока нет — добавьте первый ниже.</div>`; return; }
+      grid.innerHTML = classes.map(c => `
+        <div class="class-card">
+          <div class="cname">${escapeHtml(c.name)}</div>
+          <div class="ccount">${c.students.length} учеников</div>
+          <div class="crow">
+            <a class="btn btn-sm btn-lime" style="flex:1;justify-content:center;" href="lesson.html?classId=${c.id}">Начать урок →</a>
+            <button class="btn btn-sm btn-danger-ghost" data-del="${c.id}">Удалить</button>
+          </div>
+        </div>
+      `).join('');
+      grid.querySelectorAll('[data-del]').forEach(btn => {
+        btn.onclick = async () => {
+          if(!confirm('Удалить класс вместе с учениками?')) return;
+          await Alaqai.api('/api/classes/' + btn.dataset.del, { method:'DELETE' });
+          toast('Класс удалён'); loadClasses();
+        };
+      });
+    }catch(e){ grid.innerHTML = `<div class="empty-note">Не удалось загрузить классы: ${escapeHtml(e.message)}</div>`; }
+  }
+  $('addClassBtn').onclick = async () => {
+    if(!Alaqai.requireLogin('#loginGate')){ toast('Сначала войдите через Google'); return; }
+    const name = $('newClassName').value.trim();
+    if(!name) return;
+    try{
+      await Alaqai.api('/api/classes', { method:'POST', body:{ name } });
+      $('newClassName').value = '';
+      toast('Класс добавлен'); loadClasses();
+    }catch(e){ toast('Ошибка: ' + e.message); }
+  };
+
+  // ---------- library ----------
+  async function loadLibrary(){
+    const list = $('libList');
+    if(!currentUser){ list.innerHTML = `<div class="empty-note">Войдите, чтобы сохранять презентации и тесты сюда автоматически.</div>`; return; }
+    try{
+      const { items } = await Alaqai.api('/api/content');
+      if(!items.length){ list.innerHTML = `<div class="empty-note">Пока пусто — созданные презентации и тесты появятся здесь.</div>`; return; }
+      list.innerHTML = items.map(it => `
+        <div class="lib-item">
+          <span class="lib-badge">${it.type === 'presentation' ? 'Презентация' : 'Тест'}</span>
+          <div class="lt">
+            <div class="ti">${escapeHtml(it.title || 'Без названия')}</div>
+            <div class="me">Обновлено ${new Date(it.updatedAt).toLocaleDateString('ru-RU')}</div>
+          </div>
+          <a class="btn btn-sm" href="${it.type === 'presentation' ? 'presentation.html' : 'tests.html'}?id=${it.id}">Открыть</a>
+          <button class="btn btn-sm btn-danger-ghost" data-del-content="${it.id}">✕</button>
+        </div>
+      `).join('');
+      list.querySelectorAll('[data-del-content]').forEach(btn => {
+        btn.onclick = async () => {
+          if(!confirm('Удалить этот материал?')) return;
+          await Alaqai.api('/api/content/' + btn.dataset.delContent, { method:'DELETE' });
+          toast('Удалено'); loadLibrary();
+        };
+      });
+    }catch(e){ list.innerHTML = `<div class="empty-note">Не удалось загрузить библиотеку: ${escapeHtml(e.message)}</div>`; }
+  }
+
+  window.addEventListener('load', () => {
+    if(!window.Alaqai) return;
+    Alaqai.onAuthChange((user) => {
+      currentUser = user;
+      renderNav();
+      loadClasses();
+      loadLibrary();
+    });
+  });
+</script>
+
+</body>
+</html>
