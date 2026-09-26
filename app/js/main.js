@@ -20,7 +20,7 @@ const ROUTES = {
   new: ['./views/newlesson.js', null],
   presentations: ['./views/presentations.js', 'presentations'],
   editor: ['./views/editor.js', 'presentations', 'bare'],
-  tests: ['./views/soon.js', 'tests'],
+  tests: ['./views/tests.js', 'tests'],
   ksp: ['./views/soon.js', 'ksp'],
   homework: ['./views/soon.js', 'homework'],
   guide: ['./views/soon.js', 'guide'],
