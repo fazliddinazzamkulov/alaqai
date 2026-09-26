@@ -23,12 +23,14 @@ const ROUTES = {
   tests: ['./views/tests.js', 'tests'],
   ksp: ['./views/ksp.js', 'ksp'],
   view: ['./views/view.js', null, 'bare'],
-  homework: ['./views/soon.js', 'homework'],
-  guide: ['./views/soon.js', 'guide'],
-  plan: ['./views/soon.js', 'plan'],
+  homework: ['./views/homework.js', 'homework'],
+  s: ['./views/student.js', null, 'bare'],
+  guide: ['./views/guide.js', 'guide'],
+  plan: ['./views/subscription.js', 'plan'],
+  checkout: ['./views/soon.js', 'plan'],
   account: ['./views/soon.js', 'account'],
   lesson: ['./views/lessonmode.js', 'lessons', 'bare'],
-  results: ['./views/soon.js', 'lessons']
+  results: ['./views/results.js', 'lessons']
 };
 
 const shell = document.querySelector('.shell');

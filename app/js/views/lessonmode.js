@@ -111,7 +111,7 @@ export async function render(main, { args, query }) {
     classId: (lesson && lesson.classId) || live.classId || null, students: [], journal: new Map(),
     material: query.test ? 'test' : live.material || (deck ? 'slides' : games.length ? 'game' : test ? 'test' : 'file'),
     page: live.page || 0, gameIdx: 0, panel: null, tab: 'journal', file: null, filePage: 0,
-    groups: live.groups || null, groupScores: live.groupScores || [], answered: new Set(live.answered || []), lastPicked: null,
+    groups: live.groups || null, groupScores: live.groupScores || [], quizLog: live.quizLog || [], startedAt: live.startedAt || new Date().toISOString(), answered: new Set(live.answered || []), lastPicked: null,
     timer: { mode: 'down', total: 300, left: 300, running: false, start: 0 },
     noise: { on: false, display: live.noiseDisplay || 'monster', level: 20, threshold: 70, mic: null, balls: null, silence: 300, silenceLeft: 300, silenceRunning: false },
     started: Date.now(), chat: [], saveTimer: null, tick: null, board: null
@@ -158,7 +158,7 @@ async function saveNow() {
   const st = S;
   if (!st.classId && !st.lesson) return;
   const lesson = await ensureLesson();
-  await db.lessons.update(lesson.id, { classId: st.classId, live: { material: st.material, page: st.page, groups: st.groups, groupScores: st.groupScores, answered: [...st.answered], classId: st.classId, noiseDisplay: st.noise.display } });
+  await db.lessons.update(lesson.id, { classId: st.classId, live: { material: st.material, page: st.page, groups: st.groups, groupScores: st.groupScores, answered: [...st.answered], classId: st.classId, noiseDisplay: st.noise.display, quizLog: st.quizLog, startedAt: st.startedAt } });
   for (const [sid, m] of st.journal) {
     const data = { lessonId: lesson.id, classId: st.classId, studentId: sid, date: lesson.date || today(), present: m.present, points: m.points || 0 };
     if (m.id) await db.marks.update(m.id, data);
@@ -256,7 +256,9 @@ function drawContent() {
     playGame(el.querySelector('[data-g]'), S.games[S.gameIdx]);
   } else if (S.material === 'quiz') {
     el.innerHTML = '<div class="lm-card"><div data-g></div></div>';
-    playGame(el.querySelector('[data-g]'), { type: 'quiz', questions: S.quiz.questions });
+    playGame(el.querySelector('[data-g]'), { type: 'quiz', questions: S.quiz.questions }, {
+      onAnswer: (i, ok) => { const r = S.quizLog[i] || { ok: 0, all: 0 }; S.quizLog[i] = { ok: r.ok + (ok ? 1 : 0), all: r.all + 1 }; save(); }
+    });
   } else if (S.material === 'test') {
     el.innerHTML = `<div class="lm-card scroll"><h2 class="lm-h">${esc(S.test.title || '')}</h2><div data-g></div></div>`;
     playTest(el.querySelector('[data-g]'), S.test);

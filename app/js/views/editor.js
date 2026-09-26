@@ -1,7 +1,7 @@
 /* Screen 7 · Presentation editor: slides on the left, the slide in the middle
  * (click any text to edit it), the AI agent on the right. */
 import { add, t, lang } from '../i18n.js';
-import { html, raw, esc, icon, openModal, toast } from '../ui.js';
+import { html, raw, esc, icon, openModal, toast, downscale } from '../ui.js';
 import { db } from '../data/store.js';
 import { searchImage, generateImage, iconUrl, AiError } from '../ai.js';
 import { sanitize, plain, renderMath, LAYOUTS, GAME_LAYOUTS, THEMES } from '../slides.js';
@@ -461,20 +461,6 @@ function photoModal(main) {
   });
   const rm = m.querySelector('[data-remove]');
   if (rm) rm.addEventListener('click', () => { snapshot(); delete deck.slides[cur].imageUrl; deck.slides[cur].imageTried = true; drawStage(main); drawThumb(main, cur); save(main, 0); close(); });
-}
-
-/** Resize an uploaded picture so a presentation stays small enough to store. */
-function downscale(file, max = 1600) {
-  return new Promise(res => {
-    const img = new Image();
-    img.onload = () => {
-      const k = Math.min(1, max / Math.max(img.width, img.height));
-      const c = document.createElement('canvas'); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
-      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
-      res(c.toDataURL('image/jpeg', 0.85)); URL.revokeObjectURL(img.src);
-    };
-    img.src = URL.createObjectURL(file);
-  });
 }
 
 function iconModal(main) {

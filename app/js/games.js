@@ -146,7 +146,7 @@ export function playGame(el, game, opts = {}) {
   const P = { quiz, matching, memory, crossword, fill, search, truefalse, anagram, sort }[type];
   el.innerHTML = '';
   el.className = 'gp gp-' + type;
-  P(el, data, opts.onScore || (() => {}));
+  P(el, data, opts.onScore || (() => {}), opts);
 }
 
 function head(el, title, total) {
@@ -155,7 +155,7 @@ function head(el, title, total) {
 }
 function win(el) { el.insertAdjacentHTML('beforeend', `<div class="gp-win">${esc(t('gp.win'))}</div>`); }
 
-function quiz(el, qs, onScore) {
+function quiz(el, qs, onScore, opts = {}) {
   let i = 0, right = 0;
   const draw = () => {
     if (i >= qs.length) { el.innerHTML = `<div class="gp-final"><b>${esc(t('gp.finish', { n: right, total: qs.length }))}</b><button type="button" class="btn-o" data-again>${esc(t('gp.again'))}</button></div>`; el.querySelector('[data-again]').onclick = () => { i = 0; right = 0; draw(); }; return; }
@@ -170,6 +170,7 @@ function quiz(el, qs, onScore) {
       const k = Number(b.dataset.k);
       if (k === q.answer) { right++; b.classList.add('ok'); } else { b.classList.add('bad'); el.querySelector(`[data-k="${q.answer}"]`).classList.add('ok'); }
       onScore(right, qs.length);
+      if (opts.onAnswer) opts.onAnswer(i, k === q.answer);
       el.querySelector('.gp-foot').innerHTML = `<button type="button" class="btn-k" data-next>${esc(t('gp.next'))}</button>`;
       el.querySelector('[data-next]').onclick = () => { i++; draw(); };
     });

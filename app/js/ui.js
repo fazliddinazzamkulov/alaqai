@@ -78,7 +78,7 @@ export function openModal({ title, body, submitLabel, onSubmit, extraButtons = '
         <button type="button" class="icon-btn" data-close aria-label="${esc(t('ui.close'))}">${icon('close', 18).__raw}</button></div>
       <div class="modal-body">${body}</div>
       <div class="modal-foot">${extraButtons}<span class="grow"></span>
-        <button type="button" class="btn-o" data-close>${esc(t('ui.cancel'))}</button>
+        <button type="button" class="btn-o" data-close>${esc(onSubmit ? t('ui.cancel') : t('ui.close'))}</button>
         ${onSubmit ? `<button type="submit" class="btn-k">${esc(submitLabel || t('ui.save'))}</button>` : ''}
       </div>
     </form>`;
@@ -117,4 +117,29 @@ export function toast(message) {
 /** Initials for an avatar: "Фазлиддин Аззамкулов" → "ФА". */
 export function initials(name) {
   return String(name || '').trim().split(/\s+/).slice(0, 2).map(w => w.charAt(0).toUpperCase()).join('') || '·';
+}
+
+/** Resize an uploaded picture to a JPEG data URL so it stays small enough to store. */
+export function downscale(file, max = 1600, quality = 0.85) {
+  return new Promise((res, rej) => {
+    const img = new Image();
+    img.onload = () => {
+      const k = Math.min(1, max / Math.max(img.width, img.height));
+      const c = document.createElement('canvas'); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      res(c.toDataURL('image/jpeg', quality)); URL.revokeObjectURL(img.src);
+    };
+    img.onerror = () => { URL.revokeObjectURL(img.src); rej(new Error('image')); };
+    img.src = URL.createObjectURL(file);
+  });
+}
+
+/** Copy text; falls back to a hidden textarea where the Clipboard API is blocked. */
+export async function copyText(text) {
+  try { await navigator.clipboard.writeText(text); return true; } catch (e) {
+    const ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    let ok = false; try { ok = document.execCommand('copy'); } catch (err) { /* ignore */ }
+    ta.remove(); return ok;
+  }
 }
