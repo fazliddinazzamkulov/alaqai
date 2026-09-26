@@ -24,7 +24,8 @@ export const COLLECTIONS = [
   'tests',          // { id, lessonId, kind: 'test' | 'quiz', title, questions }
   'homework',       // { id, lessonId, classId, kind, dueDate, ... }
   'submissions',    // { id, homeworkId, studentId, status, grade, submittedAt }
-  'usage'           // { id, kind: 'ai-lesson' | ..., at }
+  'usage',          // { id, kind: 'ai-lesson' | ..., at }
+  'shares'          // { id, kind: 'ksp', refId, expiresAt, active, views: [{ name, at }] }
 ];
 
 /* ---------- localStorage adapter ---------- */
