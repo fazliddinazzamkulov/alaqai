@@ -26,7 +26,7 @@ const ROUTES = {
   guide: ['./views/soon.js', 'guide'],
   plan: ['./views/soon.js', 'plan'],
   account: ['./views/soon.js', 'account'],
-  lesson: ['./views/soon.js', 'lessons'],
+  lesson: ['./views/lessonmode.js', 'lessons', 'bare'],
   results: ['./views/soon.js', 'lessons']
 };
 
