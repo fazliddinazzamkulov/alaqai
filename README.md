@@ -1,21 +1,25 @@
 # alaqai
 
-A platform for teachers: an AI presentation generator, a test/game constructor,
-and a full in-lesson workspace (own PDF/DOCX/PPTX reader, whiteboard, timer,
-class journal, AI assistant) — plus a short practical course on using AI for
-lesson prep. Landing page and course info live at [alaqai.online](https://www.alaqai.online).
+A platform for teachers in Kazakhstan: type a topic and alaqai prepares the whole
+lesson — lesson plan (KSP), slides, games, a test and homework — plus a full
+in-lesson workspace (own PDF/DOCX/PPTX reader, whiteboard, timer, class journal,
+AI assistant). The landing page lives at [alaqai.online](https://www.alaqai.online)
+in Kazakh, Russian and English.
 
 ## Pages (static, served by GitHub Pages)
 
 | File | What it is |
 |---|---|
-| `index.html` | Landing page — the platform pitch + the practical course |
+| `index.html` | Landing page in қазақша / русский / English (switcher in the header, choice saved in `localStorage` as `alaqai_lang`; `?lang=kk\|ru\|en` links work too) |
 | `platform.html` | Dashboard: manage classes, launch tools to prepare lessons in advance |
 | `lesson.html` | The in-class workspace (formerly `lesson12.html`) — own PDF/DOCX-capable viewer, whiteboard, timer, groups, journal, AI assistant, and embeds the presentation/test generators in an in-lesson overlay |
 | `presentation.html` | AI presentation generator — usable standalone (lesson prep) or embedded from `lesson.html` |
 | `tests.html` | Test/game constructor (9 formats) — same standalone-or-embedded model, plus an "AI: fill from topic" helper |
 | `admin.html` | Owner/admin-only: API key vault, user subscriptions & roles, security (audit log, active sessions) |
 | `assets/js/api.js` | Shared client: backend fetch wrapper + Google Identity Services helper, loaded by every page |
+| `assets/css/alaqai.css` | Design tokens (colors, fonts) and base styles: logo, black/white buttons, language switcher |
+| `assets/js/lang.js` | Interface language (kk / ru / en): `?lang=` → saved choice → browser language → ru |
+| `assets/js/landing-i18n.js` | Landing texts in three languages; `index.html` elements point into it with `data-t="key"` |
 
 ## Why there's a `server/` folder
 

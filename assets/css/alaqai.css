@@ -1,0 +1,141 @@
+/* alaqai — design tokens and base styles shared by every page. */
+
+:root {
+  /* Surfaces */
+  --bg: #FFFFFF;
+  --bg-soft: #FAFAF5;
+  --panel: #F4F4F0;
+  --panel-2: #F7F7F4;
+
+  /* Text */
+  --ink: #16170F;
+  --text-2: #3A3A3A;
+  --muted: #555550;
+  --muted-2: #6B6B66;
+
+  /* Lines */
+  --line: #E6E6E1;
+  --line-2: #ECECE4;
+  --outline: #DADAD5;
+
+  /* Dark surfaces */
+  --dark-2: #1E1F17;
+  --dark-3: #262720;
+  --on-dark: #C9CABE;
+  --on-dark-2: #B5B5B0;
+
+  /* Brand accent — only for brand marks and marker highlights */
+  --lime: #D6FF3B;
+
+  /* Status */
+  --green: #1B7A43;
+  --green-bg: #E3F6EA;
+  --peach: #FFB38A;
+
+  --font-body: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-head: "TikTok Sans", Inter, system-ui, sans-serif;
+  --font-logo: Poppins, Inter, sans-serif;
+
+  --check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E");
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, p, ul, ol, figure { margin: 0; }
+ul, ol { padding: 0; list-style: none; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; }
+svg { flex-shrink: 0; }
+[hidden] { display: none !important; }
+
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+/* Logo: «alaqai» wordmark + lime square */
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-logo);
+  font-weight: 700;
+  font-size: 26px;
+  letter-spacing: -0.5px;
+  line-height: 1;
+  color: var(--ink);
+}
+.logo-dot {
+  box-sizing: content-box;
+  width: 9px;
+  height: 9px;
+  border-radius: 3px;
+  background: var(--lime);
+  border: 1.5px solid var(--ink);
+}
+
+/* Buttons: black and white only */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 0;
+  border-radius: 999px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color .15s ease, border-color .15s ease, opacity .15s ease;
+}
+.btn-ink { background: var(--ink); color: #FFFFFF; }
+.btn-ink:hover { background: #2C2D24; }
+.btn-outline { background: transparent; color: var(--ink); border: 1.5px solid var(--outline); }
+.btn-outline:hover { border-color: var(--ink); }
+.btn-lime { background: var(--lime); color: var(--ink); font-weight: 700; }
+.btn-lime:hover { opacity: .9; }
+
+/* Language switcher (ҚАЗ / РУС / ENG) */
+.lang-pill {
+  display: flex;
+  padding: 3px;
+  border-radius: 999px;
+  background: var(--panel);
+}
+.lang-pill button {
+  padding: 6px 10px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: normal;
+  cursor: pointer;
+}
+.lang-pill button:hover { color: var(--ink); }
+.lang-pill button[aria-pressed="true"] { background: var(--ink); color: #FFFFFF; }
+
+/* Round check marks */
+.tick {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 999px;
+}
+.tick::before {
+  content: "";
+  width: 56%;
+  height: 56%;
+  background: currentColor;
+  -webkit-mask: var(--check) center / contain no-repeat;
+  mask: var(--check) center / contain no-repeat;
+}
