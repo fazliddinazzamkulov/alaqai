@@ -2,8 +2,8 @@
  *
  * Every screen talks to data only through `db` below. All methods are async and
  * return plain objects, so the storage behind them can change without touching
- * the screens: today it is the browser (localStorage), later an HTTP adapter
- * that calls the alaqai server and its real database.
+ * the screens. The browser (localStorage) is the working copy; when a teacher
+ * is signed in, sync.js copies every change to the alaqai server and back.
  *
  *   db.classes.list({ filter })   db.classes.get(id)
  *   db.classes.create(obj)        db.classes.update(id, patch)
@@ -54,8 +54,70 @@ const localAdapter = {
 
 let adapter = localAdapter;
 
-/** Swap the storage (e.g. to the HTTP adapter once the server database is live). */
-export function useAdapter(next) { adapter = next; notify({ type: 'reset' }); }
+/** Swap the storage; returns a function that puts the previous one back. */
+export function useAdapter(next) {
+  const prev = adapter;
+  adapter = next;
+  notify({ type: 'reset' });
+  return () => { adapter = prev; notify({ type: 'reset' }); };
+}
+
+/** Read-only data handed over by the server (a shared lesson plan), kept in memory. */
+export function memoryAdapter(bundle = {}, settings = {}) {
+  const data = { ...bundle };
+  return {
+    async all(name) { return (data[name] || []).slice(); },
+    async saveAll(name, rows) { data[name] = rows; },
+    async getSettings() { return settings; },
+    async saveSettings(s) { settings = s; }
+  };
+}
+
+/* ---------- write hooks (cloud sync listens here) ---------- */
+
+const writeHooks = new Set();
+/** fn({ collection, ids }) after any change made in this browser; returns an unsubscribe. */
+export function onLocalWrite(fn) { writeHooks.add(fn); return () => writeHooks.delete(fn); }
+function wrote(collection, ids) {
+  if (adapter !== localAdapter) return; // shared views in memory are never uploaded
+  writeHooks.forEach(fn => { try { fn({ collection, ids }); } catch (e) { console.error(e); } });
+}
+
+/** Local rows and settings for the sync module (no hooks fired). */
+export const local = {
+  rows: name => readRaw(name) || [],
+  setRows: (name, rows) => writeRaw(name, rows),
+  settings: () => readRaw('settings') || {},
+  setSettings: s => writeRaw('settings', s),
+  meta: key => readRaw('__' + key),
+  setMeta: (key, v) => writeRaw('__' + key, v),
+  /** Deletes every collection and the settings (used when another account signs in). */
+  wipe() { COLLECTIONS.forEach(n => writeRaw(n, [])); writeRaw('settings', {}); }
+};
+
+/** Changes that came from the server: write them and let open screens refresh. */
+export function applyRemote(changes) {
+  const by = {};
+  let settings = null;
+  for (const c of changes) {
+    if (c.coll === 'settings') { settings = c.deleted ? {} : c.data; continue; }
+    if (!COLLECTIONS.includes(c.coll)) continue;
+    (by[c.coll] = by[c.coll] || []).push(c);
+  }
+  for (const [name, list] of Object.entries(by)) {
+    const rows = readRaw(name) || [];
+    const index = new Map(rows.map((r, i) => [r.id, i]));
+    const drop = new Set();
+    for (const c of list) {
+      if (c.deleted) { drop.add(c.id); continue; }
+      if (index.has(c.id)) rows[index.get(c.id)] = c.data;
+      else { index.set(c.id, rows.length); rows.push(c.data); }
+    }
+    writeRaw(name, drop.size ? rows.filter(r => !drop.has(r.id)) : rows);
+    notify({ type: 'external', collection: name });
+  }
+  if (settings) { writeRaw('settings', settings); notify({ type: 'settings', settings }); }
+}
 
 /* ---------- change notifications ---------- */
 
@@ -96,6 +158,7 @@ function collection(name) {
       rows.push(row);
       await adapter.saveAll(name, rows);
       notify({ type: 'create', collection: name, row });
+      wrote(name, [row.id]);
       return row;
     },
     async createMany(list) {
@@ -103,6 +166,7 @@ function collection(name) {
       const created = list.map(obj => ({ id: uid(), createdAt: now(), ...obj }));
       await adapter.saveAll(name, rows.concat(created));
       notify({ type: 'create', collection: name, rows: created });
+      wrote(name, created.map(r => r.id));
       return created;
     },
     async update(id, patch) {
@@ -112,18 +176,21 @@ function collection(name) {
       rows[i] = { ...rows[i], ...patch, updatedAt: now() };
       await adapter.saveAll(name, rows);
       notify({ type: 'update', collection: name, row: rows[i] });
+      wrote(name, [id]);
       return rows[i];
     },
     async remove(id) {
       const rows = await adapter.all(name);
       await adapter.saveAll(name, rows.filter(r => r.id !== id));
       notify({ type: 'remove', collection: name, id });
+      wrote(name, [id]);
     },
     async removeWhere(filter) {
       const rows = await adapter.all(name);
       const keep = rows.filter(r => !matches(r, filter));
       await adapter.saveAll(name, keep);
       notify({ type: 'remove', collection: name, count: rows.length - keep.length });
+      if (keep.length !== rows.length) wrote(name, rows.filter(r => matches(r, filter)).map(r => r.id));
     }
   };
 }
@@ -133,9 +200,10 @@ export const db = {
   settings: {
     async get() { return adapter.getSettings(); },
     async set(patch) {
-      const next = { ...(await adapter.getSettings()), ...patch };
+      const next = { ...(await adapter.getSettings()), ...patch, updatedAt: now() };
       await adapter.saveSettings(next);
       notify({ type: 'settings', settings: next });
+      wrote('settings', ['settings']);
       return next;
     }
   },

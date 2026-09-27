@@ -17,9 +17,9 @@
 <link rel="stylesheet" href="css/slides.css">
 <script>
   // Backend (Gemini proxy, accounts). The Gemini key lives only on that server.
-  window.ALAQAI_API_BASE = window.ALAQAI_API_BASE || "https://api.alaqai.online";
-  // Google sign-in: the public OAuth Client ID (same value as GOOGLE_CLIENT_ID on the server). Empty = button off.
-  window.ALAQAI_GOOGLE_CLIENT_ID = window.ALAQAI_GOOGLE_CLIENT_ID || "";
+  // For testing another server: localStorage.setItem('alaqai_api', 'http://localhost:8787')
+  window.ALAQAI_API_BASE = window.ALAQAI_API_BASE || (function () { try { return localStorage.getItem('alaqai_api'); } catch (e) { return null; } })() || "https://api.alaqai.online";
+  // Google sign-in: the Client ID comes from the server (/api/config, GOOGLE_CLIENT_ID in its .env).
 </script>
 <script src="../assets/js/lang.js"></script>
 <script src="../assets/js/api.js" defer></script>

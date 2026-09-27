@@ -21,21 +21,21 @@ in Kazakh, Russian and English.
 | `assets/js/lang.js` | Interface language (kk / ru / en): `?lang=` → saved choice → browser language → ru |
 | `assets/js/landing-i18n.js` | Landing texts in three languages; `index.html` elements point into it with `data-t="key"` |
 
-## Why there's a `server/` folder
+## Where the backend lives
 
 GitHub Pages only serves static files — it can't run Node, hold secrets, or
-keep a database. So none of the API keys (Gemini ×3 for fallback, a dedicated
-Gemini image key for "nano banana", Pixabay, Pexels, Unsplash) live in this
-repo or in any browser anymore. They're entered once by an admin in
-`admin.html`, stored encrypted in `server/`'s database, and every AI/image
-call from the frontend is proxied through that backend. See
-[`server/README.md`](server/README.md) for how to run and deploy it, and for
-the full API surface.
+keep a database. The backend is a separate **private** repository,
+[`alaqai.back`](https://github.com/fazliddinazzamkulov/alaqai.back): sign-in
+(Google and SMS), the encrypted API key vault (Gemini, photo search, SMS,
+payments), the AI proxy, payments, cloud sync of every teacher's lessons and
+the homework / lesson-plan links. No key is in this repo or in any browser;
+the owner adds them in `/admin`. See its README for installing it on a server
+in Kazakhstan.
 
-Once the backend is deployed somewhere (a small VPS, Render, Railway, Fly.io…),
-point every page at it by setting `window.ALAQAI_API_BASE` and
-`window.ALAQAI_GOOGLE_CLIENT_ID` — each HTML file has a small inline
-`<script>` near the top of `<head>` for exactly this:
+The pages talk to `https://api.alaqai.online` (Google Client ID and other
+public settings come from the server's `/api/config`). To try another server,
+run in the browser console `localStorage.setItem('alaqai_api', 'http://localhost:8787')`.
+The inline `<script>` near the top of each page's `<head>` holds the default:
 
 ```html
 <script>

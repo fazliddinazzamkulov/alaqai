@@ -90,7 +90,7 @@ export async function render(main, { args, query }) {
 
 /* ================= Screen 10: list + new assignment ================= */
 
-const dateOf = d => shortDate(d).replace(/\.$/, '');
+const dateOf = d => (d ? shortDate(d).replace(/\.$/, '') : '—');
 
 async function list(main, query) {
   const [homework, subs, classes, tests, lessons] = await Promise.all([db.homework.list(), db.submissions.list(), db.classes.list(), db.tests.list(), db.lessons.list()]);

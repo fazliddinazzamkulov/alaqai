@@ -4,6 +4,8 @@
  * added when the SMS provider is chosen; until then they answer
  * { code: 'not_configured' } and the screens say so. */
 
+import { signOutFlush } from './data/sync.js';
+
 const API = () => window.Alaqai;
 
 export class AuthError extends Error {
@@ -14,6 +16,7 @@ export class AuthError extends Error {
 export async function currentUser() {
   const a = await ready();
   if (!a) return null;
+  await a.configReady;
   const cached = a.getCachedUser();
   return cached || a.fetchMe();
 }
@@ -73,5 +76,11 @@ export async function verifySmsCode(phone, code) {
   if (a) await a.fetchMe();
   return res.user;
 }
-export async function logout() { const a = await ready(); if (a) await a.logout(); }
+/** Sends unsaved changes, then signs out; false = some changes could not be sent (offline). */
+export async function logout() {
+  const a = await ready();
+  const clean = await signOutFlush().catch(() => false);
+  if (a) await a.logout();
+  return clean;
+}
 export const logoutEverywhere = () => call('/api/auth/logout-all', {});

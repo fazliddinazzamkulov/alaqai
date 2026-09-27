@@ -136,3 +136,11 @@ a.av-tr:hover { background: var(--soft-2); }
 .av-ugrid .stat-l { white-space: normal; }
 .av-x { overflow-x: auto; }
 @media (max-width: 700px) { .av-x .av-tr.promos, .av-x .av-tr.keys, .av-table .av-tr.pays, .av-table .av-tr.log, .av-table .av-tr.subs { min-width: 560px; } .av-x .av-keyform { grid-template-columns: 1fr; } .av-tr.staff { grid-template-columns: 32px minmax(0, 1fr) auto; } .av-tr.staff > .tag { display: none; } }
+
+/* Kaspi payments waiting for the admin, phone sign-in on the gate */
+.av-kaspi { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; border-color: var(--ink); }
+.av-tr.kwait { grid-template-columns: 80px minmax(0, 1.3fr) 90px 100px auto; }
+.av-tr.kwait .av-btns { display: flex; gap: 6px; justify-content: flex-end; }
+.av-tr .p.pending, .av-tr .pending { color: var(--ink-2); }
+.ag-card .ag-phone { width: 100%; justify-content: center; }
+@media (max-width: 700px) { .av-tr.kwait { grid-template-columns: minmax(0, 1fr) auto; } .av-tr.kwait > span:first-child, .av-tr.kwait > .mono { display: none; } }

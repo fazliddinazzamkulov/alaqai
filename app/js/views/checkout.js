@@ -2,7 +2,8 @@
  * payment method on the right (card, Kaspi QR, Google Pay, Apple Pay). */
 import { add, t, lang } from '../i18n.js';
 import { html, raw, icon, toast } from '../ui.js';
-import { billingConfig, plansTable, checkPromo, priceFor, startPayment } from '../billing.js';
+import { billingConfig, plansTable, checkPromo, priceFor, startPayment, paymentStatus } from '../billing.js';
+import { qrSvg } from '../hw.js';
 
 add({
   ru: {
@@ -13,7 +14,7 @@ add({
     'co.number': 'Номер карты', 'co.exp': 'Срок', 'co.cvc': 'CVC', 'co.save': 'Сохранить карту для продления', 'co.pay': 'Оплатить {p}', 'co.cardNote': 'Оплата проходит через защищённый платёжный шлюз. Данные карты alaqai не хранит.',
     'co.kTitle': 'Оплата через Kaspi QR', 'co.k1': 'Откройте приложение Kaspi.kz', 'co.k2': 'Нажмите «Kaspi QR» и наведите камеру', 'co.k3': 'Подтвердите оплату {p}', 'co.kWait': 'Ждём оплату · код действует {t}', 'co.kOpen': 'Открыть Kaspi.kz на телефоне', 'co.kQr': 'Здесь появится QR-код',
     'co.gNote': 'Откроется окно Google Pay — выберите карту и подтвердите оплату.', 'co.gPay': 'Оплатить через Google Pay · {p}', 'co.aNote': 'Доступно на iPhone, iPad и Mac в Safari. Подтвердите оплату через Face ID или Touch ID.', 'co.aPay': 'Оплатить через Apple Pay · {p}',
-    'co.off': 'Этот способ оплаты подключается. Пока тариф может включить администратор — напишите нам в WhatsApp.', 'co.write': 'Написать в WhatsApp', 'co.login': 'Войдите, чтобы оплатить подписку', 'co.loginBtn': 'Войти', 'co.err': 'Не удалось начать оплату: {m}'
+    'co.off': 'Этот способ оплаты подключается. Пока тариф может включить администратор — напишите нам в WhatsApp.', 'co.write': 'Написать в WhatsApp', 'co.login': 'Войдите, чтобы оплатить подписку', 'co.loginBtn': 'Войти', 'co.redirect': 'Откроется защищённая страница оплаты — там можно ввести карту или оплатить через Google Pay / Apple Pay. Данные карты alaqai не видит.', 'co.go': 'Перейти к оплате · {p}', 'co.kCode': 'В комментарии к платежу укажите код: {c}', 'co.kWait2': 'Ждём подтверждения оплаты — тариф включится сам, страницу можно не закрывать', 'co.paid': 'Оплата прошла, тариф включён', 'co.activated': 'Тариф включён по промокоду', 'co.err': 'Не удалось начать оплату: {m}'
   },
   kk: {
     'co.secure': 'Қауіпсіз төлем', 'co.close': 'Жабу', 'co.title': 'Жазылымды рәсімдеу', 'co.std': 'Аптасына {n} ЖИ-сабақ, сабақ пен тапсырма талдауы', 'co.max': 'Шектеусіз, ЖИ-агенттер',
@@ -23,7 +24,7 @@ add({
     'co.number': 'Карта нөмірі', 'co.exp': 'Мерзімі', 'co.cvc': 'CVC', 'co.save': 'Ұзарту үшін картаны сақтау', 'co.pay': '{p} төлеу', 'co.cardNote': 'Төлем қорғалған төлем шлюзі арқылы өтеді. alaqai карта деректерін сақтамайды.',
     'co.kTitle': 'Kaspi QR арқылы төлеу', 'co.k1': 'Kaspi.kz қосымшасын ашыңыз', 'co.k2': '«Kaspi QR» басып, камераны бағыттаңыз', 'co.k3': '{p} төлемін растаңыз', 'co.kWait': 'Төлемді күтудеміз · код {t} жарамды', 'co.kOpen': 'Телефонда Kaspi.kz ашу', 'co.kQr': 'QR-код осында шығады',
     'co.gNote': 'Google Pay терезесі ашылады — картаны таңдап, төлемді растаңыз.', 'co.gPay': 'Google Pay арқылы төлеу · {p}', 'co.aNote': 'Safari-де iPhone, iPad және Mac-та қолжетімді. Face ID не Touch ID арқылы растаңыз.', 'co.aPay': 'Apple Pay арқылы төлеу · {p}',
-    'co.off': 'Бұл төлем тәсілі қосылып жатыр. Әзірге тарифті әкімші қоса алады — бізге WhatsApp-қа жазыңыз.', 'co.write': 'WhatsApp-қа жазу', 'co.login': 'Жазылымды төлеу үшін кіріңіз', 'co.loginBtn': 'Кіру', 'co.err': 'Төлемді бастау мүмкін болмады: {m}'
+    'co.off': 'Бұл төлем тәсілі қосылып жатыр. Әзірге тарифті әкімші қоса алады — бізге WhatsApp-қа жазыңыз.', 'co.write': 'WhatsApp-қа жазу', 'co.login': 'Жазылымды төлеу үшін кіріңіз', 'co.loginBtn': 'Кіру', 'co.redirect': 'Қорғалған төлем беті ашылады — онда картаны енгізуге немесе Google Pay / Apple Pay арқылы төлеуге болады. alaqai карта деректерін көрмейді.', 'co.go': 'Төлемге өту · {p}', 'co.kCode': 'Төлем пікірінде кодты жазыңыз: {c}', 'co.kWait2': 'Төлемнің расталуын күтудеміз — тариф өзі қосылады, бетті жаппауға болады', 'co.paid': 'Төлем өтті, тариф қосылды', 'co.activated': 'Тариф промокод бойынша қосылды', 'co.err': 'Төлемді бастау мүмкін болмады: {m}'
   },
   en: {
     'co.secure': 'Secure payment', 'co.close': 'Close', 'co.title': 'Your subscription', 'co.std': '{n} AI lessons a week, lesson and homework analysis', 'co.max': 'Unlimited, AI agents',
@@ -33,7 +34,7 @@ add({
     'co.number': 'Card number', 'co.exp': 'Expiry', 'co.cvc': 'CVC', 'co.save': 'Save the card for renewal', 'co.pay': 'Pay {p}', 'co.cardNote': 'Payment goes through a secure payment gateway. alaqai does not store card details.',
     'co.kTitle': 'Pay with Kaspi QR', 'co.k1': 'Open the Kaspi.kz app', 'co.k2': 'Tap “Kaspi QR” and point the camera', 'co.k3': 'Confirm the payment of {p}', 'co.kWait': 'Waiting for payment · the code works for {t}', 'co.kOpen': 'Open Kaspi.kz on the phone', 'co.kQr': 'The QR code appears here',
     'co.gNote': 'A Google Pay window opens — choose a card and confirm.', 'co.gPay': 'Pay with Google Pay · {p}', 'co.aNote': 'Available on iPhone, iPad and Mac in Safari. Confirm with Face ID or Touch ID.', 'co.aPay': 'Pay with Apple Pay · {p}',
-    'co.off': 'This payment method is being connected. For now an administrator can switch your plan on — write to us on WhatsApp.', 'co.write': 'Write on WhatsApp', 'co.login': 'Sign in to pay for a subscription', 'co.loginBtn': 'Sign in', 'co.err': 'Could not start the payment: {m}'
+    'co.off': 'This payment method is being connected. For now an administrator can switch your plan on — write to us on WhatsApp.', 'co.write': 'Write on WhatsApp', 'co.login': 'Sign in to pay for a subscription', 'co.loginBtn': 'Sign in', 'co.redirect': 'A secure payment page opens — enter your card there or pay with Google Pay / Apple Pay. alaqai never sees card details.', 'co.go': 'Go to payment · {p}', 'co.kCode': 'Write this code in the payment comment: {c}', 'co.kWait2': 'Waiting for the payment to be confirmed — the plan switches on by itself, you can keep this page open', 'co.paid': 'Payment received, your plan is on', 'co.activated': 'Plan switched on with the promo code', 'co.err': 'Could not start the payment: {m}'
   }
 });
 
@@ -45,7 +46,7 @@ export async function render(main, { query }) {
   const [plans, methods] = await Promise.all([plansTable(), billingConfig()]);
   const S = { plan: 'standard', // Max is not on sale yet
     period: query.period === '6' ? '6' : '1', method: query.method && CHIPS[query.method] ? query.method : 'card', promo: null, promoText: '' };
-  let kaspiLeft = 600, timer = null;
+  let timer = null;
 
   const draw = () => {
     const price = priceFor(plans, S.plan, S.period, S.promo);
@@ -53,7 +54,7 @@ export async function render(main, { query }) {
     const on = methods[S.method];
     const off = html`<div class="co-off">${icon('M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18M12 8v5M12 16h.01', 16)}<span>${t('co.off')}</span><a class="link-btn" href="${WA}" target="_blank" rel="noopener">${t('co.write')}</a></div>`;
     const payBody = {
-      card: html`<div class="co-card${on ? '' : ' disabled'}">
+      card: on ? html`<div class="co-wallet"><p>${t('co.redirect')}</p><button type="button" class="btn-k co-pay" data-pay>${t('co.go', { p: money(price.total) })}</button></div>` : html`<div class="co-card disabled">
           <label class="co-f">${t('co.number')}<input inputmode="numeric" autocomplete="cc-number" placeholder="0000 0000 0000 0000" ${on ? '' : raw('disabled')}></label>
           <div class="co-2"><label class="co-f">${t('co.exp')}<input autocomplete="cc-exp" placeholder="${lang() === 'en' ? 'MM / YY' : 'ММ / ГГ'}" ${on ? '' : raw('disabled')}></label><label class="co-f">CVC<input autocomplete="cc-csc" inputmode="numeric" placeholder="•••" ${on ? '' : raw('disabled')}></label></div>
           <label class="co-check"><input type="checkbox" checked ${on ? '' : raw('disabled')}><span>${t('co.save')}</span></label>
@@ -61,8 +62,8 @@ export async function render(main, { query }) {
           <div class="co-note">${t('co.cardNote')}</div></div>${on ? '' : off}`,
       kaspi: html`<div class="co-kaspi"><div class="co-qr${on ? '' : ' empty'}" data-qr>${on ? '' : html`<span>${t('co.kQr')}</span>`}</div>
           <div class="co-steps"><b>${t('co.kTitle')}</b><span><b>1.</b> ${t('co.k1')}</span><span><b>2.</b> ${t('co.k2')}</span><span><b>3.</b> ${t('co.k3', { p: money(price.total) })}</span>
-          ${on ? html`<span class="co-wait"><i></i><span data-wait>${t('co.kWait', { t: '10:00' })}</span></span>` : ''}</div></div>
-          ${on ? html`<a class="li-gbtn" href="https://kaspi.kz" target="_blank" rel="noopener">${t('co.kOpen')}</a>` : off}`,
+          ${on ? html`<span data-kcode></span><span class="co-wait"><i></i><span>${t('co.kWait2')}</span></span>` : ''}</div></div>
+          ${on ? html`<a class="li-gbtn" data-kopen href="https://kaspi.kz" target="_blank" rel="noopener">${t('co.kOpen')}</a>` : off}`,
       google: html`<div class="co-wallet"><p>${t('co.gNote')}</p><button type="button" class="btn-k co-pay" data-pay ${on ? '' : raw('disabled')}>${t('co.gPay', { p: money(price.total) })}</button></div>${on ? '' : off}`,
       apple: html`<div class="co-wallet"><p>${t('co.aNote')}</p><button type="button" class="btn-k co-pay black" data-pay ${on ? '' : raw('disabled')}>${t('co.aPay', { p: money(price.total) })}</button></div>${on ? '' : off}`
     }[S.method];
@@ -109,6 +110,7 @@ export async function render(main, { query }) {
       pay.disabled = true;
       try {
         const r = await startPayment({ plan: S.plan, period: S.period, method: S.method, promo: S.promo && S.promo.code });
+        if (r && r.activated) { await window.Alaqai.fetchMe(); toast(t('co.activated')); location.hash = '#/account'; return; }
         if (r && r.redirectUrl) location.href = r.redirectUrl;
       } catch (e) {
         if (e.code === 'login') { toast(t('co.login')); location.hash = '#/login?next=' + encodeURIComponent(location.hash); return; }
@@ -117,17 +119,26 @@ export async function render(main, { query }) {
     };
     clearInterval(timer);
     if (S.method === 'kaspi' && methods.kaspi) {
-      startPayment({ plan: S.plan, period: S.period, method: 'kaspi', promo: S.promo && S.promo.code }).then(r => {
+      startPayment({ plan: S.plan, period: S.period, method: 'kaspi', promo: S.promo && S.promo.code }).then(async r => {
+        if (r && r.activated) { await window.Alaqai.fetchMe(); toast(t('co.activated')); location.hash = '#/account'; return; }
+        if (!r || !r.payUrl) return;
         const q = main.querySelector('[data-qr]');
-        if (q && r && r.qrSvg) q.innerHTML = r.qrSvg;
-      }).catch(() => {});
-      kaspiLeft = 600;
-      timer = setInterval(() => {
-        const w = main.querySelector('[data-wait]');
-        if (!w) return clearInterval(timer);
-        kaspiLeft = Math.max(0, kaspiLeft - 1);
-        w.textContent = t('co.kWait', { t: `${Math.floor(kaspiLeft / 60)}:${String(kaspiLeft % 60).padStart(2, '0')}` });
-      }, 1000);
+        if (q) q.innerHTML = await qrSvg(r.payUrl, 5).catch(() => '');
+        const c = main.querySelector('[data-kcode]');
+        if (c) c.innerHTML = html`<b>${t('co.kCode', { c: r.code })}</b>`.toString();
+        const a = main.querySelector('[data-kopen]');
+        if (a) a.href = r.payUrl;
+        clearInterval(timer);
+        timer = setInterval(async () => {
+          if (!main.querySelector('[data-qr]')) return clearInterval(timer);
+          if (await paymentStatus(r.orderId) === 'paid') {
+            clearInterval(timer);
+            await window.Alaqai.fetchMe();
+            toast(t('co.paid'));
+            location.hash = '#/account';
+          }
+        }, 5000);
+      }).catch(e => { if (e.code === 'login') { toast(t('co.login')); location.hash = '#/login?next=' + encodeURIComponent(location.hash); } });
     }
   };
 

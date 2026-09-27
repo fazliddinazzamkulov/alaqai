@@ -11,21 +11,63 @@ add({
   ru: { 'sp.hw': 'Домашнее задание', 'sp.due': 'Сдать до {d}', 'sp.late': 'Срок прошёл {d} — работу всё равно можно сдать', 'sp.who': 'Кто вы?', 'sp.pick': 'Выберите своё имя', 'sp.start': 'Начать', 'sp.change': 'Это не я',
     'sp.notFound': 'Задание не найдено', 'sp.notFoundNote': 'Проверьте ссылку или спросите учителя.', 'sp.done': 'Работа сдана', 'sp.doneNote': 'Учитель проверит её и поставит оценку.', 'sp.grade': 'Оценка: {g}', 'sp.result': 'Результат: {n} из {total}',
     'sp.photos': 'Фото тетради', 'sp.photosNote': 'Сфотографируйте решение — каждую страницу отдельно, чтобы текст было видно.', 'sp.add': 'Добавить фото', 'sp.note': 'Комментарий учителю (если нужно)', 'sp.send': 'Сдать работу', 'sp.needPhoto': 'Добавьте хотя бы одно фото', 'sp.remove': 'Убрать',
-    'sp.sent': 'Готово! Работа отправлена учителю', 'sp.teacher': 'Комментарий учителя', 'sp.noStudents': 'В классе пока нет списка учеников — попросите учителя добавить его.' },
+    'sp.sent': 'Готово! Работа отправлена учителю', 'sp.fail': 'Не получилось отправить — проверьте интернет и нажмите ещё раз', 'sp.offline': 'Нет связи с сервером', 'sp.offlineNote': 'Проверьте интернет и откройте ссылку ещё раз.', 'sp.teacher': 'Комментарий учителя', 'sp.noStudents': 'В классе пока нет списка учеников — попросите учителя добавить его.' },
   kk: { 'sp.hw': 'Үй тапсырмасы', 'sp.due': '{d} дейін тапсыру', 'sp.late': 'Мерзімі {d} өтті — жұмысты бәрібір тапсыруға болады', 'sp.who': 'Сіз кімсіз?', 'sp.pick': 'Өз атыңызды таңдаңыз', 'sp.start': 'Бастау', 'sp.change': 'Бұл мен емес',
     'sp.notFound': 'Тапсырма табылмады', 'sp.notFoundNote': 'Сілтемені тексеріңіз немесе мұғалімнен сұраңыз.', 'sp.done': 'Жұмыс тапсырылды', 'sp.doneNote': 'Мұғалім тексеріп, баға қояды.', 'sp.grade': 'Баға: {g}', 'sp.result': 'Нәтиже: {total} ұпайдың {n}',
     'sp.photos': 'Дәптер фотосы', 'sp.photosNote': 'Шешімді суретке түсіріңіз — әр бетті бөлек, мәтін анық көрінсін.', 'sp.add': 'Фото қосу', 'sp.note': 'Мұғалімге пікір (қажет болса)', 'sp.send': 'Жұмысты тапсыру', 'sp.needPhoto': 'Кемінде бір фото қосыңыз', 'sp.remove': 'Алып тастау',
-    'sp.sent': 'Дайын! Жұмыс мұғалімге жіберілді', 'sp.teacher': 'Мұғалімнің пікірі', 'sp.noStudents': 'Сыныпта оқушылар тізімі әлі жоқ — мұғалімнен қосуды сұраңыз.' },
+    'sp.sent': 'Дайын! Жұмыс мұғалімге жіберілді', 'sp.fail': 'Жіберілмеді — интернетті тексеріп, қайта басыңыз', 'sp.offline': 'Сервермен байланыс жоқ', 'sp.offlineNote': 'Интернетті тексеріп, сілтемені қайта ашыңыз.', 'sp.teacher': 'Мұғалімнің пікірі', 'sp.noStudents': 'Сыныпта оқушылар тізімі әлі жоқ — мұғалімнен қосуды сұраңыз.' },
   en: { 'sp.hw': 'Homework', 'sp.due': 'Due {d}', 'sp.late': 'The deadline was {d} — you can still hand it in', 'sp.who': 'Who are you?', 'sp.pick': 'Choose your name', 'sp.start': 'Start', 'sp.change': 'Not me',
     'sp.notFound': 'Homework not found', 'sp.notFoundNote': 'Check the link or ask your teacher.', 'sp.done': 'Handed in', 'sp.doneNote': 'Your teacher will check it and give a grade.', 'sp.grade': 'Grade: {g}', 'sp.result': 'Result: {n} of {total}',
     'sp.photos': 'Notebook photos', 'sp.photosNote': 'Take a photo of your solution — each page separately, so the text is readable.', 'sp.add': 'Add a photo', 'sp.note': 'A note for the teacher (optional)', 'sp.send': 'Hand in', 'sp.needPhoto': 'Add at least one photo', 'sp.remove': 'Remove',
-    'sp.sent': 'Done! Your work was sent to the teacher', 'sp.teacher': 'Teacher’s comment', 'sp.noStudents': 'The class list is empty — ask your teacher to add it.' }
+    'sp.sent': 'Done! Your work was sent to the teacher', 'sp.fail': 'Could not send — check the internet and press again', 'sp.offline': 'Can’t reach the server', 'sp.offlineNote': 'Check the internet and open the link again.', 'sp.teacher': 'Teacher’s comment', 'sp.noStudents': 'The class list is empty — ask your teacher to add it.' }
 });
 
 const KEY = id => 'alaqai_student_' + id;
 
+/* The homework is in this browser (the teacher's own device) or, on a
+ * student's phone, comes from the alaqai server by the link's id. */
+const serverApi = () => new Promise(res => {
+  let n = 0;
+  const tick = () => (window.Alaqai ? res(window.Alaqai) : n++ > 40 ? res(null) : setTimeout(tick, 50));
+  tick();
+});
+
+async function load(id) {
+  const hw = await db.homework.get(id);
+  if (hw) {
+    return {
+      hw, cls: hw.classId ? await db.classes.get(hw.classId) : null, students: await hwStudents(hw),
+      submission: async sid => (await db.submissions.list({ homeworkId: hw.id, studentId: sid }))[0] || null,
+      submit: async data => {
+        const sub = await db.submissions.create(data);
+        if (sub.status === 'checked') await saveHwMark(hw, sub, sub.grade);
+        return sub;
+      }
+    };
+  }
+  const a = await serverApi();
+  if (!a) return { hw: null };
+  const base = '/api/public/hw/' + encodeURIComponent(id);
+  try {
+    const r = await a.api(base);
+    return {
+      hw: r.homework, cls: r.class, students: r.students,
+      submission: async sid => (await a.api(base + '/sub/' + encodeURIComponent(sid))).submission,
+      submit: async data => {
+        try { return (await a.api(base + '/submit', { method: 'POST', body: data })).submission; } catch (e) {
+          if (e.status === 409) return null; // already handed in (e.g. from another tab)
+          throw e;
+        }
+      }
+    };
+  } catch (e) {
+    return { hw: null, offline: !e.status };
+  }
+}
+
 export async function render(main, { args }) {
-  const hw = await db.homework.get(args[0]);
+  const src = await load(args[0]);
+  const hw = src.hw;
   const shell = inner => {
     main.innerHTML = html`<div class="sp"><header class="sp-head"><span class="logo">alaqai<span class="logo-dot"></span></span>
       <span class="sp-lang">${[['kk', 'ҚАЗ'], ['ru', 'РУС'], ['en', 'ENG']].map(([id, l]) => html`<button type="button" data-lang="${id}" aria-pressed="${id === lang()}">${l}</button>`)}</span></header>
@@ -33,10 +75,10 @@ export async function render(main, { args }) {
     main.querySelectorAll('[data-lang]').forEach(b => b.onclick = () => setLang(b.dataset.lang));
   };
   if (!hw || hw.status !== 'sent') {
-    shell(html`<div class="empty"><h2>${t('sp.notFound')}</h2><p>${t('sp.notFoundNote')}</p></div>`.toString());
+    shell(html`<div class="empty"><h2>${t(src.offline ? 'sp.offline' : 'sp.notFound')}</h2><p>${t(src.offline ? 'sp.offlineNote' : 'sp.notFoundNote')}</p></div>`.toString());
     return;
   }
-  const [cls, students] = await Promise.all([hw.classId ? db.classes.get(hw.classId) : null, hwStudents(hw)]);
+  const { cls, students } = src;
   const due = hw.dueDate ? shortDate(hw.dueDate).replace(/\.$/, '') + (hw.dueTime ? ', ' + hw.dueTime : '') : '';
   const late = hw.dueDate && hw.dueDate < today();
   const top = html`<div class="sp-card"><span class="k">${t('sp.hw')}${cls ? ' · ' + cls.name : ''}${cls && cls.subject ? ' · ' + cls.subject : ''}</span>
@@ -63,7 +105,7 @@ export async function render(main, { args }) {
   }
 
   const who = html`<div class="sp-me"><span>${student.name}</span><button type="button" class="link-btn" data-change>${t('sp.change')}</button></div>`;
-  const existing = (await db.submissions.list({ homeworkId: hw.id, studentId: student.id }))[0];
+  const existing = await src.submission(student.id);
   const bindChange = () => { main.querySelector('[data-change]').onclick = () => { try { sessionStorage.removeItem(KEY(hw.id)); } catch (e) { /* ignore */ } render(main, { args }); }; };
 
   if (existing) {
@@ -94,10 +136,15 @@ export async function render(main, { args }) {
         order.forEach((orig, k) => { answers[orig] = res.answers[k]; });
         const auto = hw.checker !== 'self' && !res.needsReview;
         const grade = res.total ? gradeOf(res.points / res.total) : null;
-        const sub = await db.submissions.create({ homeworkId: hw.id, studentId: student.id, answers, points: res.points, total: res.total, autoGrade: grade,
-          status: auto ? 'checked' : 'submitted', grade: auto ? grade : null, submittedAt: new Date().toISOString(), checkedAt: auto ? new Date().toISOString() : null });
-        if (auto) await saveHwMark(hw, sub, grade);
-        toast(t('sp.sent'));
+        try {
+          await src.submit({ homeworkId: hw.id, studentId: student.id, answers, points: res.points, total: res.total, autoGrade: grade, needsReview: !!res.needsReview,
+            status: auto ? 'checked' : 'submitted', grade: auto ? grade : null, submittedAt: new Date().toISOString(), checkedAt: auto ? new Date().toISOString() : null });
+          toast(t('sp.sent'));
+        } catch (e) {
+          sent = false;
+          main.querySelector('[data-test] [data-submit]').disabled = false;
+          toast(t('sp.fail'));
+        }
       }
     });
     return;
@@ -124,7 +171,13 @@ export async function render(main, { args }) {
       e.preventDefault();
       if (!photos.length) { toast(t('sp.needPhoto')); return; }
       f.querySelector('.btn-k').disabled = true;
-      await db.submissions.create({ homeworkId: hw.id, studentId: student.id, photos, text: f.text.value.trim(), status: 'submitted', grade: null, submittedAt: new Date().toISOString() });
+      try {
+        await src.submit({ homeworkId: hw.id, studentId: student.id, photos, text: f.text.value.trim(), status: 'submitted', grade: null, submittedAt: new Date().toISOString() });
+      } catch (err) {
+        f.querySelector('.btn-k').disabled = false;
+        toast(t('sp.fail'));
+        return;
+      }
       toast(t('sp.sent'));
       render(main, { args });
     };
