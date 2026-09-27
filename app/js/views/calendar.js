@@ -31,7 +31,8 @@ add({
   }
 });
 
-let view = 'week';
+// On a phone a week of six columns does not fit — start with one day there.
+let view = (typeof matchMedia === 'function' && matchMedia('(max-width: 700px)').matches) ? 'day' : 'week';
 let anchor = null; // any date inside the shown week / day / month
 
 function lessonHref(l) {
@@ -104,7 +105,7 @@ export async function render(main, { query }) {
           const due = homework.filter(h => h.dueDate === d).map(h => clsName.get(h.classId)).filter(Boolean);
           return html`<button type="button" class="cal-day${d === day ? ' is-today' : ''}" data-open-day="${d}">
             <div class="dn">${view === 'day' ? dayName(d) : dayShort(d)}${d === day ? ' · ' + t('cal.today') : ''}</div>
-            <div class="dd"><b>${parse(d).getDate()}</b><span>${due.length ? t('cal.hw', { c: due.join(', ') }) : ''}</span></div>
+            <div class="cdn"><b>${parse(d).getDate()}</b><span>${due.length ? t('cal.hw', { c: due.join(', ') }) : ''}</span></div>
           </button>`;
         })}
       </div>

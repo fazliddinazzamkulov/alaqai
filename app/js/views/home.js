@@ -17,7 +17,7 @@ add({
     'home.start': 'Начать', 'home.open': 'Итоги', 'home.prepare': 'Подготовить',
     'home.st.ready': 'готов', 'home.st.planned': 'не подготовлен', 'home.st.done': 'проведён',
     'home.noToday': 'Сегодня уроков нет.', 'home.noGrades': 'Оценки появятся после первых уроков с журналом.',
-    'home.emptyTitle': 'Добро пожаловать в alaqai', 'home.emptyText': 'Добавьте свои классы — и здесь появится статистика: качество знаний, успеваемость, лучшие ученики и уроки на сегодня. Или посмотрите, как всё выглядит, на примере.',
+    'home.emptyTitle': 'Добро пожаловать в alaqai', 'home.emptyText': 'Добавьте свои классы — и здесь появится статистика: качество знаний, успеваемость, лучшие ученики и уроки на сегодня.',
     'home.addClass': '+ Класс', 'home.fillDemo': 'Заполнить примером', 'home.demoOn': 'Сейчас показан пример с выдуманными классами и оценками.', 'home.demoOff': 'Удалить пример', 'home.demoRemoved': 'Пример удалён', 'home.demoAdded': 'Пример добавлен'
   },
   kk: {
@@ -31,7 +31,7 @@ add({
     'home.start': 'Бастау', 'home.open': 'Қорытынды', 'home.prepare': 'Дайындау',
     'home.st.ready': 'дайын', 'home.st.planned': 'дайындалмаған', 'home.st.done': 'өткізілді',
     'home.noToday': 'Бүгін сабақ жоқ.', 'home.noGrades': 'Бағалар журнал жүргізілген алғашқы сабақтардан кейін шығады.',
-    'home.emptyTitle': 'alaqai-ға қош келдіңіз', 'home.emptyText': 'Сыныптарыңызды қосыңыз — мұнда статистика шығады: білім сапасы, үлгерім, үздік оқушылар және бүгінгі сабақтар. Немесе бәрі қалай көрінетінін мысалдан қараңыз.',
+    'home.emptyTitle': 'alaqai-ға қош келдіңіз', 'home.emptyText': 'Сыныптарыңызды қосыңыз — мұнда статистика шығады: білім сапасы, үлгерім, үздік оқушылар және бүгінгі сабақтар.',
     'home.addClass': '+ Сынып', 'home.fillDemo': 'Мысалмен толтыру', 'home.demoOn': 'Қазір ойдан алынған сыныптар мен бағалар мысалы көрсетілген.', 'home.demoOff': 'Мысалды жою', 'home.demoRemoved': 'Мысал жойылды', 'home.demoAdded': 'Мысал қосылды'
   },
   en: {
@@ -45,7 +45,7 @@ add({
     'home.start': 'Start', 'home.open': 'Results', 'home.prepare': 'Prepare',
     'home.st.ready': 'ready', 'home.st.planned': 'not prepared', 'home.st.done': 'taught',
     'home.noToday': 'No lessons today.', 'home.noGrades': 'Grades appear after your first lessons with the register.',
-    'home.emptyTitle': 'Welcome to alaqai', 'home.emptyText': 'Add your classes and this page fills with statistics: knowledge quality, pass rate, top students and today’s lessons. Or see how it all looks with an example.',
+    'home.emptyTitle': 'Welcome to alaqai', 'home.emptyText': 'Add your classes and this page fills with statistics: knowledge quality, pass rate, top students and today’s lessons.',
     'home.addClass': '+ Class', 'home.fillDemo': 'Fill with an example', 'home.demoOn': 'You are looking at an example with made-up classes and grades.', 'home.demoOff': 'Remove example', 'home.demoRemoved': 'Example removed', 'home.demoAdded': 'Example added'
   }
 });
@@ -104,15 +104,8 @@ export async function render(main) {
     main.innerHTML = html`${head}
       <div class="empty">
         <h2>${t('home.emptyTitle')}</h2><p>${t('home.emptyText')}</p>
-        <div class="row"><a class="btn-k" href="#/classes?add=1">${t('home.addClass')}</a><button type="button" class="btn-o" data-demo>${t('home.fillDemo')}</button></div>
+        <div class="row"><a class="btn-k" href="#/classes?add=1">${t('home.addClass')}</a><a class="btn-o" href="#/lesson/file">${t('nav.start')}</a></div>
       </div>`;
-    main.querySelector('[data-demo]').addEventListener('click', async e => {
-      e.target.disabled = true;
-      const { loadDemo } = await import('../data/demo.js');
-      await loadDemo();
-      toast(t('home.demoAdded'));
-      render(main);
-    });
     return;
   }
 

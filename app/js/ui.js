@@ -52,7 +52,7 @@ export const ICONS = {
 export function icon(name, size = 16, extra = '') {
   const d = ICONS[name] || name;
   const fill = name === 'sparkle' || name === 'play' ? 'currentColor' : 'none';
-  return raw(`<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="${fill}" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" ${extra}><path d="${d}"/></svg>`);
+  return raw(`<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="${fill}" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" ${extra}><path d="${d}"/></svg>`);
 }
 
 /* ---------- segmented control ---------- */

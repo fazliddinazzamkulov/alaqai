@@ -155,9 +155,9 @@ function enhanceDate(inp) {
           const off = (inp.min && v < inp.min) || (inp.max && v > inp.max);
           cells.push(`<button type="button" data-v="${v}" class="${v === inp.value ? 'on' : ''}${v === today ? ' today' : ''}" ${off ? 'disabled' : ''}>${d}</button>`);
         }
-        body.innerHTML = `<div class="cal"><div class="cal-h"><button type="button" data-m="-1" aria-label="‹">‹</button><b>${esc(view.toLocaleDateString(locale(), { month: 'long', year: 'numeric' }))}</b><button type="button" data-m="1" aria-label="›">›</button></div>
-          <div class="cal-g">${wd.map(w => `<i>${esc(w)}</i>`).join('')}${cells.join('')}</div>
-          <button type="button" class="cal-today" data-today>${esc(t('ctl.today'))}</button></div>`;
+        body.innerHTML = `<div class="dp"><div class="dp-h"><button type="button" data-m="-1" aria-label="‹">‹</button><b>${esc(view.toLocaleDateString(locale(), { month: 'long', year: 'numeric' }))}</b><button type="button" data-m="1" aria-label="›">›</button></div>
+          <div class="dp-g">${wd.map(w => `<i>${esc(w)}</i>`).join('')}${cells.join('')}</div>
+          <button type="button" class="dp-today" data-today>${esc(t('ctl.today'))}</button></div>`;
         body.querySelectorAll('[data-m]').forEach(b => b.onclick = () => { view = new Date(view.getFullYear(), view.getMonth() + Number(b.dataset.m), 1); draw(); });
         body.querySelectorAll('[data-v]').forEach(b => b.onclick = () => { inp.value = b.dataset.v; fire(inp); paint(); done(); });
         body.querySelector('[data-today]').onclick = () => { if ((inp.min && today < inp.min) || (inp.max && today > inp.max)) return; inp.value = today; fire(inp); paint(); done(); };

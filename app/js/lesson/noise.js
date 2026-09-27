@@ -16,29 +16,47 @@ export function monsterSvg(state, size = 120) {
 
 export const moodOf = (level, threshold) => (level < threshold * 0.5 ? 'sleep' : level < threshold ? 'mid' : 'loud');
 
-/** Live microphone level 0–100. */
+/**
+ * Live microphone level 0–100, tuned to the room by itself: the first seconds
+ * measure how the quiet class sounds, and loudness is counted from there, so it
+ * works the same with a laptop, a board or a phone microphone.
+ */
 export class Mic {
-  constructor(onLevel) { this.onLevel = onLevel; this.stream = null; this.raf = null; this.smooth = 0; }
+  constructor(onLevel, onReady) { this.onLevel = onLevel; this.onReady = onReady; this.stream = null; this.raf = null; this.smooth = 0; this.samples = []; this.base = null; }
   async start() {
-    this.stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false } });
+    this.stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } });
     this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+    if (this.ctx.state === 'suspended') await this.ctx.resume();
     const src = this.ctx.createMediaStreamSource(this.stream);
     this.an = this.ctx.createAnalyser();
-    this.an.fftSize = 1024;
+    this.an.fftSize = 2048;
     src.connect(this.an);
     const data = new Float32Array(this.an.fftSize);
+    this.t0 = performance.now();
     const loop = () => {
       this.an.getFloatTimeDomainData(data);
       let sum = 0; for (let i = 0; i < data.length; i++) sum += data[i] * data[i];
-      const rms = Math.sqrt(sum / data.length);
-      const db = 20 * Math.log10(rms + 1e-8); // about −60 (silence) … 0 (very loud)
-      const level = Math.max(0, Math.min(100, (db + 55) * 2.2));
-      this.smooth = this.smooth * 0.85 + level * 0.15;
-      this.onLevel(Math.round(this.smooth));
+      const db = 20 * Math.log10(Math.sqrt(sum / data.length) + 1e-8);
+      if (this.base == null) {
+        this.samples.push(db);
+        if (performance.now() - this.t0 > 2500) {
+          const sorted = [...this.samples].sort((a, b) => a - b);
+          this.base = Math.min(sorted[Math.floor(sorted.length / 2)], -35); // the quiet room, never above a normal voice
+          if (this.onReady) this.onReady();
+        }
+      } else {
+        // quiet room ≈ 10, normal talking ≈ 45–60, a loud class ≥ 70
+        const level = Math.max(0, Math.min(100, 10 + (db - this.base) * 2.6));
+        this.smooth = this.smooth * 0.8 + level * 0.2;
+        this.onLevel(Math.round(this.smooth));
+      }
       this.raf = requestAnimationFrame(loop);
     };
     loop();
   }
+  /** Measure the quiet room again (e.g. after the class has settled). */
+  recalibrate() { this.base = null; this.samples = []; this.t0 = performance.now(); }
+  get calibrating() { return this.base == null; }
   stop() {
     if (this.raf) cancelAnimationFrame(this.raf);
     if (this.stream) this.stream.getTracks().forEach(tr => tr.stop());

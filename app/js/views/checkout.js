@@ -43,7 +43,8 @@ const WA = 'https://wa.me/77759018100';
 
 export async function render(main, { query }) {
   const [plans, methods] = await Promise.all([plansTable(), billingConfig()]);
-  const S = { plan: query.plan === 'max' ? 'max' : 'standard', period: query.period === '6' ? '6' : '1', method: query.method && CHIPS[query.method] ? query.method : 'card', promo: null, promoText: '' };
+  const S = { plan: 'standard', // Max is not on sale yet
+    period: query.period === '6' ? '6' : '1', method: query.method && CHIPS[query.method] ? query.method : 'card', promo: null, promoText: '' };
   let kaspiLeft = 600, timer = null;
 
   const draw = () => {
@@ -71,7 +72,7 @@ export async function render(main, { query }) {
       <div class="co-body">
         <div class="co-left">
           <h1 class="title title-md">${t('co.title')}</h1>
-          <div class="co-plans">${['standard', 'max'].map(id => html`<label class="co-plan${S.plan === id ? ' on' : ''}"><input type="radio" name="plan" value="${id}" ${S.plan === id ? raw('checked') : ''}><i></i>
+          <div class="co-plans">${['standard'].map(id => html`<label class="co-plan${S.plan === id ? ' on' : ''}"><input type="radio" name="plan" value="${id}" ${S.plan === id ? raw('checked') : ''}><i></i>
             <span class="grow"><b>${t('plan.' + id)}</b><span>${id === 'standard' ? t('co.std', { n: plans.standard.aiLessonsPerWeek }) : t('co.max')}</span></span><b>${money(S.period === '6' ? plans[id].price6 : plans[id].priceMonth)}</b></label>`)}</div>
           <div class="seg lg co-period"><button type="button" data-period="1" aria-selected="${S.period === '1'}">${t('co.m1')}</button><button type="button" data-period="6" aria-selected="${S.period === '6'}">${t('co.m6', { p: money(plans[S.plan].price6) })}</button></div>
           <form class="co-promo"><input name="code" placeholder="${t('co.promo')}" aria-label="${t('co.promo')}" value="${S.promoText}" autocomplete="off"><button class="btn-o">${t('co.apply')}</button></form>
