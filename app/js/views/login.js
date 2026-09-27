@@ -40,8 +40,9 @@ add({
 const errText = e => ({ not_configured: t('li.noSms'), offline: t('li.offline'), too_many: t('li.tooMany'), bad_code: t('li.badCode') })[e.code] || e.message;
 
 export async function render(main, { args, query }) {
-  const next = query.next && query.next.startsWith('#/') ? query.next : '#/home';
-  const done = () => { toast(t('li.welcome')); location.hash = next; };
+  // next: a screen of the platform (#/…) or the admin panel ('admin').
+  const next = query.next === 'admin' ? 'admin' : query.next && query.next.startsWith('#/') ? query.next : '#/home';
+  const done = () => { toast(t('li.welcome')); if (next === 'admin') location.href = '../admin/'; else location.hash = next; };
   const langs = html`<div class="li-lang">${[['kk', 'ҚАЗ'], ['ru', 'РУС'], ['en', 'ENG']].map(([id, l]) => html`<button type="button" data-lang="${id}" aria-pressed="${id === lang()}">${l}</button>`)}</div>`;
   const hero = full => html`<div class="li-hero"><span class="logo">alaqai<span class="logo-dot"></span></span>
     <div class="li-h">${t('li.hero1')}<br><span>${t('li.hero2')}</span></div>

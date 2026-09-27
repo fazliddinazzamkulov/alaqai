@@ -12,7 +12,7 @@
 
   const DEFAULT_API_BASE = "https://api.alaqai.online";
   const API_BASE = (global.ALAQAI_API_BASE || DEFAULT_API_BASE).replace(/\/$/, "");
-  const GOOGLE_CLIENT_ID = global.ALAQAI_GOOGLE_CLIENT_ID || "";
+  let GOOGLE_CLIENT_ID = global.ALAQAI_GOOGLE_CLIENT_ID || "";
 
   let cachedUser = undefined; // undefined = not fetched yet, null = signed out
   const authListeners = [];
@@ -120,8 +120,21 @@
     return false;
   }
 
+  // Public settings from the server (Google Client ID etc.), so nothing has to be written into the pages.
+  const configReady = fetch(API_BASE + "/api/config", { credentials: "include" })
+    .then((r) => (r.ok ? r.json() : {}))
+    .catch(() => ({}))
+    .then((cfg) => {
+      if (!GOOGLE_CLIENT_ID && cfg.googleClientId) {
+        GOOGLE_CLIENT_ID = cfg.googleClientId;
+        global.ALAQAI_GOOGLE_CLIENT_ID = cfg.googleClientId;
+      }
+      return cfg;
+    });
+
   global.Alaqai = {
     API_BASE,
+    configReady,
     api,
     onAuthChange,
     fetchMe,

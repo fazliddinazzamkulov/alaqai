@@ -4,7 +4,7 @@
  * watermark makes any copy traceable. */
 import { add, t, lang } from '../i18n.js';
 import { esc } from '../ui.js';
-import { db } from '../data/store.js';
+import { db, useAdapter, memoryAdapter } from '../data/store.js';
 import { today } from '../school.js';
 import { kspHtml, docLangOf } from '../ksp/doc.js';
 import { kspContext } from './ksp.js';
@@ -16,8 +16,25 @@ add({
   en: { 'vw.who': 'Please introduce yourself', 'vw.whoNote': 'Your name appears on the page as a watermark, so the teacher knows who viewed the plan.', 'vw.name': 'Name and position', 'vw.open': 'Open the plan', 'vw.only': 'View only', 'vw.expired': 'This link has expired', 'vw.expiredNote': 'Ask the teacher for a new link.', 'vw.slides': 'Lesson slides' }
 });
 
+let restore = null; // puts the teacher's own data back after showing a plan from the server
+
+/** On an observer's device the plan comes from the server; it is shown from memory, never saved. */
+async function fromServer(id) {
+  let n = 0;
+  while (!window.Alaqai && n++ < 40) await new Promise(r => setTimeout(r, 50));
+  if (!window.Alaqai) return false;
+  try {
+    const r = await window.Alaqai.api('/api/public/share/' + encodeURIComponent(id));
+    if (restore) restore();
+    restore = useAdapter(memoryAdapter(r.bundle, r.settings));
+    return true;
+  } catch (e) { return false; }
+}
+
 export async function render(main, { args }) {
-  const share = await db.shares.get(args[0]);
+  let share = await db.shares.get(args[0]);
+  const remote = !share && await fromServer(args[0]);
+  if (remote) share = await db.shares.get(args[0]);
   const shell = inner => { main.innerHTML = `<div class="vw"><header class="vw-head"><span class="logo">alaqai<span class="logo-dot"></span></span><span class="pill">${esc(t('vw.only'))}</span></header>${inner}</div>`; };
   if (!share || !share.active || share.expiresAt < today()) {
     shell(`<div class="empty" style="margin:40px auto;max-width:520px"><h2>${esc(t('vw.expired'))}</h2><p>${esc(t('vw.expiredNote'))}</p></div>`);
@@ -32,7 +49,8 @@ export async function render(main, { args }) {
       name = e.target.n.value.trim();
       if (!name) return;
       try { sessionStorage.setItem('alaqai_viewer_' + share.id, name); } catch (err) { /* private mode */ }
-      await db.shares.update(share.id, { views: [...(share.views || []), { name, at: new Date().toISOString() }] });
+      if (remote) { try { await window.Alaqai.api('/api/public/share/' + encodeURIComponent(share.id) + '/view', { method: 'POST', body: { name } }); } catch (err) { /* the plan still opens */ } }
+      else await db.shares.update(share.id, { views: [...(share.views || []), { name, at: new Date().toISOString() }] });
       render(main, { args });
     };
     return;
@@ -51,5 +69,5 @@ export async function render(main, { args }) {
   const onKey = e => { if ((e.ctrlKey || e.metaKey) && ['p', 's', 'c', 'a'].includes(e.key.toLowerCase())) e.preventDefault(); };
   document.addEventListener('keydown', onKey);
   document.body.classList.add('no-print');
-  return () => { document.removeEventListener('keydown', onKey); document.body.classList.remove('no-print'); };
+  return () => { document.removeEventListener('keydown', onKey); document.body.classList.remove('no-print'); if (restore) { restore(); restore = null; } };
 }

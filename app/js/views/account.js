@@ -8,7 +8,7 @@ import { currentUser, logout, logoutEverywhere, maskPhone } from '../auth.js';
 
 add({
   ru: {
-    'ac.title': 'Личный кабинет', 'ac.logout': 'Выйти', 'ac.login': 'Войти', 'ac.guest': 'Вы не вошли — данные хранятся только в этом браузере. Войдите, чтобы пользоваться ИИ и не потерять уроки.',
+    'ac.title': 'Личный кабинет', 'ac.trial': 'пробный период', 'ac.p1': '1 месяц', 'ac.p6': '6 месяцев', 'ac.paidOk': 'Оплата прошла — спасибо! Тариф включится в течение минуты.', 'ac.unsent': 'Нет интернета: часть изменений осталась в этом браузере и отправится при следующем входе.', 'ac.logout': 'Выйти', 'ac.login': 'Войти', 'ac.guest': 'Вы не вошли — данные хранятся только в этом браузере. Войдите, чтобы пользоваться ИИ и не потерять уроки.',
     'ac.photo': 'Изменить фото', 'ac.name': 'Имя и фамилия', 'ac.school': 'Школа', 'ac.subjects': 'Предметы', 'ac.lang': 'Язык интерфейса', 'ac.save': 'Сохранить', 'ac.saved': 'Сохранено',
     'ac.methods': 'Способы входа', 'ac.google': 'Google', 'ac.phone': 'Телефон', 'ac.on': 'подключён', 'ac.off': 'не подключён', 'ac.connect': 'Подключить', 'ac.everywhere': 'Выйти на всех устройствах', 'ac.soon': 'Заработает после подключения базы и SMS-сервиса',
     'ac.plan': 'Ваш тариф', 'ac.active': 'активен', 'ac.free': 'бесплатно', 'ac.until': 'до {d}', 'ac.usage': 'Уроки с ИИ на этой неделе', 'ac.usageOf': '{n} из {max}', 'ac.unl': 'без лимита', 'ac.next': 'Следующее списание — {sum} · {d} · {how}',
@@ -17,7 +17,7 @@ add({
     'ac.delete': 'Удалить аккаунт', 'ac.delTitle': 'Удалить аккаунт?', 'ac.delGuest': 'Все классы, уроки, презентации, тесты и журнал в этом браузере будут удалены без возможности восстановления.', 'ac.delUser': 'Аккаунт и все данные на сервере будут удалены без возможности восстановления.', 'ac.delType': 'Напишите «{w}», чтобы подтвердить', 'ac.delWord': 'удалить', 'ac.deleted': 'Данные удалены'
   },
   kk: {
-    'ac.title': 'Жеке кабинет', 'ac.logout': 'Шығу', 'ac.login': 'Кіру', 'ac.guest': 'Сіз кірмедіңіз — деректер тек осы браузерде сақталады. ЖИ-ді пайдалану және сабақтарды жоғалтпау үшін кіріңіз.',
+    'ac.title': 'Жеке кабинет', 'ac.trial': 'сынақ кезеңі', 'ac.p1': '1 ай', 'ac.p6': '6 ай', 'ac.paidOk': 'Төлем өтті — рақмет! Тариф бір минут ішінде қосылады.', 'ac.unsent': 'Интернет жоқ: кейбір өзгерістер осы браузерде қалды, келесі кіргенде жіберіледі.', 'ac.logout': 'Шығу', 'ac.login': 'Кіру', 'ac.guest': 'Сіз кірмедіңіз — деректер тек осы браузерде сақталады. ЖИ-ді пайдалану және сабақтарды жоғалтпау үшін кіріңіз.',
     'ac.photo': 'Фотоны өзгерту', 'ac.name': 'Аты-жөні', 'ac.school': 'Мектеп', 'ac.subjects': 'Пәндер', 'ac.lang': 'Интерфейс тілі', 'ac.save': 'Сақтау', 'ac.saved': 'Сақталды',
     'ac.methods': 'Кіру тәсілдері', 'ac.google': 'Google', 'ac.phone': 'Телефон', 'ac.on': 'қосылған', 'ac.off': 'қосылмаған', 'ac.connect': 'Қосу', 'ac.everywhere': 'Барлық құрылғыдан шығу', 'ac.soon': 'Дерекқор мен SMS-сервис қосылғаннан кейін жұмыс істейді',
     'ac.plan': 'Сіздің тариф', 'ac.active': 'белсенді', 'ac.free': 'тегін', 'ac.until': '{d} дейін', 'ac.usage': 'Осы аптадағы ЖИ-сабақтар', 'ac.usageOf': '{max}-дан {n}', 'ac.unl': 'шектеусіз', 'ac.next': 'Келесі төлем — {sum} · {d} · {how}',
@@ -26,7 +26,7 @@ add({
     'ac.delete': 'Аккаунтты жою', 'ac.delTitle': 'Аккаунтты жою керек пе?', 'ac.delGuest': 'Осы браузердегі барлық сынып, сабақ, презентация, тест және журнал қайтарусыз жойылады.', 'ac.delUser': 'Аккаунт пен сервердегі барлық дерек қайтарусыз жойылады.', 'ac.delType': 'Растау үшін «{w}» деп жазыңыз', 'ac.delWord': 'жою', 'ac.deleted': 'Деректер жойылды'
   },
   en: {
-    'ac.title': 'Account', 'ac.logout': 'Sign out', 'ac.login': 'Sign in', 'ac.guest': 'You are not signed in — your data is kept only in this browser. Sign in to use AI and keep your lessons safe.',
+    'ac.title': 'Account', 'ac.trial': 'free trial', 'ac.p1': '1 month', 'ac.p6': '6 months', 'ac.paidOk': 'Payment received — thank you! Your plan switches on within a minute.', 'ac.unsent': 'No internet: some changes stayed in this browser and will be sent next time you sign in.', 'ac.logout': 'Sign out', 'ac.login': 'Sign in', 'ac.guest': 'You are not signed in — your data is kept only in this browser. Sign in to use AI and keep your lessons safe.',
     'ac.photo': 'Change photo', 'ac.name': 'Full name', 'ac.school': 'School', 'ac.subjects': 'Subjects', 'ac.lang': 'Interface language', 'ac.save': 'Save', 'ac.saved': 'Saved',
     'ac.methods': 'Sign-in methods', 'ac.google': 'Google', 'ac.phone': 'Phone', 'ac.on': 'connected', 'ac.off': 'not connected', 'ac.connect': 'Connect', 'ac.everywhere': 'Sign out on all devices', 'ac.soon': 'Works once the database and SMS service are connected',
     'ac.plan': 'Your plan', 'ac.active': 'active', 'ac.free': 'free', 'ac.until': 'until {d}', 'ac.usage': 'AI lessons this week', 'ac.usageOf': '{n} of {max}', 'ac.unl': 'unlimited', 'ac.next': 'Next charge — {sum} · {d} · {how}',
@@ -43,7 +43,8 @@ async function payments() {
   try { return (await window.Alaqai.api('/api/billing/payments')).payments || []; } catch (e) { return []; }
 }
 
-export async function render(main) {
+export async function render(main, { query = {} } = {}) {
+  if (query.paid) { toast(t('ac.paidOk')); history.replaceState(null, '', '#/account'); }
   const [user, settings, usage, pays] = await Promise.all([currentUser(), db.settings.get(), weeklyUsage(), payments()]);
   const profile = { name: '', school: '', subjects: '', ...(settings.profile || {}) };
   if (!profile.name && user) profile.name = user.name || '';
@@ -75,7 +76,7 @@ export async function render(main) {
       </div>
       <div class="ac-col">
         <div class="ac-plan">
-          <div class="r"><span class="mut">${t('ac.plan')}</span><span class="pill-l">${paid ? t('ac.active') : t('ac.free')}</span></div>
+          <div class="r"><span class="mut">${t('ac.plan')}</span><span class="pill-l">${user && user.subscriptionStatus === 'trial' ? t('ac.trial') : paid ? t('ac.active') : t('ac.free')}</span></div>
           <div class="r base"><span class="nm">${usage.plan.name}</span>${paid && until ? html`<span class="mut">${t('ac.until', { d: longDate(until.slice(0, 10)).replace(/^[^,]+,\s*/, '') })}</span>` : ''}</div>
           <div class="u"><span class="r"><span class="mut">${t('ac.usage')}</span><span>${usage.max == null ? t('ac.unl') : usage.max === 0 ? t('plan.noAi') : t('ac.usageOf', { n: usage.used, max: usage.max })}</span></span>
             ${usage.max ? html`<span class="bar"><i style="width:${usage.percent}%"></i></span>` : ''}</div>
@@ -85,7 +86,7 @@ export async function render(main) {
         <div class="card ac-pays">
           <div class="card-title">${t('ac.history')}</div>
           <div class="ac-row h"><span>${t('ac.date')}</span><span>${t('ac.what')}</span><span>${t('ac.how')}</span><span>${t('ac.sum')}</span><span>${t('ac.status')}</span><span></span></div>
-          ${pays.length ? pays.map(p => html`<div class="ac-row"><span class="mut">${p.date}</span><b>${p.what}</b><span class="mut">${p.method}</span><b>${money(p.sum)}</b><span class="${p.status === 'paid' ? 'ok' : 'bad'}">${p.status === 'paid' ? t('ac.paid') : t('ac.failed')}</span>${p.receiptUrl ? html`<a href="${p.receiptUrl}" target="_blank" rel="noopener">${t('ac.receipt')}</a>` : html`<span></span>`}</div>`)
+          ${pays.length ? pays.map(p => html`<div class="ac-row"><span class="mut">${p.date}</span><b>${p.plan ? t('plan.' + p.plan) + ' · ' + t('ac.p' + (p.period === '6' ? '6' : '1')) : p.what}</b><span class="mut">${p.method}</span><b>${money(p.sum)}</b><span class="${p.status === 'paid' ? 'ok' : 'bad'}">${p.status === 'paid' ? t('ac.paid') : t('ac.failed')}</span>${p.receiptUrl ? html`<a href="${p.receiptUrl}" target="_blank" rel="noopener">${t('ac.receipt')}</a>` : html`<span></span>`}</div>`)
             : html`<p class="muted-note ac-none">${t('ac.noPays')}</p>`}
           <span class="grow"></span>
           <button type="button" class="link-btn danger" data-delete>${t('ac.delete')}</button>
@@ -97,6 +98,7 @@ export async function render(main) {
   form.onsubmit = async e => {
     e.preventDefault();
     await db.settings.set({ profile: { ...profile, name: form.name.value.trim(), school: form.school.value.trim(), subjects: form.subjects.value.trim() } });
+    if (user) { try { await window.Alaqai.api('/api/account', { method: 'PATCH', body: { name: form.name.value.trim(), school: form.school.value.trim() } }); } catch (err) { /* saved in the profile anyway */ } }
     if (form.lang.value !== lang()) setLang(form.lang.value);
     toast(t('ac.saved'));
   };
@@ -106,7 +108,7 @@ export async function render(main) {
     try { const photo = await downscale(f, 256, 0.85); await db.settings.set({ profile: { ...profile, photo } }); render(main); } catch (err) { /* not an image */ }
   };
   const lo = main.querySelector('[data-logout]');
-  if (lo) lo.onclick = async () => { await logout(); location.hash = '#/login'; };
+  if (lo) lo.onclick = async () => { const clean = await logout(); if (!clean) toast(t('ac.unsent')); location.hash = '#/login'; };
   const ev = main.querySelector('[data-everywhere]');
   if (ev) ev.onclick = async () => { try { await logoutEverywhere(); await logout(); location.hash = '#/login'; } catch (err) { toast(t('ac.soon')); } };
   const nr = main.querySelector('[data-norenew]');

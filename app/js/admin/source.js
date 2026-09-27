@@ -61,10 +61,9 @@ export function demo() {
 /* ---------- normalising server users ---------- */
 
 function fromServer(u) {
-  const plan = { free: 'basic' }[u.subscription_plan] || u.subscription_plan || 'basic';
-  const status = u.disabled ? 'blocked' : u.subscription_status === 'suspended' ? 'debt' : plan === 'basic' ? 'free' : 'active';
-  return { id: u.id, name: u.name || u.email, email: u.email, phone: null, via: 'google', school: '', region: '', role: u.role, plan, status, aiWeek: null,
-    since: u.created_at, last: u.last_login_at, until: u.subscription_expires_at, raw: u };
+  return { id: u.id, name: u.name || u.email || u.phone || '—', email: u.email, phone: u.phone, via: u.via, school: u.school || '', region: u.region || '', role: u.role,
+    plan: u.plan, status: u.status, aiWeek: u.aiWeek == null ? null : u.aiWeek, since: u.created_at, last: u.last_login_at, until: u.until, lessons: u.lessons,
+    autoRenew: u.autoRenew, raw: u };
 }
 
 /* ---------- the API used by the screens ---------- */
@@ -92,11 +91,12 @@ export async function user(id) {
 export async function updateUser(u, patch) {
   if (mode === 'demo') { Object.assign(u, patch.plan ? { plan: patch.plan, status: patch.plan === 'basic' ? 'free' : 'active' } : {}, patch.until ? { until: patch.until } : {}, patch.blocked != null ? { status: patch.blocked ? 'blocked' : u.plan === 'basic' ? 'free' : 'active' } : {}, patch.role ? { role: patch.role } : {}); return u; }
   const body = {};
-  if (patch.plan) { body.subscriptionPlan = patch.plan; body.subscriptionStatus = 'active'; }
-  if (patch.until) body.subscriptionExpiresAt = patch.until;
+  if (patch.plan) body.plan = patch.plan;
+  if (patch.until) body.until = patch.until;
   if (patch.blocked != null) body.disabled = patch.blocked;
   if (patch.role) body.role = patch.role;
-  return fromServer({ ...(await api('/api/admin/users/' + u.id, { method: 'PATCH', body })).user, created_at: u.since, last_login_at: u.last });
+  const res = await api('/api/admin/users/' + u.id, { method: 'PATCH', body });
+  return { ...fromServer({ ...res.admin, lessons: u.lessons, aiWeek: u.aiWeek }) };
 }
 
 export async function stats() {
@@ -109,8 +109,11 @@ export async function stats() {
       revenue, aiCost: Math.round(revenue * 0.24), lessons: d.users.reduce((s, u) => s + u.lessons, 0), failed: d.payments.filter(p => p.status === 'failed').length, schoolRequests: d.schools.length };
   }
   const s = await api('/api/admin/stats');
-  return { totalUsers: s.totalUsers, activeSubs: s.activeSubs, trial: s.trialSubs, suspended: s.suspended, aiToday: s.aiToday, revenue: null, aiCost: null, lessons: null };
+  return { totalUsers: s.totalUsers, newWeek: s.newWeek, activeSubs: s.activeSubs, trial: s.trialSubs, suspended: s.suspended, aiToday: s.aiToday, aiWeek: s.aiWeek,
+    revenue: s.revenue, aiCost: null, lessons: s.lessons, failed: s.failed, pendingKaspi: s.pendingKaspi, schoolRequests: 0 };
 }
+
+export const setPaymentStatus = (id, status) => mode === 'demo' ? Promise.resolve() : api('/api/admin/payments/' + encodeURIComponent(id), { method: 'PATCH', body: { status } });
 
 export async function payments() {
   if (mode === 'demo') return demo().payments;
@@ -119,7 +122,7 @@ export async function payments() {
 
 export async function userLog(u) {
   if (mode === 'demo') return demo().log.map((e, i) => ({ at: i < 5 ? ['08:14', '08:20', '08:21', '09:25', '09:31'][i] : ['вчера', '12.09', '12.08'][i - 5], text: e }));
-  try { return ((await api('/api/admin/audit-log')).entries || []).filter(e => e.target === u.email || e.actor_email === u.email).slice(0, 30).map(e => ({ at: e.at.slice(0, 16).replace('T', ' '), text: e.action })); } catch (e) { return []; }
+  try { return ((await api('/api/admin/users/' + u.id + '/log')).entries || []).map(e => ({ at: new Date(e.at).toLocaleString('ru-RU', { dateStyle: 'short', timeStyle: 'short' }), text: e.action })); } catch (e) { return []; }
 }
 
 export async function auditLog() {

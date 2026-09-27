@@ -14,7 +14,8 @@
 <link rel="stylesheet" href="../app/css/admin.css">
 <script>
   // The same server as the platform; admin routes need a signed-in admin or owner.
-  window.ALAQAI_API_BASE = window.ALAQAI_API_BASE || "https://api.alaqai.online";
+  // For testing another server: localStorage.setItem('alaqai_api', 'http://localhost:8787')
+  window.ALAQAI_API_BASE = window.ALAQAI_API_BASE || (function () { try { return localStorage.getItem('alaqai_api'); } catch (e) { return null; } })() || "https://api.alaqai.online";
   window.ALAQAI_GOOGLE_CLIENT_ID = window.ALAQAI_GOOGLE_CLIENT_ID || "";
 </script>
 <script src="../assets/js/lang.js"></script>

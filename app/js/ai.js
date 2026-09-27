@@ -1,4 +1,4 @@
-/* AI client. Every call goes to the alaqai server (server/src/routes/ai.js),
+/* AI client. Every call goes to the alaqai server (alaqai.back, src/routes/ai.js),
  * which holds the Gemini keys — the browser never sees a key. */
 import { add, t } from './i18n.js';
 

@@ -19,10 +19,14 @@ export async function billingConfig() {
   try { const r = await api('/api/billing/config'); return { ...Object.fromEntries(METHODS.map(m => [m, false])), ...(r.methods || {}) }; } catch (e) { return Object.fromEntries(METHODS.map(m => [m, false])); }
 }
 
-/** Plans with the admin's changes applied. */
+/** Plans with the admin's changes applied (the server's prices win). */
 export async function plansTable() {
   const s = await db.settings.get();
-  return { ...DEFAULT_PLANS, ...(s.plans || {}) };
+  let server = {};
+  try { server = (await api('/api/billing/config')).plans || {}; } catch (e) { /* offline: defaults */ }
+  const out = { ...DEFAULT_PLANS };
+  for (const id of Object.keys(out)) out[id] = { ...out[id], ...((s.plans || {})[id] || {}), ...(server[id] || {}) };
+  return out;
 }
 
 /** Promo code → { off: 0.3 } or { freeMonths: 1 }, checked by the server; falls back to codes the admin saved here. */
@@ -42,6 +46,11 @@ export function priceFor(plans, plan, period, promo) {
   if (promo && promo.off) discount = Math.round(base * promo.off);
   if (promo && promo.freeMonths) discount = Math.min(base, p.priceMonth * promo.freeMonths);
   return { base, discount, total: Math.max(0, base - discount) };
+}
+
+/** 'pending' | 'paid' | 'failed' for an order started here. */
+export async function paymentStatus(id) {
+  try { return (await api('/api/billing/status/' + encodeURIComponent(id))).status; } catch (e) { return 'pending'; }
 }
 
 /** Starts a payment on the server; resolves with what to show next ({ redirectUrl } or { qr, orderId }). */

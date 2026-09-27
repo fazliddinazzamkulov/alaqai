@@ -5,6 +5,7 @@ import { db } from './data/store.js';
 import { renderSidebar } from './sidebar.js';
 import { icon } from './ui.js';
 import { watchControls } from './controls.js';
+import { initSync } from './data/sync.js';
 
 add({
   ru: { 'app.title': 'alaqai — платформа для учителей' },
@@ -76,7 +77,8 @@ db.subscribe(evt => {
   clearTimeout(pending);
   pending = setTimeout(() => {
     renderSidebar(sidebar, ROUTES[current.route][1]);
-    if (evt.type === 'external' || evt.type === 'reset') render();
+    // Changes from another tab or device refresh list screens, never a screen the teacher is working in.
+    if ((evt.type === 'external' || evt.type === 'reset') && !BUSY.has(current.route)) render();
   }, 60);
 });
 
@@ -88,7 +90,10 @@ document.addEventListener('click', e => {
   if (shell.classList.contains('menu-open') && !e.target.closest('#sidebar, #menu-toggle')) shell.classList.remove('menu-open');
 });
 
+const BUSY = new Set(['lesson', 'editor', 'new', 's', 'view', 'checkout', 'login', 'ksp']);
+
 watchControls();
+initSync();
 render();
 
 /** Re-render the open screen (used by views after they change data). */

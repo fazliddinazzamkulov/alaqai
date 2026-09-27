@@ -11,16 +11,16 @@ import { watchControls } from '../controls.js';
 add({
   ru: { 'ad.title': 'alaqai — админка', 'ad.overview': 'Обзор', 'ad.db': 'База данных', 'ad.user': 'Аккаунты', 'ad.plans': 'Подписки и тарифы', 'ad.payments': 'Платежи', 'ad.ai': 'ИИ: ключи и расходы', 'ad.admins': 'Администраторы', 'ad.log': 'Журнал действий',
     'ad.owner': 'Владелец', 'ad.admin': 'Администратор', 'ad.openApp': 'Открыть платформу', 'ad.demoWho': 'Пример данных', 'ad.exitDemo': 'Выйти из примера',
-    'ad.gate': 'Вход для администраторов', 'ad.gateNote': 'Войдите через Google аккаунтом, у которого есть роль администратора или владельца (OWNER_EMAILS на сервере).', 'ad.notAdmin': 'Аккаунт {e} — не администратор. Попросите владельца выдать роль.',
-    'ad.noGoogle': 'Google Client ID не настроен для этой страницы.', 'ad.demo': 'Посмотреть на примере данных', 'ad.demoNote': 'Сервер ещё не подключён? Интерфейс можно проверить на выдуманных данных — они нигде не сохраняются.', 'ad.menu': 'Меню' },
+    'ad.gate': 'Вход для администраторов', 'ad.gateNote': 'Войдите аккаунтом, у которого есть роль администратора или владельца (OWNER_EMAILS / OWNER_PHONES на сервере).', 'ad.notAdmin': 'Аккаунт {e} — не администратор. Попросите владельца выдать роль.',
+    'ad.noGoogle': 'Вход через Google ещё не настроен (GOOGLE_CLIENT_ID на сервере).', 'ad.phone': 'Войти по номеру телефона', 'ad.demo': 'Посмотреть на примере данных', 'ad.demoNote': 'Сервер ещё не подключён? Интерфейс можно проверить на выдуманных данных — они нигде не сохраняются.', 'ad.menu': 'Меню' },
   kk: { 'ad.title': 'alaqai — әкімші', 'ad.overview': 'Шолу', 'ad.db': 'Дерекқор', 'ad.user': 'Аккаунттар', 'ad.plans': 'Жазылымдар мен тарифтер', 'ad.payments': 'Төлемдер', 'ad.ai': 'ЖИ: кілттер мен шығын', 'ad.admins': 'Әкімшілер', 'ad.log': 'Әрекеттер журналы',
     'ad.owner': 'Иесі', 'ad.admin': 'Әкімші', 'ad.openApp': 'Платформаны ашу', 'ad.demoWho': 'Деректер мысалы', 'ad.exitDemo': 'Мысалдан шығу',
-    'ad.gate': 'Әкімшілерге кіру', 'ad.gateNote': 'Әкімші немесе иесі рөлі бар Google аккаунтымен кіріңіз (сервердегі OWNER_EMAILS).', 'ad.notAdmin': '{e} аккаунты әкімші емес. Иесінен рөл беруді сұраңыз.',
-    'ad.noGoogle': 'Бұл бет үшін Google Client ID бапталмаған.', 'ad.demo': 'Деректер мысалымен көру', 'ad.demoNote': 'Сервер әлі қосылмаған ба? Интерфейсті ойдан алынған деректермен тексеруге болады — олар ешқайда сақталмайды.', 'ad.menu': 'Мәзір' },
+    'ad.gate': 'Әкімшілерге кіру', 'ad.gateNote': 'Әкімші немесе иесі рөлі бар аккаунтпен кіріңіз (сервердегі OWNER_EMAILS / OWNER_PHONES).', 'ad.phone': 'Телефон нөмірімен кіру', 'ad.notAdmin': '{e} аккаунты әкімші емес. Иесінен рөл беруді сұраңыз.',
+    'ad.noGoogle': 'Google арқылы кіру әлі бапталмаған (сервердегі GOOGLE_CLIENT_ID).', 'ad.demo': 'Деректер мысалымен көру', 'ad.demoNote': 'Сервер әлі қосылмаған ба? Интерфейсті ойдан алынған деректермен тексеруге болады — олар ешқайда сақталмайды.', 'ad.menu': 'Мәзір' },
   en: { 'ad.title': 'alaqai — admin', 'ad.overview': 'Overview', 'ad.db': 'Database', 'ad.user': 'Accounts', 'ad.plans': 'Plans & subscriptions', 'ad.payments': 'Payments', 'ad.ai': 'AI: keys and costs', 'ad.admins': 'Administrators', 'ad.log': 'Activity log',
     'ad.owner': 'Owner', 'ad.admin': 'Administrator', 'ad.openApp': 'Open the platform', 'ad.demoWho': 'Example data', 'ad.exitDemo': 'Leave the example',
-    'ad.gate': 'Administrator sign-in', 'ad.gateNote': 'Sign in with a Google account that has the admin or owner role (OWNER_EMAILS on the server).', 'ad.notAdmin': 'The account {e} is not an administrator. Ask the owner for the role.',
-    'ad.noGoogle': 'Google Client ID is not set up for this page.', 'ad.demo': 'See it with example data', 'ad.demoNote': 'Server not connected yet? Review the interface with made-up data — nothing is saved anywhere.', 'ad.menu': 'Menu' }
+    'ad.gate': 'Administrator sign-in', 'ad.gateNote': 'Sign in with an account that has the admin or owner role (OWNER_EMAILS / OWNER_PHONES on the server).', 'ad.notAdmin': 'The account {e} is not an administrator. Ask the owner for the role.',
+    'ad.noGoogle': 'Google sign-in is not set up yet (GOOGLE_CLIENT_ID on the server).', 'ad.phone': 'Sign in with a phone number', 'ad.demo': 'See it with example data', 'ad.demoNote': 'Server not connected yet? Review the interface with made-up data — nothing is saved anywhere.', 'ad.menu': 'Menu' }
 });
 
 const NAV = [
@@ -49,7 +49,7 @@ function parse() {
 
 function sidebar(active) {
   const demo = getMode() === 'demo';
-  const name = demo ? t('ad.demoWho') : (who && (who.name || who.email)) || '';
+  const name = demo ? t('ad.demoWho') : (who && (who.name || who.email || who.phone)) || '';
   side.innerHTML = html`
     <div class="as-logo"><span class="logo">alaqai<span class="logo-dot"></span></span><span class="as-badge">admin</span></div>
     <div class="as-url">alaqai.online/admin</div>
@@ -86,6 +86,7 @@ function gate(user) {
       <h1 class="li-title">${t('ad.gate')}</h1><p class="li-lead">${t('ad.gateNote')}</p>
       ${user && user.notAdmin ? html`<div class="li-err">${t('ad.notAdmin', { e: user.email })}</div>` : ''}
       <div class="li-google" data-google>${googleConfigured() ? '' : html`<div class="co-off"><span>${t('ad.noGoogle')}</span></div>`}</div>
+      <a class="btn-k btn-md ag-phone" href="../app/#/login?next=admin">${t('ad.phone')}</a>
       <hr><p class="muted-note">${t('ad.demoNote')}</p><button type="button" class="btn-o btn-md" data-demo>${t('ad.demo')}</button>
     </div></div>`;
   const g = main.querySelector('[data-google]');
@@ -94,6 +95,7 @@ function gate(user) {
 }
 
 async function start() {
+  if (window.Alaqai) await window.Alaqai.configReady;
   const user = await me();
   if (user && !user.notAdmin) { who = user; setMode('live'); }
   else if (savedMode() === 'demo') { who = null; setMode('demo'); }
