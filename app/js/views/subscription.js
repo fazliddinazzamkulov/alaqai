@@ -13,7 +13,7 @@ add({
     'sub.deal': 'Договорная', 'sub.dealSub': 'для всех учителей школы', 'sub.always': 'Доступен всегда', 'sub.renew': 'Продлить', 'sub.go': 'Перейти на {p}', 'sub.contact': 'Связаться',
     'sub.b1': 'Своя презентация и урок — сколько угодно', 'sub.b2': 'Журнал и посещаемость', 'sub.b3': 'Шумомер с таймером', 'sub.b4': 'Колесо фортуны и выбор ученика', 'sub.b5': 'Тестовые игры без ИИ', 'sub.b6': 'Базовый анализ и статистика без ИИ',
     'sub.s1': 'Всё из Базового', 'sub.s2': '{n} про-уроков в неделю: КСП, презентация, игры, тест и ДЗ с ИИ', 'sub.s3': 'Анализ уроков с ИИ', 'sub.s4': 'Анализ результатов ДЗ', 'sub.s5': 'КСП в Word и ссылка для наблюдателей',
-    'sub.m1': 'Всё из Стандарта', 'sub.m2': 'Уроки без ограничений', 'sub.m3': 'Агент при подготовке к уроку', 'sub.m4': 'Агент для открытого урока — {n} раза в месяц',
+    'sub.m1': 'Всё из Стандарта', 'sub.soon': 'Скоро', 'sub.soonBadge': 'скоро', 'sub.soonSub': 'новые игры и уроки без ограничений', 'sub.soonCta': 'Скоро будет', 'sub.mNewGames': 'Новые игры', 'sub.mUnlimited': 'Количество уроков не ограничено', 'sub.m2': 'Уроки без ограничений', 'sub.m3': 'Агент при подготовке к уроку', 'sub.m4': 'Агент для открытого урока — {n} раза в месяц',
     'sub.k1': 'Подключение всех учителей школы', 'sub.k2': 'Условия и цена — по договорённости', 'sub.k3': 'Напишите нам — обсудим'
   },
   kk: {
@@ -23,7 +23,7 @@ add({
     'sub.deal': 'Келісім бойынша', 'sub.dealSub': 'мектептің барлық мұғаліміне', 'sub.always': 'Әрқашан қолжетімді', 'sub.renew': 'Ұзарту', 'sub.go': '{p} тарифіне өту', 'sub.contact': 'Байланысу',
     'sub.b1': 'Өз презентацияңыз бен сабағыңыз — шексіз', 'sub.b2': 'Журнал және қатысу', 'sub.b3': 'Таймері бар шуөлшегіш', 'sub.b4': 'Сәттілік дөңгелегі және оқушы таңдау', 'sub.b5': 'ЖИ-сыз тест ойындары', 'sub.b6': 'ЖИ-сыз базалық талдау мен статистика',
     'sub.s1': 'Базалықтың бәрі', 'sub.s2': 'Аптасына {n} про-сабақ: ҚМЖ, презентация, ойындар, тест және ҮТ ЖИ-мен', 'sub.s3': 'Сабақты ЖИ-мен талдау', 'sub.s4': 'ҮТ нәтижелерін талдау', 'sub.s5': 'ҚМЖ Word-та және бақылаушыға сілтеме',
-    'sub.m1': 'Стандарттың бәрі', 'sub.m2': 'Шектеусіз сабақтар', 'sub.m3': 'Сабаққа дайындықта агент', 'sub.m4': 'Ашық сабаққа агент — айына {n} рет',
+    'sub.m1': 'Стандарттың бәрі', 'sub.soon': 'Жақында', 'sub.soonBadge': 'жақында', 'sub.soonSub': 'жаңа ойындар және шектеусіз сабақтар', 'sub.soonCta': 'Жақында болады', 'sub.mNewGames': 'Жаңа ойындар', 'sub.mUnlimited': 'Сабақ саны шектелмейді', 'sub.m2': 'Шектеусіз сабақтар', 'sub.m3': 'Сабаққа дайындықта агент', 'sub.m4': 'Ашық сабаққа агент — айына {n} рет',
     'sub.k1': 'Мектептің барлық мұғалімін қосу', 'sub.k2': 'Шарттары мен бағасы — келісім бойынша', 'sub.k3': 'Бізге жазыңыз — талқылаймыз'
   },
   en: {
@@ -33,7 +33,7 @@ add({
     'sub.deal': 'By agreement', 'sub.dealSub': 'for every teacher in the school', 'sub.always': 'Always available', 'sub.renew': 'Renew', 'sub.go': 'Switch to {p}', 'sub.contact': 'Contact us',
     'sub.b1': 'Your own slides and lessons — as many as you like', 'sub.b2': 'Register and attendance', 'sub.b3': 'Noise meter with a timer', 'sub.b4': 'Wheel of fortune and student picker', 'sub.b5': 'Test games without AI', 'sub.b6': 'Basic analysis and statistics without AI',
     'sub.s1': 'Everything in Basic', 'sub.s2': '{n} pro lessons a week: lesson plan, slides, games, test and homework with AI', 'sub.s3': 'AI lesson analysis', 'sub.s4': 'Homework results analysis', 'sub.s5': 'Lesson plan in Word and an observer link',
-    'sub.m1': 'Everything in Standard', 'sub.m2': 'Unlimited lessons', 'sub.m3': 'An agent to help you prepare', 'sub.m4': 'Open-lesson agent — {n} times a month',
+    'sub.m1': 'Everything in Standard', 'sub.soon': 'Coming soon', 'sub.soonBadge': 'soon', 'sub.soonSub': 'new games and unlimited lessons', 'sub.soonCta': 'Coming soon', 'sub.mNewGames': 'New games', 'sub.mUnlimited': 'No limit on the number of lessons', 'sub.m2': 'Unlimited lessons', 'sub.m3': 'An agent to help you prepare', 'sub.m4': 'Open-lesson agent — {n} times a month',
     'sub.k1': 'Every teacher in the school', 'sub.k2': 'Terms and price by agreement', 'sub.k3': 'Write to us and we’ll talk'
   }
 });
@@ -48,7 +48,7 @@ export async function render(main, { query }) {
   let period = query.period === '6' ? '6' : '1';
 
   const draw = () => {
-    const st = plans.standard, mx = plans.max;
+    const st = plans.standard;
     const price = p => period === '1'
       ? { price: t('sub.perMonth', { p: money(p.priceMonth) }), sub: t('sub.or6', { p: money(p.price6) }) }
       : { price: t('sub.per6', { p: money(p.price6) }), sub: t('sub.eq', { p: money(Math.round(p.price6 / 6)), s: money(p.priceMonth * 6 - p.price6) }) };
@@ -56,7 +56,8 @@ export async function render(main, { query }) {
     const cards = [
       { id: 'basic', name: t('plan.basic'), badge: cur === 'basic' ? t('sub.current') : t('sub.forever'), price: '0 ₸', sub: t('sub.noTime'), items: ['b1', 'b2', 'b3', 'b4', 'b5', 'b6'].map(k => t('sub.' + k)), cta: html`<span class="btn-o sub-cta off">${t('sub.always')}</span>` },
       { id: 'standard', name: t('plan.standard'), badge: cur === 'standard' ? t('sub.current') : '', ...price(st), items: [t('sub.s1'), t('sub.s2', { n: st.aiLessonsPerWeek }), t('sub.s3'), t('sub.s4'), t('sub.s5')], cta: html`<a class="btn-o sub-cta" href="#/checkout?plan=standard&period=${period}">${cta('standard', t('plan.standard'))}</a>` },
-      { id: 'max', name: t('plan.max'), badge: cur === 'max' ? t('sub.current') : t('sub.nolimit'), ...price(mx), items: [t('sub.m1'), t('sub.m2'), t('sub.m3'), t('sub.m4', { n: mx.openLessonAgentPerMonth })], cta: html`<a class="btn-w sub-cta" href="#/checkout?plan=max&period=${period}">${cta('max', 'Max')}</a>`, dark: true },
+      // Max is announced but not on sale yet: no price, just what it will bring.
+      { id: 'max', name: t('plan.max'), badge: t('sub.soonBadge'), price: t('sub.soon'), sub: t('sub.soonSub'), items: [t('sub.m1'), t('sub.mNewGames'), t('sub.mUnlimited')], cta: html`<span class="btn-w sub-cta off">${t('sub.soonCta')}</span>`, dark: true },
       { id: 'school', name: t('plan.school'), badge: '', price: t('sub.deal'), sub: t('sub.dealSub'), items: ['k1', 'k2', 'k3'].map(k => t('sub.' + k)), cta: html`<a class="btn-k sub-cta" href="${WHATSAPP}" target="_blank" rel="noopener">${t('sub.contact')}</a>`, soft: true }
     ];
     const usageText = usage.max == null ? t('sub.unl') : usage.max === 0 ? t('sub.noAi') : t('sub.usage', { n: usage.used, max: usage.max });

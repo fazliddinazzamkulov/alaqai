@@ -2,6 +2,7 @@
  * and in lesson mode. Ported from the old test constructor (legacy/tests.html):
  * each game is written as plain text in a simple format and played from it. */
 import { add, t, lang } from './i18n.js';
+import { sfx } from './sound.js';
 import { esc } from './ui.js';
 
 add({
@@ -146,7 +147,27 @@ export function playGame(el, game, opts = {}) {
   const P = { quiz, matching, memory, crossword, fill, search, truefalse, anagram, sort }[type];
   el.innerHTML = '';
   el.className = 'gp gp-' + type;
+  listenForSounds(el);
   P(el, data, opts.onScore || (() => {}), opts);
+}
+
+/* Sounds for every game: a right or wrong answer (an element turns .ok / .bad) and the win. */
+function listenForSounds(el) {
+  if (el._sfx) el._sfx.disconnect();
+  let last = 0;
+  const once = fn => { const n = Date.now(); if (n - last > 120) { last = n; fn(); } };
+  el._sfx = new MutationObserver(list => {
+    for (const m of list) {
+      if (m.type === 'childList') {
+        for (const node of m.addedNodes) if (node.nodeType === 1 && (node.matches('.gp-win') || node.matches('.gp-final'))) { sfx.win(); return; }
+      } else if (m.type === 'attributes' && m.target.classList) {
+        const was = m.oldValue || '';
+        if (m.target.classList.contains('ok') && !/\bok\b/.test(was)) once(sfx.right);
+        else if (m.target.classList.contains('bad') && !/\bbad\b/.test(was)) once(sfx.wrong);
+      }
+    }
+  });
+  el._sfx.observe(el, { subtree: true, childList: true, attributes: true, attributeFilter: ['class'], attributeOldValue: true });
 }
 
 function head(el, title, total) {

@@ -50,8 +50,8 @@ window.ALAQAI_LANDING_I18N = {
         items: ['Своя презентация и урок — без ограничений', 'Журнал и посещаемость', 'Монстрик тишины с таймером', 'Колесо фортуны и выбор ученика', 'Игры без ИИ', 'Базовая статистика'], cta: 'Начать бесплатно' },
       { name: 'Стандарт', badge: '', price: '4 990 ₸', per: '/ мес', alt: 'или 25 900 ₸ за 6 месяцев',
         items: ['Всё из Базового', '20 уроков с ИИ в неделю', 'Анализ уроков', 'Анализ домашних заданий', 'КСП в Word'], cta: 'Выбрать Стандарт' },
-      { name: 'Max', badge: 'без ограничений', price: '9 990 ₸', per: '/ мес', alt: 'или 49 900 ₸ за 6 месяцев',
-        items: ['Всё из Стандарта', 'Уроки без ограничений', 'ИИ-агент для подготовки к уроку', 'ИИ-агент для открытого урока — 4 раза в месяц'], cta: 'Выбрать Max' },
+      { name: 'Max', badge: 'скоро', price: 'Скоро', per: '', alt: 'новые игры и уроки без ограничений',
+        items: ['Всё из Стандарта', 'Новые игры', 'Количество уроков не ограничено'], cta: 'Скоро будет' },
       { name: 'Для школ', badge: '', price: 'Договорная', per: '', alt: 'для всех учителей школы',
         items: ['Подключим всех учителей', 'Цена и условия — по договорённости'], cta: 'Связаться' }
     ],
@@ -112,8 +112,8 @@ window.ALAQAI_LANDING_I18N = {
         items: ['Өз презентацияңыз бен сабақ — шектеусіз', 'Журнал және қатысу', 'Таймері бар тыныштық күзетшісі', 'Бақыт дөңгелегі және оқушы таңдау', 'ЖИ-сіз ойындар', 'Базалық статистика'], cta: 'Тегін бастау' },
       { name: 'Стандарт', badge: '', price: '4 990 ₸', per: '/ ай', alt: 'немесе 6 айға 25 900 ₸',
         items: ['Базалықтағының бәрі', 'Аптасына ЖИ-мен 20 сабақ', 'Сабақты талдау', 'Үй тапсырмаларын талдау', 'ҚМЖ Word-та'], cta: 'Стандартты таңдау' },
-      { name: 'Max', badge: 'шектеусіз', price: '9 990 ₸', per: '/ ай', alt: 'немесе 6 айға 49 900 ₸',
-        items: ['Стандарттағының бәрі', 'Шектеусіз сабақтар', 'Сабаққа дайындалуға ЖИ-агент', 'Ашық сабаққа ЖИ-агент — айына 4 рет'], cta: 'Max таңдау' },
+      { name: 'Max', badge: 'жақында', price: 'Жақында', per: '', alt: 'жаңа ойындар және шектеусіз сабақтар',
+        items: ['Стандарттағының бәрі', 'Жаңа ойындар', 'Сабақ саны шектелмейді'], cta: 'Жақында болады' },
       { name: 'Мектептерге', badge: '', price: 'Келісім бойынша', per: '', alt: 'мектептің барлық мұғалімдеріне',
         items: ['Барлық мұғалімді қосамыз', 'Баға мен шарттар — келісім бойынша'], cta: 'Байланысу' }
     ],
@@ -174,8 +174,8 @@ window.ALAQAI_LANDING_I18N = {
         items: ['Your own slides and lessons — unlimited', 'Register and attendance', 'Quiet monster with timer', 'Wheel of fortune and student picker', 'Games without AI', 'Basic statistics'], cta: 'Start for free' },
       { name: 'Standard', badge: '', price: '4 990 ₸', per: '/ mo', alt: 'or 25 900 ₸ for 6 months',
         items: ['Everything in Basic', '20 AI lessons a week', 'Lesson analysis', 'Homework analysis', 'Lesson plans in Word'], cta: 'Choose Standard' },
-      { name: 'Max', badge: 'no limits', price: '9 990 ₸', per: '/ mo', alt: 'or 49 900 ₸ for 6 months',
-        items: ['Everything in Standard', 'Unlimited lessons', 'AI agent for lesson prep', 'AI agent for open lessons — 4 times a month'], cta: 'Choose Max' },
+      { name: 'Max', badge: 'soon', price: 'Coming soon', per: '', alt: 'new games and unlimited lessons',
+        items: ['Everything in Standard', 'New games', 'No limit on the number of lessons'], cta: 'Coming soon' },
       { name: 'For schools', badge: '', price: 'Custom', per: '', alt: 'for every teacher in your school',
         items: ['We set up all your teachers', 'Price and terms by agreement'], cta: 'Contact us' }
     ],
