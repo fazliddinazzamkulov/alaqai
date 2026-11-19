@@ -24,6 +24,7 @@ def main():
     with sync_playwright() as p:
         b = p.chromium.launch(executable_path="/usr/bin/google-chrome", args=["--no-sandbox"])
         ctx = b.new_context(viewport={"width": 1440, "height": 1000})
+        ctx.add_init_script("try { localStorage.setItem('alaqai_last_user', JSON.stringify({name: 'Тест Мұғалім', email: 't@test.kz'})) } catch (e) {}")  # signed in before; offline now
         # No server in tests: every API call fails fast, as when offline.
         ctx.route("https://api.alaqai.online/**", lambda r: r.abort())
         pg = ctx.new_page()
@@ -62,9 +63,21 @@ def main():
         check("class in quick create select", "8 «А»" in pg.locator("[data-quick] select").inner_text())
         os.makedirs("/tmp/shots", exist_ok=True)
         pg.screenshot(path="/tmp/shots/home.png", full_page=True)
-        m = b.new_page(viewport={"width": 390, "height": 844})
-        m.goto(base + "/app/index.html#/home"); m.wait_for_timeout(800)
+        m = ctx.new_page()
+        m.set_viewport_size({"width": 390, "height": 844})
+        m.goto(base + "/app/index.html#/home"); m.wait_for_selector("[data-quick]")
         check("no horizontal scroll on phone", m.evaluate("document.documentElement.scrollWidth <= 392"))
+        # phone: the menu is hidden behind a burger, content comes first
+        check("burger visible on phone", m.locator("#burger").is_visible())
+        side_box = m.locator("#side").bounding_box()
+        check(f"menu off screen until the burger is tapped {side_box}", side_box["x"] + side_box["width"] <= 1)
+        check("content starts near the top", m.locator("#main").bounding_box()["y"] < 80)
+        m.click("#burger"); m.wait_for_timeout(350)
+        check("menu slides in", m.locator("#side").bounding_box()["x"] >= -1)
+        check("sign-out in the menu", m.locator("#side [data-logout]").is_visible())
+        m.locator("#side a[href='#/classes']").click(); m.wait_for_timeout(350)
+        check("choosing a section closes the menu", "menu-open" not in (m.locator("#shell").get_attribute("class") or "") and "#/classes" in m.url)
+        check("no burger on a desktop screen", not pg.locator("#burger").is_visible())
         m.screenshot(path="/tmp/shots/home-phone.png", full_page=True)
         check("no page errors: " + "; ".join(errors), not errors)
         b.close()

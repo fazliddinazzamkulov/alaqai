@@ -3,9 +3,9 @@ import { add, t, lang, setLang } from './i18n.js';
 import { html, icon, initials } from './ui.js';
 
 add({
-  kk: { 'nav.create': 'Сабақ құру', 'nav.home': 'Басты бет', 'nav.lessons': 'Сабақтарым', 'nav.live': 'Сабақ өткізу', 'nav.growth': 'Оқушылар өсуі', 'nav.classes': 'Сыныптар', 'nav.guest': 'Қонақ', 'nav.signin': 'Кіру' },
-  ru: { 'nav.create': 'Создать урок', 'nav.home': 'Главная', 'nav.lessons': 'Мои уроки', 'nav.live': 'Провести урок', 'nav.growth': 'Рост учеников', 'nav.classes': 'Классы', 'nav.guest': 'Гость', 'nav.signin': 'Войти' },
-  en: { 'nav.create': 'Create lesson', 'nav.home': 'Home', 'nav.lessons': 'My lessons', 'nav.live': 'Run a lesson', 'nav.growth': 'Student growth', 'nav.classes': 'Classes', 'nav.guest': 'Guest', 'nav.signin': 'Sign in' }
+  kk: { 'nav.create': 'Сабақ құру', 'nav.home': 'Басты бет', 'nav.lessons': 'Сабақтарым', 'nav.live': 'Сабақ өткізу', 'nav.growth': 'Оқушылар өсуі', 'nav.classes': 'Сыныптар', 'nav.guest': 'Қонақ', 'nav.signin': 'Кіру', 'nav.logout': 'Шығу' },
+  ru: { 'nav.create': 'Создать урок', 'nav.home': 'Главная', 'nav.lessons': 'Мои уроки', 'nav.live': 'Провести урок', 'nav.growth': 'Рост учеников', 'nav.classes': 'Классы', 'nav.guest': 'Гость', 'nav.signin': 'Войти', 'nav.logout': 'Выйти' },
+  en: { 'nav.create': 'Create lesson', 'nav.home': 'Home', 'nav.lessons': 'My lessons', 'nav.live': 'Run a lesson', 'nav.growth': 'Student growth', 'nav.classes': 'Classes', 'nav.guest': 'Guest', 'nav.signin': 'Sign in', 'nav.logout': 'Sign out' }
 });
 
 export const IC = {
@@ -24,7 +24,7 @@ export function renderSide(el, active, user) {
     ${ITEMS.map(([id, href]) => html`<a class="nav${id === active ? ' on' : ''}" href="${href}">${icon(IC[id], 22)}${t('nav.' + id)}</a>`)}
     <div class="side-grow"></div>
     <div class="langs">${['kk', 'ru', 'en'].map(l => html`<button type="button" data-lang="${l}" class="${l === lang() ? 'on' : ''}">${{ kk: 'ҚАЗ', ru: 'РУС', en: 'ENG' }[l]}</button>`)}</div>
-    ${user ? html`<a class="me" href="#/home"><span class="ava">${initials(user.name || user.email || '?')}</span><span>${user.name || user.email || ''}<small>${user.school || ''}</small></span></a>`
+    ${user ? html`<div class="me-row"><a class="me" href="#/home"><span class="ava">${initials(user.name || user.email || '?')}</span><span>${user.name || user.email || ''}<small>${user.school || ''}</small></span></a><button type="button" class="logout" data-logout>${t('nav.logout')}</button></div>`
       : html`<a class="me" href="#/login"><span class="ava">?</span><span>${t('nav.guest')}<small>${t('nav.signin')}</small></span></a>`}`.toString();
   el.querySelectorAll('[data-lang]').forEach(b => { b.onclick = () => setLang(b.dataset.lang); });
 }

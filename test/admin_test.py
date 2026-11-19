@@ -30,6 +30,12 @@ def main():
         pg.wait_for_timeout(400)
         check("no SMS code screen", pg.locator("input[name=code]").count() == 0)
 
+        # --- a guest cannot use the teacher app: everything needs a Google account ---
+        pg.goto(lv.base + "/app/index.html#/classes")
+        pg.wait_for_selector(".li-form", timeout=8000)
+        check(f"guest is sent to sign-in ({pg.url})", "#/login" in pg.url and "classes" in pg.url)
+        check("no example-without-sign-in link", pg.locator("a[href='#/preview']").count() == 0)
+
         # --- admin gate: no phone sign-in ---
         pg.goto(lv.base + "/admin/index.html")
         pg.wait_for_selector(".ag-card", timeout=8000)

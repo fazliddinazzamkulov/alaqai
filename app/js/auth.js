@@ -18,6 +18,26 @@ export async function currentUser() {
   return cached || a.fetchMe();
 }
 
+const LAST = 'alaqai_last_user';
+const remember = u => { try { localStorage.setItem(LAST, JSON.stringify({ name: u.name || '', email: u.email || '', school: u.school || '' })); } catch (e) { /* private mode */ } };
+const forget = () => { try { localStorage.removeItem(LAST); } catch (e) { /* private mode */ } };
+function lastUser() { try { return JSON.parse(localStorage.getItem(LAST) || 'null'); } catch (e) { return null; } }
+
+/** Who is signed in: asks the server. Without internet a teacher who signed in on this
+ *  device before keeps working (changes are sent later); a new visitor must sign in. */
+export async function authState() {
+  const a = await ready();
+  if (!a) return { user: lastUser(), offline: true };
+  await a.configReady;
+  try {
+    const { user } = await a.api('/api/auth/me');
+    if (user) remember(user); else forget();
+    return { user: user || null, offline: false };
+  } catch (e) {
+    return e.status ? { user: null, offline: false } : { user: lastUser(), offline: true };
+  }
+}
+
 function ready() {
   return new Promise(res => {
     let n = 0;
@@ -59,6 +79,7 @@ export async function logout() {
   const a = await ready();
   const clean = await signOutFlush().catch(() => false);
   if (a) await a.logout();
+  forget();
   return clean;
 }
 export const logoutEverywhere = () => call('/api/auth/logout-all', {});

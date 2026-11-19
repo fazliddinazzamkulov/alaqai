@@ -56,6 +56,7 @@ def main():
         b = p.chromium.launch(executable_path="/usr/bin/google-chrome", args=["--no-sandbox"])
         # --- with AI ---
         ctx = b.new_context(viewport={"width": 1440, "height": 1000})
+        ctx.add_init_script("try { localStorage.setItem('alaqai_last_user', JSON.stringify({name: 'Тест Мұғалім', email: 't@test.kz'})) } catch (e) {}")  # signed in before; offline now
         ctx.route("https://api.alaqai.online/api/ai/generate", ai)
         ctx.route("https://api.alaqai.online/**", lambda r: r.abort() if "/api/ai/generate" not in r.request.url else r.fallback())
         pg = ctx.new_page(); errors = []
@@ -84,6 +85,7 @@ def main():
         check("no page errors: " + "; ".join(errors), not errors)
         # --- AI offline: error + create without AI ---
         ctx2 = b.new_context(viewport={"width": 1440, "height": 1000})
+        ctx2.add_init_script("try { localStorage.setItem('alaqai_last_user', JSON.stringify({name: 'Тест Мұғалім', email: 't@test.kz'})) } catch (e) {}")  # signed in before; offline now
         ctx2.route("https://api.alaqai.online/**", lambda r: r.abort())
         pg2 = ctx2.new_page()
         cid2 = make_class(pg2, base)

@@ -28,6 +28,7 @@ def main():
     with sync_playwright() as p:
         b = p.chromium.launch(executable_path="/usr/bin/google-chrome", args=["--no-sandbox"])
         ctx = b.new_context(viewport={"width": 1440, "height": 1000})
+        ctx.add_init_script("try { localStorage.setItem('alaqai_last_user', JSON.stringify({name: 'Тест Мұғалім', email: 't@test.kz'})) } catch (e) {}")  # signed in before; offline now
         ctx.route("https://api.alaqai.online/**", lambda r: r.abort())
         pg = ctx.new_page(); errors = []
         pg.on("pageerror", lambda e: errors.append(str(e)))
