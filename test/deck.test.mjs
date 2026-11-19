@@ -54,3 +54,15 @@ test('title:false keeps task slides without adding a title', () => {
   assert.equal(r.slides.length, 1);
   assert.equal(r.slides[0].type, 'steps');
 });
+
+test('unsafe pictures are removed: svg with handlers or scripts, javascript: links', () => {
+  const r = normalizeDeck({ slides: [{ type: 'title', title: 'T' },
+    { type: 'figure', title: 'F', svg: '<svg onload="alert(1)"><circle r="2"/></svg>', items: [] },
+    { type: 'figure', title: 'G', svg: '<svg><script>alert(1)</script></svg>', image: 'javascript:alert(1)' },
+    { type: 'figure', title: 'H', svg: '<svg viewBox="0 0 2 2"><circle r="1"/></svg>', image: 'https://images.pexels.com/a.jpg' }] });
+  assert.equal(r.slides[1].svg, undefined);
+  assert.equal(r.slides[2].svg, undefined);
+  assert.equal(r.slides[2].image, undefined);
+  assert.ok(r.slides[3].svg.startsWith('<svg'));
+  assert.equal(r.slides[3].image, 'https://images.pexels.com/a.jpg');
+});

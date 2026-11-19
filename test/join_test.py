@@ -11,7 +11,7 @@ def main():
     with Live() as L, sync_playwright() as p:
         b = p.chromium.launch(executable_path="/usr/bin/google-chrome", args=["--no-sandbox"])
         ctx = b.new_context(viewport={"width": 1440, "height": 900})
-        ctx.add_init_script(f"localStorage.setItem('alaqai_api', '{L.api}')")
+        ctx.add_init_script(f"try {{ localStorage.setItem('alaqai_api', '{L.api}') }} catch (e) {{}}")
         pg = ctx.new_page(); errors = []
         pg.on("pageerror", lambda e: errors.append(str(e)))
         # wrong code
@@ -47,6 +47,16 @@ def main():
         pg.click("[data-help]"); pg.wait_for_timeout(400)
         board = L.teacher("GET", f"/api/live/{L.code}/board")
         check("help reached the teacher", next(s for s in board["students"] if s["name"].startswith("Нұрлан"))["status"] == "help")
+        # pressing «Check» again on the same task does not add points (no gaming the ranking)
+        L.teacher("POST", f"/api/live/{L.code}/control", {"mode": "common"})
+        pg.wait_for_timeout(2600)
+        f = next(fr for fr in pg.frames if fr.url.endswith("player.html"))
+        f.fill("#stage .slide.active .pd-in", "0\n1\n2")
+        f.click("#stage .slide.active [data-act=check]"); pg.wait_for_timeout(300)
+        f.click("#stage .slide.active [data-act=check]"); pg.wait_for_timeout(800)
+        s3 = next(s for s in L.teacher("GET", f"/api/live/{L.code}/board")["students"] if s["name"].startswith("Нұрлан"))
+        check(f"repeat check counted once (correct={s3['correct']}, total={s3['total']})", s3["correct"] == 2 and s3["total"] == 2)
+        L.teacher("POST", f"/api/live/{L.code}/control", {"mode": "levels"})
         # break screen
         L.teacher("POST", f"/api/live/{L.code}/control", {"break": {"minutes": 5, "text": "Дәптерге блок-схема сыз"}})
         pg.wait_for_selector("[data-break]:not([hidden])", timeout=5000)
@@ -60,7 +70,7 @@ def main():
         pg.reload(); pg.wait_for_selector("[data-level]", timeout=5000)
         check("remembered after reload", "Нұрлан" in pg.inner_text("header"))
         # another device cannot take the same name
-        pg2 = b.new_context(viewport={"width": 390, "height": 844}); pg2.add_init_script(f"localStorage.setItem('alaqai_api', '{L.api}')")
+        pg2 = b.new_context(viewport={"width": 390, "height": 844}); pg2.add_init_script(f"try {{ localStorage.setItem('alaqai_api', '{L.api}') }} catch (e) {{}}")
         m = pg2.new_page(); m.goto(L.base + f"/join/index.html?c={L.code}"); m.wait_for_selector("[data-student]")
         check("taken name is disabled", m.locator("[data-student][disabled]", has_text="Нұрлан").count() == 1)
         check("no horizontal scroll on phone", m.evaluate("document.documentElement.scrollWidth <= 392"))

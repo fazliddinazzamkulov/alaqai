@@ -99,7 +99,11 @@ function taskScreen(code, me) {
         <div data-stage></div>
       </main></div>`;
   const $ = s => root.querySelector(s);
+  const reported = new Set(); // one answer per slide of a task: pressing «Check» again adds nothing
   player = mountPlayer($('[data-stage]'), { slides: [] }, { lang: 'kk', onResult: m => {
+    const k = `${key}|${m.slide}`;
+    if (reported.has(k)) return;
+    reported.add(k);
     api('POST', code + '/answer', { token: me.token, method: st ? st.method : 'steps', template: m.template, correct: m.correct, total: m.total });
   } });
   $('[data-help]').onclick = async () => { help = true; $('[data-help]').classList.add('on'); $('[data-help]').textContent = T('helpSent'); await api('POST', code + '/help', { token: me.token }); };

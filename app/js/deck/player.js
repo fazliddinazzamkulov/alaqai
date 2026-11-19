@@ -10,6 +10,8 @@ export function mountPlayer(el, deck, { lang, index = 0, onSlide, onResult, onRe
   f.dataset.player = '';
   f.title = 'alaqai slides';
   f.allow = 'fullscreen';
+  // The deck is data from the AI or the teacher: the frame cannot reach this page's storage.
+  f.setAttribute('sandbox', 'allow-scripts allow-popups');
   f.src = SRC;
   let ready = false, pending = { deck, index, lang };
   const send = m => { try { f.contentWindow.postMessage({ source: 'alaqai', ...m }, '*'); } catch (e) { /* frame gone */ } };

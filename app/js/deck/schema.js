@@ -98,6 +98,21 @@ const FIX = {
   balance: d => (strs(d.left).length && strs(d.right).length ? d : null)
 };
 
+const BAD_SVG = /<script|<foreignObject|<iframe|<object|<embed|\son[a-z]+\s*=|javascript:/i;
+const OK_URL = /^(https:\/\/|http:\/\/|data:image\/(png|jpe?g|webp|gif);base64,)/i;
+/** Drops pictures that could run code: svg with scripts or handlers, non-http(s)/data:image links. */
+function safePictures(v) {
+  if (Array.isArray(v)) return v.map(safePictures);
+  if (!v || typeof v !== 'object') return v;
+  const out = {};
+  for (const [k, x] of Object.entries(v)) {
+    if (k === 'svg' && (typeof x !== 'string' || BAD_SVG.test(x))) continue;
+    if ((k === 'image' || k === 'src') && (typeof x !== 'string' || !OK_URL.test(x.trim()))) continue;
+    out[k] = safePictures(x);
+  }
+  return out;
+}
+
 /**
  * Repairs an AI deck: unknown types and broken slides are dropped; the first
  * slide is always a title (made from `topic` when missing).
@@ -108,7 +123,8 @@ export function normalizeDeck(raw, { topic = '', title = true } = {}) {
   const slides = [];
   for (const s of input) {
     if (!s || !TEMPLATES[s.type]) { dropped++; continue; }
-    const fixed = FIX[s.type] ? FIX[s.type](s) : s;
+    const clean = safePictures(s);
+    const fixed = FIX[clean.type] ? FIX[clean.type](clean) : clean;
     if (!fixed) { dropped++; continue; }
     slides.push(fixed);
   }

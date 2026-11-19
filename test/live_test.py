@@ -18,7 +18,7 @@ def main():
         ctx = b.new_context(viewport={"width": 1440, "height": 1000})
         name, value = L.cookie.split("=", 1)
         ctx.add_cookies([{"name": name, "value": value, "url": L.api}])
-        ctx.add_init_script(f"localStorage.setItem('alaqai_api', '{L.api}')")
+        ctx.add_init_script(f"try {{ localStorage.setItem('alaqai_api', '{L.api}') }} catch (e) {{}}")
         ctx.route("https://fonts.googleapis.com/**", lambda r: r.abort())
         pg = ctx.new_page(); errors = []
         pg.on("pageerror", lambda e: errors.append(str(e)))
