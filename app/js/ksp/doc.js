@@ -1,6 +1,7 @@
 /* KSP (short-term lesson plan) in the official Kazakhstan format: the on-screen
  * document (screen 4, the observer page) and the Word file. */
-import { esc } from '../ui.js';
+// Local escape so this module also runs outside the browser (tests, server).
+const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 /** Labels language for a KSP made in materials language `l` (English lessons get the notes language). */
 export function docLangOf(l, ui = 'ru') {
@@ -15,19 +16,19 @@ export const LABELS = {
     title: 'Қысқа мерзімді (сабақ) жоспары', school: 'Мектеп атауы', section: 'Бөлім:', teacher: 'Педагогтің аты-жөні:', date: 'Күні:', grade: 'Сынып:', present: 'Қатысушылар саны: ___', absent: 'Қатыспағандар саны: ___',
     topic: 'Сабақтың тақырыбы:', objectives: 'Оқу бағдарламасына сәйкес оқыту мақсаттары:', goals: 'Сабақтың мақсаты:', criteria: 'Бағалау критерийлері:', language: 'Тілдік мақсаттар:', values: 'Құндылықтарды дарыту:',
     cross: 'Пәнаралық байланыс:', prior: 'Алдыңғы білім:', course: 'Сабақтың барысы', stage: 'Сабақтың кезеңі / уақыт', tAct: 'Педагогтің әрекеті', sAct: 'Оқушының әрекеті', assess: 'Бағалау', res: 'Ресурстар',
-    diff: 'Саралау', assessNote: 'Бағалау', reflection: 'Рефлексия', hw: 'Үй тапсырмасы', min: 'мин', slides: 'Слайдтар', game: 'Ойын', quiz: 'Викторина', test: 'Тест', hwLink: 'Үй тапсырмасы'
+    diff: 'Саралау', assessNote: 'Бағалау', methods: 'Әдіс-тәсілдер:', health: 'Денсаулық және қауіпсіздік', reflection: 'Рефлексия', hw: 'Үй тапсырмасы', min: 'мин', slides: 'Слайдтар', game: 'Ойын', quiz: 'Викторина', test: 'Тест', hwLink: 'Үй тапсырмасы'
   },
   ru: {
     title: 'Краткосрочный (поурочный) план', school: 'Название школы', section: 'Раздел:', teacher: 'ФИО педагога:', date: 'Дата:', grade: 'Класс:', present: 'Количество присутствующих: ___', absent: 'отсутствующих: ___',
     topic: 'Тема урока:', objectives: 'Цели обучения в соответствии с учебной программой:', goals: 'Цели урока:', criteria: 'Критерии оценивания:', language: 'Языковые цели:', values: 'Привитие ценностей:',
     cross: 'Межпредметные связи:', prior: 'Предварительные знания:', course: 'Ход урока', stage: 'Этап урока / время', tAct: 'Действия педагога', sAct: 'Действия учащихся', assess: 'Оценивание', res: 'Ресурсы',
-    diff: 'Дифференциация', assessNote: 'Оценивание', reflection: 'Рефлексия', hw: 'Домашнее задание', min: 'мин', slides: 'Слайды', game: 'Игра', quiz: 'Викторина', test: 'Тест', hwLink: 'Домашнее задание'
+    diff: 'Дифференциация', assessNote: 'Оценивание', methods: 'Методы и приёмы:', health: 'Здоровье и безопасность', reflection: 'Рефлексия', hw: 'Домашнее задание', min: 'мин', slides: 'Слайды', game: 'Игра', quiz: 'Викторина', test: 'Тест', hwLink: 'Домашнее задание'
   },
   en: {
     title: 'Short-term (lesson) plan', school: 'School name', section: 'Unit:', teacher: 'Teacher:', date: 'Date:', grade: 'Grade:', present: 'Number present: ___', absent: 'absent: ___',
     topic: 'Lesson title:', objectives: 'Learning objectives (curriculum):', goals: 'Lesson objectives:', criteria: 'Assessment criteria:', language: 'Language objectives:', values: 'Values:',
     cross: 'Cross-curricular links:', prior: 'Previous learning:', course: 'Lesson plan', stage: 'Stage / time', tAct: 'Teacher actions', sAct: 'Student actions', assess: 'Assessment', res: 'Resources',
-    diff: 'Differentiation', assessNote: 'Assessment', reflection: 'Reflection', hw: 'Homework', min: 'min', slides: 'Slides', game: 'Game', quiz: 'Quiz', test: 'Test', hwLink: 'Homework'
+    diff: 'Differentiation', assessNote: 'Assessment', methods: 'Methods:', health: 'Health and safety', reflection: 'Reflection', hw: 'Homework', min: 'min', slides: 'Slides', game: 'Game', quiz: 'Quiz', test: 'Test', hwLink: 'Homework'
   }
 };
 
@@ -45,6 +46,7 @@ export function kspModel(ksp, ctx) {
     ['topic', L.topic, ksp.topic || ''],
     ['learningObjectives', L.objectives, list(ksp.learningObjectives)],
     ['lessonGoals', L.goals, list(ksp.lessonGoals)],
+    ['methods', L.methods, ksp.methods || ''],
     ['successCriteria', L.criteria, list(ksp.successCriteria)],
     ['languageGoals', L.language, ksp.languageGoals || ''],
     ['values', L.values, ksp.values || ''],
@@ -57,7 +59,7 @@ export function kspModel(ksp, ctx) {
   if (ctx.quiz) extra.push(`${L.quiz}: «${ctx.quiz}»`);
   if (ctx.hwLink) extra.push(`${L.hwLink}: ${ctx.hwLink}`);
   const stages = (ksp.stages || []).map((s, i, arr) => ({ ...s, resources: [s.resources, i === arr.length - 1 && extra.length && !String(s.resources || '').includes(ctx.hwLink || '§§') ? extra.join(' · ') : ''].filter(Boolean).join(' · ') }));
-  const after = [['differentiation', L.diff, ksp.differentiation || ''], ['assessmentNote', L.assessNote, ksp.assessmentNote || ''], ['reflection', L.reflection, ksp.reflection || '']].filter(r => r[2]);
+  const after = [['differentiation', L.diff, ksp.differentiation || ''], ['assessmentNote', L.assessNote, ksp.assessmentNote || ''], ['health', L.health, ksp.health || ''], ['reflection', L.reflection, ksp.reflection || '']].filter(r => r[2]);
   return { L, info, stages, after, school: ctx.school || '' };
 }
 
