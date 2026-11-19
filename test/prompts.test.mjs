@@ -6,11 +6,14 @@ import { kspModel } from '../app/js/ksp/doc.js';
 const base = { topic: 'Цикл for', subject: 'Информатика', className: '8 «А»', lang: 'kk', count: 10 };
 const sum = (arr, f) => arr.reduce((a, s) => a + (f(s) ? s.minutes : 0), 0);
 
-test('deck prompt lists only chosen types', () => {
+test('deck prompt builds a whole lesson: warm-up, explanation, common questions, individual work, summary, reflection, homework', () => {
   const p = deckPrompt({ ...base, types: ['title', 'notes', 'predict'], images: 'photo' });
-  assert.ok(p.includes('"type":"predict"'));
-  assert.ok(!p.includes('"type":"quiz"'));
+  assert.ok(p.includes('"type":"predict"'), 'chosen types are offered');
+  assert.ok(!p.includes('"type":"match"'), 'types the teacher did not choose are not offered');
+  for (const always of ['quiz', 'summary', 'reflection', 'homework']) assert.ok(p.includes(`"type":"${always}"`), 'always offered: ' + always);
   assert.ok(p.includes('10'));
+  for (const stage of [/актуализац/i, /объяснен/i, /общие вопросы/i, /индивидуальн/i, /рефлекс/i, /домашн/i]) assert.match(p, stage);
+  assert.match(p, /не пиши.*уров/i, 'projected slides never name levels');
 });
 
 test('screen limit by grade', () => {
