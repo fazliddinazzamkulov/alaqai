@@ -9,7 +9,7 @@ window.ALAQAI_LANDING_I18N = {
       description: 'Платформа для учителей Казахстана: напишите тему — alaqai соберёт КСП, презентацию, игры, тест и домашнее задание.'
     },
     langLabel: 'Язык', menuLabel: 'Меню', navLabel: 'Разделы',
-    nav: ['Как это работает', 'Возможности', 'На уроке', 'Тарифы'], login: 'Войти', cta: 'Начать бесплатно',
+    nav: ['Как это работает', 'Возможности', 'На уроке', 'Тарифы'], login: 'Войти', students: 'Ученику', cta: 'Начать бесплатно',
     eyebrow: 'Платформа для учителей Казахстана', h1a: 'Готовый урок', h1b: 'за одну минуту',
     sub: 'Напишите тему — alaqai соберёт КСП, презентацию, игры, тест и домашнее задание. Вам останется только провести урок.',
     cta2: 'Как это работает', noteA: 'Без установки · вход через Google', noteB: 'базовые функции бесплатно навсегда',
@@ -71,7 +71,7 @@ window.ALAQAI_LANDING_I18N = {
       description: 'Қазақстан мұғалімдеріне арналған платформа: тақырыпты жазыңыз — alaqai ҚМЖ, презентация, ойындар, тест және үй тапсырмасын дайындайды.'
     },
     langLabel: 'Тіл', menuLabel: 'Мәзір', navLabel: 'Бөлімдер',
-    nav: ['Қалай жұмыс істейді', 'Мүмкіндіктер', 'Сабақта', 'Тарифтер'], login: 'Кіру', cta: 'Тегін бастау',
+    nav: ['Қалай жұмыс істейді', 'Мүмкіндіктер', 'Сабақта', 'Тарифтер'], login: 'Кіру', students: 'Оқушыға', cta: 'Тегін бастау',
     eyebrow: 'Қазақстан мұғалімдеріне арналған платформа', h1a: 'Дайын сабақ', h1b: 'бір минутта',
     sub: 'Тақырыпты жазыңыз — alaqai ҚМЖ, презентация, ойындар, тест және үй тапсырмасын дайындайды. Сізге тек сабақты өткізу қалады.',
     cta2: 'Қалай жұмыс істейді', noteA: 'Орнатудың қажеті жоқ · Google арқылы кіру', noteB: 'негізгі функциялар мәңгі тегін',
@@ -133,7 +133,7 @@ window.ALAQAI_LANDING_I18N = {
       description: 'A platform for teachers in Kazakhstan: type a topic and alaqai builds the lesson plan, slides, games, a test and homework.'
     },
     langLabel: 'Language', menuLabel: 'Menu', navLabel: 'Sections',
-    nav: ['How it works', 'Features', 'In class', 'Pricing'], login: 'Log in', cta: 'Start for free',
+    nav: ['How it works', 'Features', 'In class', 'Pricing'], login: 'Log in', students: 'Students', cta: 'Start for free',
     eyebrow: 'A platform for teachers in Kazakhstan', h1a: 'A ready lesson', h1b: 'in one minute',
     sub: 'Type a topic — alaqai builds the lesson plan, slides, games, a test and homework. All that is left is to teach.',
     cta2: 'See how it works', noteA: 'Nothing to install · Sign in with Google', noteB: 'Core features free forever',

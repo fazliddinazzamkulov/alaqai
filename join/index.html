@@ -12,9 +12,9 @@
 <link rel="stylesheet" href="../app/css/v2.css">
 <link rel="stylesheet" href="join.css">
 <script>
-  window.ALAQAI_API_BASE = window.ALAQAI_API_BASE || (function () { try { return localStorage.getItem('alaqai_api'); } catch (e) { return null; } })() || "https://api.alaqai.online";
   try { if (!localStorage.getItem('alaqai_lang') && !/[?&]lang=/.test(location.search)) localStorage.setItem('alaqai_lang', 'kk'); } catch (e) {}
 </script>
+<script src="../assets/js/apibase.js"></script>
 <script src="../assets/js/lang.js"></script>
 <script type="module" src="join.js"></script>
 </head>

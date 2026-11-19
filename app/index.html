@@ -13,12 +13,10 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=TikTok+Sans:wght@600;700;800&family=JetBrains+Mono:wght@500;700&family=Poppins:wght@600&display=swap">
 <link rel="stylesheet" href="css/v2.css">
 <script>
-  // Backend (AI, accounts, live lessons). API keys live only on that server.
-  // Another server for testing: localStorage.setItem('alaqai_api', 'http://localhost:8787')
-  window.ALAQAI_API_BASE = window.ALAQAI_API_BASE || (function () { try { return localStorage.getItem('alaqai_api'); } catch (e) { return null; } })() || "https://api.alaqai.online";
   // The platform opens in Kazakh unless the teacher chose another language.
   try { if (!localStorage.getItem('alaqai_lang') && !/[?&]lang=/.test(location.search)) localStorage.setItem('alaqai_lang', 'kk'); } catch (e) {}
 </script>
+<script src="../assets/js/apibase.js"></script>
 <script src="../assets/js/lang.js"></script>
 <script src="../assets/js/api.js" defer></script>
 <script type="module" src="js/main.js"></script>

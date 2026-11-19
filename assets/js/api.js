@@ -11,7 +11,7 @@
   "use strict";
 
   const DEFAULT_API_BASE = "https://api.alaqai.online";
-  const API_BASE = (global.ALAQAI_API_BASE || DEFAULT_API_BASE).replace(/\/$/, "");
+  const API_BASE = (typeof global.ALAQAI_API_BASE === "string" ? global.ALAQAI_API_BASE : DEFAULT_API_BASE).replace(/\/$/, "");
   let GOOGLE_CLIENT_ID = global.ALAQAI_GOOGLE_CLIENT_ID || "";
 
   let cachedUser = undefined; // undefined = not fetched yet, null = signed out
