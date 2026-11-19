@@ -67,6 +67,8 @@ def main():
         pg2.goto(f"http://127.0.0.1:{port}/app/slides/player.html?deck=demo.json")
         pg2.wait_for_function("document.querySelectorAll('#stage .slide').length >= 50", timeout=8000)
         check("demo deck: no unknown templates", pg2.locator("#stage .slide .err").count() == 0)
+        check("KaTeX served locally renders formulas", pg2.evaluate("!!window.katex && document.querySelectorAll('#stage .katex').length > 5"))
+        check("QR library served locally", pg2.evaluate("typeof qrcode === 'function'"))
         check("demo deck: no page errors " + "; ".join(err2), not err2)
         b.close()
     srv.shutdown()

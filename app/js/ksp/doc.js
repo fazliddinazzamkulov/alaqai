@@ -86,7 +86,7 @@ export function kspHtml(ksp, ctx, { edit = false } = {}) {
 
 let zipLoading = null;
 function loadJSZip() {
-  if (!zipLoading) zipLoading = new Promise((res, rej) => { const s = document.createElement('script'); s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js'; s.onload = () => res(window.JSZip); s.onerror = rej; document.head.appendChild(s); });
+  if (!zipLoading) zipLoading = new Promise((res, rej) => { const s = document.createElement('script'); s.src = new URL('../../vendor/jszip.min.js', import.meta.url).href; s.onload = () => res(window.JSZip); s.onerror = rej; document.head.appendChild(s); });
   return zipLoading;
 }
 
