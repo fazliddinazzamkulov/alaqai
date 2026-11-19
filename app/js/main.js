@@ -13,6 +13,7 @@ const ROUTES = {
   lessons: ['./views/lessons.js', 'lessons'],
   lesson: ['./views/lesson.js', 'lessons', 'bare'],
   live: ['./views/live.js', 'live', 'bare'],
+  present: ['./views/present.js', 'lessons', 'bare'],
   growth: ['./views/growth.js', 'growth'],
   classes: ['./views/classes.js', 'classes'],
   login: ['./views/login.js', null, 'bare']
