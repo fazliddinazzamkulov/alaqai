@@ -12,12 +12,10 @@
 <link rel="stylesheet" href="../assets/css/alaqai.css">
 <link rel="stylesheet" href="../legacy/app-v1/css/app.css">
 <link rel="stylesheet" href="../legacy/app-v1/css/admin.css">
-<script>
-  // The same server as the platform; admin routes need a signed-in admin or owner.
-  // For testing another server: localStorage.setItem('alaqai_api', 'http://localhost:8787')
-  window.ALAQAI_API_BASE = window.ALAQAI_API_BASE || (function () { try { return localStorage.getItem('alaqai_api'); } catch (e) { return null; } })() || "https://api.alaqai.online";
-  window.ALAQAI_GOOGLE_CLIENT_ID = window.ALAQAI_GOOGLE_CLIENT_ID || "";
-</script>
+<!-- The same server as the platform (alaqai.com → same address); admin routes
+     need a Google account that is the owner or on the admin list. -->
+<script src="../assets/js/apibase.js"></script>
+<script>window.ALAQAI_GOOGLE_CLIENT_ID = window.ALAQAI_GOOGLE_CLIENT_ID || "";</script>
 <script src="../assets/js/lang.js"></script>
 <script src="../assets/js/api.js" defer></script>
 <script type="module" src="../legacy/app-v1/js/admin/main.js"></script>

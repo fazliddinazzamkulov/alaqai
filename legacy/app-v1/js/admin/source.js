@@ -177,3 +177,44 @@ export async function paymentMethods() {
   return ['card', 'kaspi', 'apple', 'google'].map(id => ({ id, on: !!on[id], share: share[id] }));
 }
 export async function schoolRequests() { return mode === 'demo' ? demo().schools : []; }
+
+/* ---------- usage, limits, administrators by e-mail ---------- */
+
+function demoUsage() {
+  const d = demo();
+  const r = rng(7);
+  const services = [['gemini', 'Gemini — тексты, задания, КСП', 1840, 1500], ['gemini_image', 'Nano Banana — генерация картинок', 212, 250], ['pexels', 'Pexels — поиск фото', 960, null], ['pixabay', 'Pixabay — поиск фото', 140, null], ['unsplash', 'Unsplash — поиск фото', 0, null]]
+    .map(([id, label, today, limit]) => ({ id, label, today, limit, failedToday: id === 'gemini' ? 3 : 0, week: today * 5, month: today * 21 }));
+  const teachers = d.users.filter(u => u.plan !== 'basic').slice(0, 24).map((u, i) => {
+    const month = Math.round(r() * 400), week = Math.round(month / 4), today = Math.round(week / 5);
+    return { id: u.id, name: u.name, email: u.email || (u.name.split(' ')[0].toLowerCase() + '@gmail.com'), role: u.role, plan: u.plan, today, week, month, picturesMonth: Math.round(month * 0.1), photosMonth: Math.round(month * 0.6),
+      weekLimit: u.plan === 'standard' ? 300 + (i === 2 ? 50 : 0) : null, extraWeek: i === 2 ? 50 : 0, dailyCap: i === 4 ? 0 : null };
+  }).sort((a, b) => b.month - a.month);
+  return { services, teachers, defaultDailyCap: 300, callsPerLesson: 15 };
+}
+let demoUsageCache = null;
+export async function usage() {
+  if (mode === 'demo') return (demoUsageCache = demoUsageCache || demoUsage());
+  return api('/api/admin/usage');
+}
+export async function setServiceLimits(limits) {
+  if (mode === 'demo') {
+    const u = await usage();
+    u.services.forEach(s => { const v = limits[s.id]; s.limit = v === '' || v == null ? null : Number(v); });
+    return { limits };
+  }
+  return api('/api/admin/service-limits', { method: 'PUT', body: { limits } });
+}
+export async function setTeacherLimit(u, { aiExtraWeek, aiDailyCap }) {
+  if (mode === 'demo') { Object.assign(u, { extraWeek: aiExtraWeek, dailyCap: aiDailyCap }); return; }
+  await api('/api/admin/users/' + u.id, { method: 'PATCH', body: { aiExtraWeek, aiDailyCap } });
+}
+let demoAdmins = null;
+export async function adminEmails() {
+  if (mode === 'demo') return (demoAdmins = demoAdmins || { emails: ['timur.aliev@gmail.com'], owners: ['owner@gmail.com'] });
+  return api('/api/admin/admin-emails');
+}
+export async function setAdminEmails(emails) {
+  if (mode === 'demo') { demoAdmins = { ...(await adminEmails()), emails }; return demoAdmins; }
+  return api('/api/admin/admin-emails', { method: 'PUT', body: { emails } });
+}

@@ -107,20 +107,12 @@ svg{flex:none}
 .li-title{font:800 32px var(--f-head)}
 .li-lead{margin:0;color:var(--ink2)}
 .li-field{display:flex;flex-direction:column;gap:8px;font-weight:600;color:var(--ink2)}
-.li-phone{display:flex;align-items:center;gap:8px;height:56px;border:1.5px solid var(--line2);border-radius:var(--r);padding:0 14px}
-.li-phone input{border:0;outline:0;flex:1;font-size:18px;background:none}
 .li-btn{height:56px;border-radius:var(--r);border:0;background:var(--ink);color:#fff;font-weight:600;font-size:17px;cursor:pointer;display:grid;place-items:center;text-decoration:none}
 .li-err{color:var(--bad);font-weight:600}
-.li-or{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:14px}
 .li-or span{flex:1;height:1px;background:var(--line)}
 .li-gbtn{width:100%;height:52px;border-radius:var(--r);border:1.5px solid var(--line2);background:#fff;font-weight:600;display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer}
 .li-terms{font-size:13px;color:var(--muted);margin:0}
 .li-example,.li-change,.li-backlink{font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
-.li-code{position:relative;display:block}
-.li-code input{position:absolute;inset:0;opacity:0}
-.li-code .boxes{display:flex;gap:10px}
-.li-code .boxes i{width:60px;height:70px;border-radius:14px;border:2px solid var(--line2);display:grid;place-items:center;font:800 30px var(--f-head);font-style:normal}
-.li-code .boxes i.cur{border-color:var(--acc)} .li-code .boxes i.filled{border-color:var(--ink)}
 .li{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));min-height:100vh}
 .li-hero{background:var(--ink);color:#fff;padding:48px;display:flex;flex-direction:column;gap:28px;justify-content:center}
 .li-hero .logo{color:#fff;padding:0}

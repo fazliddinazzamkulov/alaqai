@@ -144,3 +144,27 @@ a.av-tr:hover { background: var(--soft-2); }
 .av-tr .p.pending, .av-tr .pending { color: var(--ink-2); }
 .ag-card .ag-phone { width: 100%; justify-content: center; }
 @media (max-width: 700px) { .av-tr.kwait { grid-template-columns: minmax(0, 1fr) auto; } .av-tr.kwait > span:first-child, .av-tr.kwait > .mono { display: none; } }
+
+/* usage and limits */
+.us-svc { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin-top: 12px; }
+.us-card { display: flex; flex-direction: column; gap: 8px; padding: 14px; border: 1px solid var(--card-line); border-radius: 14px; background: #FFFFFF; min-width: 0; }
+.us-card.full { border-color: #B42318; background: #FEF3F2; }
+.us-name b { display: block; font-size: 14px; }
+.us-name span { display: block; font-size: 12px; color: var(--ink-3); }
+.us-big { display: flex; align-items: baseline; gap: 6px; }
+.us-big b { font-size: 26px; font-weight: 700; line-height: 1; }
+.us-big span { font-size: 12px; color: var(--ink-3); }
+.us-bar { height: 6px; border-radius: 3px; background: var(--row-line-2); overflow: hidden; }
+.us-bar i { display: block; height: 100%; background: #2563EB; border-radius: 3px; }
+.us-bar i.warn { background: #B54708; }
+.us-bar i.bad { background: #B42318; }
+.us-sub { font-size: 12px; color: var(--ink-2); }
+.us-sub em, .us-off, .us-over { color: #B42318; font-style: normal; font-weight: 600; }
+.us-lim { display: flex; flex-direction: column; gap: 4px; font-size: 12px; font-weight: 600; color: var(--ink-2); }
+.us-lim input { height: 36px; padding: 0 10px; border: 1px solid var(--btn-line); border-radius: 10px; font: inherit; font-size: 14px; }
+.us-foot { grid-column: 1 / -1; display: flex; justify-content: flex-end; }
+.us-table { margin-top: 10px; overflow-x: auto; }
+.av-tr.us { grid-template-columns: minmax(160px, 1.6fr) 80px 60px 100px 70px 70px 60px 90px 80px; min-width: 820px; }
+.card.us-add { display: flex; flex-direction: row; gap: 10px; align-items: center; justify-content: stretch; text-align: left; }
+.card.us-add input { flex: 1 1 auto; width: auto; max-width: none; height: 42px; padding: 0 12px; border: 1px solid var(--btn-line); border-radius: 12px; font: inherit; font-size: 14px; }
+.us-find { display: flex; margin-top: 10px; }

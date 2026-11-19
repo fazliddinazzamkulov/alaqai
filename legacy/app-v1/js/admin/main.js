@@ -6,21 +6,22 @@ import { html, icon, initials } from '../ui.js';
 import { me, getMode, setMode, savedMode } from './source.js';
 import { renderGoogle, googleConfigured } from '../auth.js';
 import * as V from './views.js';
+import { usagePage, adminsPage } from './usage.js';
 import { watchControls } from '../controls.js';
 
 add({
-  ru: { 'ad.title': 'alaqai — админка', 'ad.overview': 'Обзор', 'ad.db': 'База данных', 'ad.user': 'Аккаунты', 'ad.plans': 'Подписки и тарифы', 'ad.payments': 'Платежи', 'ad.ai': 'ИИ: ключи и расходы', 'ad.admins': 'Администраторы', 'ad.log': 'Журнал действий',
+  ru: { 'ad.title': 'alaqai — админка', 'ad.overview': 'Обзор', 'ad.db': 'База данных', 'ad.user': 'Аккаунты', 'ad.plans': 'Подписки и тарифы', 'ad.payments': 'Платежи', 'ad.ai': 'ИИ: ключи и расходы', 'ad.usage': 'Расход и лимиты', 'ad.admins': 'Администраторы', 'ad.log': 'Журнал действий',
     'ad.owner': 'Владелец', 'ad.admin': 'Администратор', 'ad.openApp': 'Открыть платформу', 'ad.demoWho': 'Пример данных', 'ad.exitDemo': 'Выйти из примера',
-    'ad.gate': 'Вход для администраторов', 'ad.gateNote': 'Войдите аккаунтом, у которого есть роль администратора или владельца (OWNER_EMAILS / OWNER_PHONES на сервере).', 'ad.notAdmin': 'Аккаунт {e} — не администратор. Попросите владельца выдать роль.',
-    'ad.noGoogle': 'Вход через Google ещё не настроен (GOOGLE_CLIENT_ID на сервере).', 'ad.phone': 'Войти по номеру телефона', 'ad.demo': 'Посмотреть на примере данных', 'ad.demoNote': 'Сервер ещё не подключён? Интерфейс можно проверить на выдуманных данных — они нигде не сохраняются.', 'ad.menu': 'Меню' },
-  kk: { 'ad.title': 'alaqai — әкімші', 'ad.overview': 'Шолу', 'ad.db': 'Дерекқор', 'ad.user': 'Аккаунттар', 'ad.plans': 'Жазылымдар мен тарифтер', 'ad.payments': 'Төлемдер', 'ad.ai': 'ЖИ: кілттер мен шығын', 'ad.admins': 'Әкімшілер', 'ad.log': 'Әрекеттер журналы',
+    'ad.gate': 'Вход для администраторов', 'ad.gateNote': 'Войдите через Google: почтой владельца (OWNER_EMAILS на сервере) или почтой, которую владелец добавил в «Администраторы».', 'ad.notAdmin': 'Аккаунт {e} — не администратор. Попросите владельца выдать роль.',
+    'ad.noGoogle': 'Вход через Google ещё не настроен (GOOGLE_CLIENT_ID на сервере).', 'ad.demo': 'Посмотреть на примере данных', 'ad.demoNote': 'Сервер ещё не подключён? Интерфейс можно проверить на выдуманных данных — они нигде не сохраняются.', 'ad.menu': 'Меню' },
+  kk: { 'ad.title': 'alaqai — әкімші', 'ad.overview': 'Шолу', 'ad.db': 'Дерекқор', 'ad.user': 'Аккаунттар', 'ad.plans': 'Жазылымдар мен тарифтер', 'ad.payments': 'Төлемдер', 'ad.ai': 'ЖИ: кілттер мен шығын', 'ad.usage': 'Шығын және лимиттер', 'ad.admins': 'Әкімшілер', 'ad.log': 'Әрекеттер журналы',
     'ad.owner': 'Иесі', 'ad.admin': 'Әкімші', 'ad.openApp': 'Платформаны ашу', 'ad.demoWho': 'Деректер мысалы', 'ad.exitDemo': 'Мысалдан шығу',
-    'ad.gate': 'Әкімшілерге кіру', 'ad.gateNote': 'Әкімші немесе иесі рөлі бар аккаунтпен кіріңіз (сервердегі OWNER_EMAILS / OWNER_PHONES).', 'ad.phone': 'Телефон нөмірімен кіру', 'ad.notAdmin': '{e} аккаунты әкімші емес. Иесінен рөл беруді сұраңыз.',
+    'ad.gate': 'Әкімшілерге кіру', 'ad.gateNote': 'Google арқылы кіріңіз: иесінің поштасымен (сервердегі OWNER_EMAILS) немесе иесі «Әкімшілерге» қосқан поштамен.', 'ad.notAdmin': '{e} аккаунты әкімші емес. Иесінен рөл беруді сұраңыз.',
     'ad.noGoogle': 'Google арқылы кіру әлі бапталмаған (сервердегі GOOGLE_CLIENT_ID).', 'ad.demo': 'Деректер мысалымен көру', 'ad.demoNote': 'Сервер әлі қосылмаған ба? Интерфейсті ойдан алынған деректермен тексеруге болады — олар ешқайда сақталмайды.', 'ad.menu': 'Мәзір' },
-  en: { 'ad.title': 'alaqai — admin', 'ad.overview': 'Overview', 'ad.db': 'Database', 'ad.user': 'Accounts', 'ad.plans': 'Plans & subscriptions', 'ad.payments': 'Payments', 'ad.ai': 'AI: keys and costs', 'ad.admins': 'Administrators', 'ad.log': 'Activity log',
+  en: { 'ad.title': 'alaqai — admin', 'ad.overview': 'Overview', 'ad.db': 'Database', 'ad.user': 'Accounts', 'ad.plans': 'Plans & subscriptions', 'ad.payments': 'Payments', 'ad.ai': 'AI: keys and costs', 'ad.usage': 'Usage and limits', 'ad.admins': 'Administrators', 'ad.log': 'Activity log',
     'ad.owner': 'Owner', 'ad.admin': 'Administrator', 'ad.openApp': 'Open the platform', 'ad.demoWho': 'Example data', 'ad.exitDemo': 'Leave the example',
-    'ad.gate': 'Administrator sign-in', 'ad.gateNote': 'Sign in with an account that has the admin or owner role (OWNER_EMAILS / OWNER_PHONES on the server).', 'ad.notAdmin': 'The account {e} is not an administrator. Ask the owner for the role.',
-    'ad.noGoogle': 'Google sign-in is not set up yet (GOOGLE_CLIENT_ID on the server).', 'ad.phone': 'Sign in with a phone number', 'ad.demo': 'See it with example data', 'ad.demoNote': 'Server not connected yet? Review the interface with made-up data — nothing is saved anywhere.', 'ad.menu': 'Menu' }
+    'ad.gate': 'Administrator sign-in', 'ad.gateNote': 'Sign in with Google: the owner e-mail (OWNER_EMAILS on the server) or an e-mail the owner added under «Administrators».', 'ad.notAdmin': 'The account {e} is not an administrator. Ask the owner for the role.',
+    'ad.noGoogle': 'Google sign-in is not set up yet (GOOGLE_CLIENT_ID on the server).', 'ad.demo': 'See it with example data', 'ad.demoNote': 'Server not connected yet? Review the interface with made-up data — nothing is saved anywhere.', 'ad.menu': 'Menu' }
 });
 
 const NAV = [
@@ -30,10 +31,11 @@ const NAV = [
   ['plans', 'M3 8l4 4 5-7 5 7 4-4-2 11H5z'],
   ['payments', 'M3 6h18v12H3zM3 10h18M7 15h3'],
   ['ai', 'M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z'],
+  ['usage', 'M4 20V10M10 20V4M16 20v-7M22 20H2'],
   ['admins', 'M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z'],
   ['log', 'M4 5h16M4 10h16M4 15h10M4 20h7']
 ];
-const ROUTES = { overview: V.overview, db: V.database, user: V.account, plans: V.plans, payments: V.paymentsPage, ai: V.aiPage, admins: V.admins, log: V.logPage };
+const ROUTES = { overview: V.overview, db: V.database, user: V.account, plans: V.plans, payments: V.paymentsPage, ai: V.aiPage, usage: usagePage, admins: adminsPage, log: V.logPage };
 
 const shell = document.querySelector('.shell');
 const side = document.getElementById('sidebar');
@@ -86,7 +88,6 @@ function gate(user) {
       <h1 class="li-title">${t('ad.gate')}</h1><p class="li-lead">${t('ad.gateNote')}</p>
       ${user && user.notAdmin ? html`<div class="li-err">${t('ad.notAdmin', { e: user.email })}</div>` : ''}
       <div class="li-google" data-google>${googleConfigured() ? '' : html`<div class="co-off"><span>${t('ad.noGoogle')}</span></div>`}</div>
-      <a class="btn-k btn-md ag-phone" href="../app/#/login?next=admin">${t('ad.phone')}</a>
       <hr><p class="muted-note">${t('ad.demoNote')}</p><button type="button" class="btn-o btn-md" data-demo>${t('ad.demo')}</button>
     </div></div>`;
   const g = main.querySelector('[data-google]');
