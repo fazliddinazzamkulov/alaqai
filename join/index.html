@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="kk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>alaqai — сабаққа кіру</title>
+<meta name="theme-color" content="#FFFFFF">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/img/favicon-32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=TikTok+Sans:wght@600;700;800&family=Poppins:wght@600&display=swap">
+<link rel="stylesheet" href="../app/css/v2.css">
+<link rel="stylesheet" href="join.css">
+<script>
+  window.ALAQAI_API_BASE = window.ALAQAI_API_BASE || (function () { try { return localStorage.getItem('alaqai_api'); } catch (e) { return null; } })() || "https://api.alaqai.online";
+  try { if (!localStorage.getItem('alaqai_lang') && !/[?&]lang=/.test(location.search)) localStorage.setItem('alaqai_lang', 'kk'); } catch (e) {}
+</script>
+<script src="../assets/js/lang.js"></script>
+<script type="module" src="join.js"></script>
+</head>
+<body>
+<div id="root"></div>
+<noscript>alaqai жұмыс істеуі үшін браузерде JavaScript қосулы болуы керек.</noscript>
+</body>
+</html>
