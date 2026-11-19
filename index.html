@@ -54,6 +54,7 @@
   .card p { margin-top: 6px; color: var(--muted); font-size: 15px; }
 
   footer { border-top: 1px solid var(--line); padding: 22px 0 30px; color: var(--muted); font-size: 14px; }
+  footer a { color: var(--muted); }
   footer .wrap { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 
   @media (max-width: 760px) {
@@ -121,7 +122,7 @@
 </main>
 
 <footer>
-  <div class="wrap"><span>© 2026 alaqai</span><span data-t="foot">Қазақша · Русский · English</span></div>
+  <div class="wrap"><span>© 2026 alaqai</span><span class="legal"><a href="privacy/" data-t="privacy">Құпиялылық саясаты</a> · <a href="terms/" data-t="terms">Пайдалану шарттары</a></span></div>
 </footer>
 
 <script>
@@ -133,21 +134,21 @@
       c1: 'Презентация және ҚМЖ', c1p: 'Слайдтар, код жазуға арналған шаблондар және бүкіл сабақтың ҚМЖ-сы Word-та.',
       c2: 'A, B, C деңгейлері', c2p: 'Әр оқушыға өз деңгейі мен әдісі: қадамдап, үлгімен немесе қатені табу.',
       c3: 'Оқушылардың өсуі', c3p: 'Кім артта қалғанын бірден көресіз, ал ИИ әр оқушыға қай әдіс көмектесетінін ұсынады.',
-      foot: 'Қазақша · Русский · English', menu: 'Мәзір', title: 'alaqai — сабаққа дайындық бір минутта' },
+      privacy: 'Құпиялылық саясаты', terms: 'Пайдалану шарттары', menu: 'Мәзір', title: 'alaqai — сабаққа дайындық бір минутта' },
     ru: { student: 'Ученику', login: 'Войти', eyebrow: 'Платформа для учителей', h1a: 'Подготовка к уроку', h1b: 'за одну минуту',
       sub: 'Напишите тему — alaqai сделает презентацию, задания по уровням A/B/C и КСП. На уроке ученики входят по коду, и каждый работает на своём уровне.',
       teacher: 'Учитель — войти через Google', student2: 'Ученик — ввести код урока',
       c1: 'Презентация и КСП', c1p: 'Слайды, шаблоны для написания кода и КСП всего урока в Word.',
       c2: 'Уровни A, B, C', c2p: 'Каждому ученику — свой уровень и методика: пошагово, по примеру или найди ошибку.',
       c3: 'Рост учеников', c3p: 'Сразу видно, кто отстаёт, а ИИ подсказывает, какая методика помогает каждому.',
-      foot: 'Қазақша · Русский · English', menu: 'Меню', title: 'alaqai — подготовка к уроку за одну минуту' },
+      privacy: 'Политика конфиденциальности', terms: 'Правила использования', menu: 'Меню', title: 'alaqai — подготовка к уроку за одну минуту' },
     en: { student: 'Students', login: 'Sign in', eyebrow: 'A platform for teachers', h1a: 'Lesson prep', h1b: 'in one minute',
       sub: 'Type a topic — alaqai makes the slides, tasks for levels A/B/C and the lesson plan. In class, students join with a code and each works at their own level.',
       teacher: 'Teacher — sign in with Google', student2: 'Student — enter the lesson code',
       c1: 'Slides and lesson plan', c1p: 'Slides, code-writing templates and the whole lesson plan in Word.',
       c2: 'Levels A, B, C', c2p: 'Each student gets their own level and method: step by step, by example or find the error.',
       c3: 'Student growth', c3p: 'See at once who is falling behind; AI suggests which method helps each student.',
-      foot: 'Қазақша · Русский · English', menu: 'Menu', title: 'alaqai — lesson prep in one minute' }
+      privacy: 'Privacy policy', terms: 'Terms of use', menu: 'Menu', title: 'alaqai — lesson prep in one minute' }
   };
   var L = window.AlaqaiLang;
   var LABELS = { kk: 'ҚАЗ', ru: 'РУС', en: 'ENG' };

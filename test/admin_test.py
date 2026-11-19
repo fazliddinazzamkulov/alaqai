@@ -35,6 +35,16 @@ def main():
         pg.wait_for_selector(".li-form", timeout=8000)
         check(f"guest is sent to sign-in ({pg.url})", "#/login" in pg.url and "classes" in pg.url)
         check("no example-without-sign-in link", pg.locator("a[href='#/preview']").count() == 0)
+        # consent: the Google button stays locked until the rules are accepted
+        check("Google locked before consent", "locked" in (pg.locator("[data-google]").get_attribute("class") or ""))
+        check("links to the rules", pg.locator(".li-agree a[href='../terms/']").count() == 1 and pg.locator(".li-agree a[href='../privacy/']").count() == 1)
+        pg.click("[data-google]", force=True)
+        check("asks for consent first", pg.locator(".li-err").is_visible())
+        pg.check("[data-agree]")
+        check("unlocked after consent", "locked" not in (pg.locator("[data-google]").get_attribute("class") or ""))
+        for page in ["/privacy/", "/terms/"]:
+            pg.goto(lv.base + page); pg.wait_for_selector("article.on h1")
+            check(f"{page} opens with its text", len(pg.locator("article.on").inner_text()) > 1500)
 
         # --- admin gate: no phone sign-in ---
         pg.goto(lv.base + "/admin/index.html")
@@ -57,6 +67,23 @@ def main():
         pg.fill("[data-add] input", "new.admin@gmail.com")
         pg.click("[data-add] .btn-k")
         pg.wait_for_selector("[data-admin='new.admin@gmail.com']", timeout=4000)
+
+        # --- a signed-in teacher who has not accepted the current rules is asked first ---
+        lv.teacher("POST", "/api/account/terms", {"version": "2020-01-01"})
+        sess0 = lv.cookie.split("=", 1)
+        c2 = b.new_context(viewport={"width": 1200, "height": 900})
+        c2.add_init_script(f"try {{ localStorage.setItem('alaqai_api', '{lv.api}'); }} catch (e) {{}}")
+        c2.add_cookies([{"name": sess0[0], "value": sess0[1], "url": lv.api}])
+        p2 = c2.new_page()
+        p2.goto(lv.base + "/app/index.html#/classes")
+        p2.wait_for_selector("[data-continue]", timeout=8000)
+        p2.click("[data-continue]")
+        check("continue needs the tick", p2.locator(".li-err").is_visible())
+        p2.check("[data-agree]"); p2.click("[data-continue]")
+        p2.wait_for_selector("[data-new-class]", timeout=8000)
+        check("after accepting, the teacher reaches the page", "#/classes" in p2.url)
+        check("acceptance stored on the server", lv.teacher("GET", "/api/auth/me")["user"]["termsVersion"] == "2026-11-19")
+        c2.close()
 
         # --- real API as the owner ---
         sess = lv.cookie.split("=", 1)

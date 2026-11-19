@@ -205,3 +205,8 @@ svg{flex:none}
 .pr-boardwrap canvas{width:100%;height:100%;cursor:crosshair;touch-action:none;background:rgba(255,255,255,.01)}
 .pr-boardbar{position:absolute;top:12px;right:12px;display:flex;gap:6px;padding:6px;border-radius:16px;background:rgba(255,255,255,.94);box-shadow:0 8px 24px rgba(11,11,12,.15)}
 @media (max-width:820px){.pr-tools span{display:none}.pr-topic{max-width:30vw}}
+.li-agree{display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:1.45;color:var(--ink2);cursor:pointer}
+.li-agree input{width:20px;height:20px;margin-top:1px;flex:none;accent-color:var(--acc)}
+.li-agree a{color:var(--acc);font-weight:600}
+.li-google.locked{opacity:.45;filter:grayscale(1)}
+.li-google.locked > *{pointer-events:none}

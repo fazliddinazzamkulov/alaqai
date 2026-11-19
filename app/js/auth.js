@@ -18,6 +18,18 @@ export async function currentUser() {
   return cached || a.fetchMe();
 }
 
+/** Version of the terms of use and privacy policy (the date on /terms/ and /privacy/).
+ *  A teacher who accepted an older version is asked again. */
+export const TERMS_VERSION = '2026-11-19';
+
+/** Records on the server that the signed-in teacher accepted the current terms. */
+export async function acceptTerms() {
+  const a = await ready();
+  if (!a) throw new AuthError('offline');
+  await a.api('/api/account/terms', { method: 'POST', body: { version: TERMS_VERSION } });
+  return a.fetchMe();
+}
+
 const LAST = 'alaqai_last_user';
 const remember = u => { try { localStorage.setItem(LAST, JSON.stringify({ name: u.name || '', email: u.email || '', school: u.school || '' })); } catch (e) { /* private mode */ } };
 const forget = () => { try { localStorage.removeItem(LAST); } catch (e) { /* private mode */ } };

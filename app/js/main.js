@@ -4,7 +4,7 @@ import { onChange } from './i18n.js';
 import { db } from './data/store.js';
 import { renderSide } from './shell.js';
 import { initSync } from './data/sync.js';
-import { authState, logout } from './auth.js';
+import { authState, logout, TERMS_VERSION } from './auth.js';
 
 // route → [module, menu item, layout]
 const ROUTES = {
@@ -41,7 +41,8 @@ async function render() {
   if (route === 'login') auth = null;
   else {
     if (!auth) { auth = await authState(); user = auth.user; }
-    if (!auth.user) { location.replace('#/login?next=' + encodeURIComponent('#/' + location.hash.replace(/^#\/?/, ''))); return; }
+    // No account, or the current rules not accepted yet → the sign-in screen asks for it.
+    if (!auth.user || (!auth.offline && auth.user.termsVersion !== TERMS_VERSION)) { location.replace('#/login?next=' + encodeURIComponent('#/' + location.hash.replace(/^#\/?/, ''))); return; }
   }
   const [mod, menu, layout] = ROUTES[route];
   current = { ...p, route };
