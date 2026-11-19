@@ -26,7 +26,7 @@ def main():
         pg.screenshot(path="/tmp/shots/join.png", full_page=True)
         pg.locator("[data-student]", has_text="Нұрлан").click()
         pg.wait_for_selector("iframe[data-player]")
-        check("level badge A", pg.inner_text("[data-level]").strip().endswith("A"))
+        check("the student never sees a level", pg.locator("[data-level], .lvbadge").count() == 0 and not any(w in pg.inner_text("body") for w in ["Деңгей", "Уровень", "Level"]))
         f = None
         for _ in range(40):
             f = next((fr for fr in pg.frames if fr.url.endswith("player.html")), None)
@@ -67,7 +67,7 @@ def main():
         pg.wait_for_selector("[data-ranking]:not([hidden])", timeout=5000)
         check("ranking shows the student", "Нұрлан" in pg.inner_text("[data-ranking]"))
         # reload keeps the student signed in
-        pg.reload(); pg.wait_for_selector("[data-level]", timeout=5000)
+        pg.reload(); pg.wait_for_selector("[data-method]", timeout=5000)
         check("remembered after reload", "Нұрлан" in pg.inner_text("header"))
         # another device cannot take the same name
         pg2 = b.new_context(viewport={"width": 390, "height": 844}); pg2.add_init_script(f"try {{ localStorage.setItem('alaqai_api', '{L.api}') }} catch (e) {{}}")

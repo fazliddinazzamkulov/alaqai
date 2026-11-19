@@ -18,8 +18,6 @@
 .shead{display:flex;flex-wrap:wrap;align-items:center;gap:14px;padding:12px 24px;background:#fff;border-bottom:1px solid var(--line)}
 .shead .who{flex:1 1 200px;min-width:0;font-weight:600}
 .shead .who small{color:var(--muted);font-weight:500}
-.lvbadge{display:inline-flex;align-items:center;height:36px;padding:0 14px;border-radius:999px;color:#fff;font-weight:700;font-size:15px}
-.lvbadge.A{background:var(--lvA)} .lvbadge.B{background:var(--lvB)} .lvbadge.C{background:var(--lvC)}
 .helpbtn{border-color:var(--warn-line);color:var(--warn)}
 .helpbtn.on{background:var(--warn-soft)}
 .sbody{display:flex;flex-wrap:wrap;gap:20px;padding:20px 24px;align-items:flex-start}

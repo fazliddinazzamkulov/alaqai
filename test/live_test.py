@@ -49,6 +49,12 @@ def main():
         check("ranking top5", L.teacher("GET", f"/api/live/{L.code}/board")["ranking"] == "top5")
         check("top5 shown on the teacher screen", "Аружан" in pg.inner_text("[data-top]"))
         pg.click("[data-rank=off]"); pg.wait_for_timeout(300)
+        # levels are hidden on this screen until the teacher asks (it may be on the projector)
+        check("levels hidden by default", pg.locator("[data-lvtag]").count() == 0)
+        pg.click("[data-showlv]"); pg.wait_for_timeout(300)
+        check("levels shown on request", pg.locator("[data-lvtag]").count() >= 1)
+        pg.click("[data-showlv]"); pg.wait_for_timeout(300)
+        check("and hidden again", pg.locator("[data-lvtag]").count() == 0)
         # level change from the card
         pg.click("[data-card=s1]"); pg.click(".modal [data-setlevel=C]"); pg.wait_for_timeout(500)
         check("level C on the server", next(s for s in L.teacher("GET", f"/api/live/{L.code}/board")["students"] if s["id"] == "s1")["level"] == "C")
