@@ -25,7 +25,9 @@ export const COLLECTIONS = [
   'homework',       // { id, lessonId, classId, kind, dueDate, ... }
   'submissions',    // { id, homeworkId, studentId, status, grade, submittedAt }
   'usage',          // { id, kind: 'ai-lesson' | ..., at }
-  'shares'          // { id, kind: 'ksp', refId, expiresAt, active, views: [{ name, at }] }
+  'shares',         // { id, kind: 'ksp', refId, expiresAt, active, views: [{ name, at }] }
+  'tasks',          // { id, lessonId, common: [slide], levels: { A|B|C: { steps|example|error: [slide] } } }
+  'attempts'        // { id, lessonId, classId, studentId, template, method, level, correct, total, at }
 ];
 
 /* ---------- localStorage adapter ---------- */

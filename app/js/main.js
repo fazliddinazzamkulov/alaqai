@@ -1,100 +1,64 @@
-/* Platform entry: hash router + menu. Each screen is a module in views/ that
- * exports render(main, params) and may return a cleanup function. */
-import { add, t, onChange } from './i18n.js';
+/* alaqai v2 teacher app: hash router. Each screen is a module in views/ that
+ * exports render(main, { args, query }) and may return a cleanup function. */
+import { onChange } from './i18n.js';
 import { db } from './data/store.js';
-import { renderSidebar } from './sidebar.js';
-import { icon } from './ui.js';
-import { watchControls } from './controls.js';
+import { renderSide } from './shell.js';
 import { initSync } from './data/sync.js';
+import { currentUser } from './auth.js';
 
-add({
-  ru: { 'app.title': 'alaqai — платформа для учителей' },
-  kk: { 'app.title': 'alaqai — мұғалімдерге арналған платформа' },
-  en: { 'app.title': 'alaqai — a platform for teachers' }
-});
-
-// route → [module, menu item it belongs to, layout]
+// route → [module, menu item, layout]
 const ROUTES = {
   home: ['./views/home.js', 'home'],
-  calendar: ['./views/calendar.js', 'calendar', 'tight'],
-  classes: ['./views/classes.js', 'classes'],
-  lessons: ['./views/lessons.js', 'lessons'],
   new: ['./views/newlesson.js', null],
-  presentations: ['./views/presentations.js', 'presentations'],
-  editor: ['./views/editor.js', 'presentations', 'bare'],
-  tests: ['./views/tests.js', 'tests'],
-  ksp: ['./views/ksp.js', 'ksp'],
-  view: ['./views/view.js', null, 'bare'],
-  homework: ['./views/homework.js', 'homework'],
-  s: ['./views/student.js', null, 'bare'],
-  guide: ['./views/guide.js', 'guide'],
-  plan: ['./views/subscription.js', 'plan'],
-  checkout: ['./views/checkout.js', 'plan', 'bare'],
-  account: ['./views/account.js', 'account'],
-  login: ['./views/login.js', null, 'bare'],
-  preview: ['./views/preview.js', null, 'bare'],
-  lesson: ['./views/lessonmode.js', 'lessons', 'bare'],
-  results: ['./views/results.js', 'lessons']
+  lessons: ['./views/lessons.js', 'lessons'],
+  lesson: ['./views/lesson.js', 'lessons', 'bare'],
+  live: ['./views/live.js', 'live', 'bare'],
+  growth: ['./views/growth.js', 'growth'],
+  classes: ['./views/classes.js', 'classes'],
+  login: ['./views/login.js', null, 'bare']
 };
+// Old links (homework #/s/…, plan viewer #/view/…) keep working in the first version.
+const LEGACY = ['s', 'view', 'preview'];
 
-const shell = document.querySelector('.shell');
-const sidebar = document.getElementById('sidebar');
+const shell = document.getElementById('shell');
+const side = document.getElementById('side');
 const main = document.getElementById('main');
-let cleanup = null;
-let current = null;
+let cleanup = null, current = null, user = null;
 
 function parseHash() {
   const [path, query = ''] = location.hash.replace(/^#\/?/, '').split('?');
-  const [route, ...rest] = path.split('/');
-  return { route: ROUTES[route] ? route : 'home', args: rest, query: Object.fromEntries(new URLSearchParams(query)) };
+  const [route, ...args] = path.split('/');
+  return { route, args, query: Object.fromEntries(new URLSearchParams(query)) };
 }
 
 async function render() {
-  const { route, args, query } = parseHash();
-  const [modPath, menuId, layout] = ROUTES[route];
-  current = { route, args, query };
-  document.title = t('app.title');
-  shell.classList.remove('menu-open');
-  document.querySelectorAll('.modal-back, .dd-menu, .dd-back').forEach(el => el.remove());
-  renderSidebar(sidebar, menuId);
+  const p = parseHash();
+  if (LEGACY.includes(p.route)) { location.replace('../legacy/app-v1/' + location.hash); return; }
+  const route = ROUTES[p.route] ? p.route : 'home';
+  const [mod, menu, layout] = ROUTES[route];
+  current = { ...p, route };
   if (cleanup) { try { cleanup(); } catch (e) { console.error(e); } cleanup = null; }
-  main.className = 'main' + (layout ? ' ' + layout : '');
-  shell.classList.toggle('is-bare', layout === 'bare');
-  const mod = await import(modPath);
-  if (current.route !== route) return; // navigated away while loading
+  shell.classList.toggle('bare', layout === 'bare');
+  renderSide(side, menu, user);
+  document.querySelectorAll('.modal-back').forEach(el => el.remove());
+  const m = await import(mod);
+  if (current.route !== route) return;
   main.innerHTML = '';
-  cleanup = (await mod.render(main, { route, args, query })) || null;
+  cleanup = (await m.render(main, { args: p.args, query: p.query })) || null;
   main.focus({ preventScroll: true });
 }
 
 window.addEventListener('hashchange', () => { window.scrollTo(0, 0); render(); });
 onChange(render);
 
-// Data changed (this tab or another one): refresh the menu and the open screen.
+// Background changes refresh list screens only, never a screen the teacher is working in.
 let pending = null;
 db.subscribe(evt => {
-  if (evt.silent) return;
+  if (evt.silent || !current) return;
   clearTimeout(pending);
-  pending = setTimeout(() => {
-    renderSidebar(sidebar, ROUTES[current.route][1]);
-    // Changes from another tab or device refresh list screens, never a screen the teacher is working in.
-    if ((evt.type === 'external' || evt.type === 'reset') && !BUSY.has(current.route)) render();
-  }, 60);
+  pending = setTimeout(() => { if (['home', 'lessons', 'growth', 'classes'].includes(current.route) && evt.type === 'external') render(); }, 250);
 });
 
-// Narrow screens: the menu slides in from the left.
-document.getElementById('menu-toggle').innerHTML = icon('menu', 18);
-document.getElementById('menu-toggle').addEventListener('click', () => shell.classList.toggle('menu-open'));
-document.addEventListener('keydown', e => { if (e.key === 'Escape') shell.classList.remove('menu-open'); });
-document.addEventListener('click', e => {
-  if (shell.classList.contains('menu-open') && !e.target.closest('#sidebar, #menu-toggle')) shell.classList.remove('menu-open');
-});
-
-const BUSY = new Set(['lesson', 'editor', 'new', 's', 'view', 'checkout', 'login', 'ksp']);
-
-watchControls();
 initSync();
 render();
-
-/** Re-render the open screen (used by views after they change data). */
-export function refresh() { render(); }
+currentUser().then(u => { user = u; if (current) renderSide(side, ROUTES[current.route][1], user); }).catch(() => {});
