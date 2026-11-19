@@ -3,6 +3,6 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test test/*.test.mjs && python3 test/player_test.py && python3 test/app_test.py"
+    "test": "node --test test/*.test.mjs && python3 test/player_test.py && python3 test/app_test.py && python3 test/newlesson_test.py"
   }
 }

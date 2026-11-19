@@ -49,7 +49,7 @@ const BY_SUBJECT = [
   [/физ|phys/i, ['formula', 'figure', 'lab', 'graph']],
   [/хим|chem/i, ['formula', 'reaction', 'balance', 'lab', 'figure']],
   [/биол|bio|жаратылыс|естеств|science/i, ['figure', 'label', 'cause', 'lab']],
-  [/мат|алгеб|геом|math/i, ['formula', 'rule', 'graph', 'geometry', 'build']],
+  [/математ|алгеб|геом|math|^мат/i, ['formula', 'rule', 'graph', 'geometry', 'build']],
   [/геогр|geog/i, ['figure', 'facts', 'cause', 'timeline', 'label']],
   [/истор|тарих|hist/i, ['timeline', 'facts', 'cause', 'figure']]
 ];
@@ -102,7 +102,7 @@ const FIX = {
  * Repairs an AI deck: unknown types and broken slides are dropped; the first
  * slide is always a title (made from `topic` when missing).
  */
-export function normalizeDeck(raw, { topic = '' } = {}) {
+export function normalizeDeck(raw, { topic = '', title = true } = {}) {
   const input = raw && Array.isArray(raw.slides) ? raw.slides : [];
   let dropped = 0;
   const slides = [];
@@ -112,6 +112,6 @@ export function normalizeDeck(raw, { topic = '' } = {}) {
     if (!fixed) { dropped++; continue; }
     slides.push(fixed);
   }
-  if (!slides.length || slides[0].type !== 'title') slides.unshift({ type: 'title', title: str(topic) || str(raw && raw.title) || '—', goals: [] });
+  if (title && (!slides.length || slides[0].type !== 'title')) slides.unshift({ type: 'title', title: str(topic) || str(raw && raw.title) || '—', goals: [] });
   return { ...(raw || {}), slides, dropped };
 }

@@ -34,6 +34,7 @@ test('informatics templates include code tasks, not chemistry', () => {
   const t = templatesFor('Информатика');
   for (const k of ['code', 'predict', 'codefill', 'parsons', 'steps', 'error', 'flowchart']) assert.ok(t.includes(k), k);
   assert.ok(!t.includes('reaction'));
+  assert.ok(!t.includes('geometry'), 'Информатика contains «мат» but is not maths');
 });
 
 test('physics templates include formula and lab', () => {
@@ -46,4 +47,10 @@ test('every template has a prompt shape and a kind', () => {
     assert.ok(v.prompt && v.prompt.length > 10, k);
     assert.ok(v.kind === 'teach' || v.kind === 'task', k);
   }
+});
+
+test('title:false keeps task slides without adding a title', () => {
+  const r = normalizeDeck({ slides: [{ type: 'steps', title: 'S', steps: [{ q: '1+1', answer: '2' }] }] }, { title: false });
+  assert.equal(r.slides.length, 1);
+  assert.equal(r.slides[0].type, 'steps');
 });
