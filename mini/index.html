@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="kk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>alaqai mini — CSS сабағы</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/img/favicon-32.png">
+<!-- Mini demo lesson: one ready CSS lesson for 10th grade. Students join with a code and
+     a name and answer on their own devices; the teacher sees answers live and grades.
+     One self-contained page; the API is /api/mini on the alaqai server. -->
+<style>
+  :root{--ink:#0B0B0C;--ink2:#3A3A40;--muted:#6B6B73;--line:#E6E4DE;--bg:#FAFAF7;--paper:#fff;--acc:#2F6BFF;--acc-soft:#EAF0FF;--ok:#12805C;--ok-soft:#E5F5EE;--bad:#C2362B;--bad-soft:#FCEBE9;--warn:#A85A00;--r:16px}
+  *{box-sizing:border-box} html,body{margin:0}
+  body{font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--ink);background:var(--bg)}
+  button,input,select{font:inherit;color:inherit}
+  .wrap{max-width:760px;margin:0 auto;padding:24px 18px 60px}
+  .wide{max-width:1180px}
+  header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line);background:var(--paper)}
+  .logo{font:800 22px system-ui;letter-spacing:-.5px;text-decoration:none;color:var(--ink)} .logo i{font-style:normal;color:var(--acc)} .logo small{font-weight:600;font-size:13px;color:var(--muted);margin-left:6px}
+  h1{font-size:30px;line-height:1.15;margin:8px 0 6px;letter-spacing:-.5px} h2{font-size:20px;margin:0 0 10px}
+  .sub{color:var(--muted);margin:0 0 18px}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:10px 18px;font-weight:600;cursor:pointer;text-decoration:none}
+  .btn:hover{border-color:#cfccc4} .btn:disabled{opacity:.5;cursor:default}
+  .btn.k{background:var(--ink);border-color:var(--ink);color:#fff} .btn.acc{background:var(--acc);border-color:var(--acc);color:#fff} .btn.sm{padding:7px 14px;font-size:14px}
+  .roles{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:22px}
+  .role{display:block;text-align:left;border:1px solid var(--line);background:var(--paper);border-radius:var(--r);padding:22px;cursor:pointer}
+  .role:hover{border-color:var(--acc)} .role b{display:block;font-size:20px;margin-bottom:4px} .role span{color:var(--muted)}
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:20px;margin:14px 0}
+  label.f{display:block;font-weight:600;font-size:14px;margin:12px 0 0} label.f input,label.f select{display:block;width:100%;margin-top:6px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:#fff;font-size:17px}
+  input:focus,select:focus,.btn:focus-visible,.role:focus-visible,.opt:focus-visible{outline:3px solid var(--acc-soft);border-color:var(--acc)}
+  .err{color:var(--bad);font-weight:600;min-height:22px;margin:10px 0 0}
+  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  pre{background:#14161B;color:#E8EAF0;border-radius:12px;padding:14px 16px;overflow:auto;font:15px/1.5 ui-monospace,Menlo,Consolas,monospace;margin:10px 0}
+  .task .n{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+  .task .q{font-size:18px;font-weight:600;margin:4px 0 8px}
+  .opts{display:grid;gap:8px}
+  .opt{text-align:left;border:1px solid var(--line);background:#fff;border-radius:12px;padding:11px 14px;cursor:pointer}
+  .opt:hover:not(:disabled){border-color:var(--acc)} .opt:disabled{cursor:default}
+  .opt.pick.ok{background:var(--ok-soft);border-color:var(--ok)} .opt.pick.bad{background:var(--bad-soft);border-color:var(--bad)}
+  .res{margin-top:10px;font-weight:700} .res.ok{color:var(--ok)} .res.bad{color:var(--bad)}
+  .score{position:sticky;bottom:0;background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:14px 18px;display:flex;justify-content:space-between;align-items:center;margin-top:18px;box-shadow:0 6px 24px rgba(0,0,0,.06)}
+  .score b{font-size:22px}
+  .note{background:#FFF4E5;border:1px solid #F5C38A;color:var(--warn);border-radius:12px;padding:10px 14px;font-weight:600}
+  /* teacher */
+  .codebox{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+  .code{font:800 54px/1 ui-monospace,Menlo,monospace;letter-spacing:.12em;background:var(--ink);color:#fff;border-radius:18px;padding:14px 22px}
+  .howto{color:var(--ink2)} .howto a{color:var(--acc);font-weight:700}
+  .tbl-wrap{overflow-x:auto;background:var(--paper);border:1px solid var(--line);border-radius:var(--r)}
+  table{border-collapse:separate;border-spacing:0;width:100%;font-size:15px}
+  th,td{padding:8px 8px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap}
+  thead th{font-size:13px;color:var(--muted);font-weight:700;vertical-align:bottom}
+  th.nm,td.nm{position:sticky;left:0;background:var(--paper);text-align:left;font-weight:600;min-width:170px;max-width:220px;overflow:hidden;text-overflow:ellipsis;border-right:1px solid var(--line);z-index:1}
+  .grp{border-left:1px solid var(--line)}
+  .cell{width:38px;height:34px;border:0;border-radius:9px;background:none;cursor:pointer;font-weight:800;font-size:16px;position:relative}
+  .cell:hover{background:#F1F0EC} .cell.ok{color:var(--ok);background:var(--ok-soft)} .cell.bad{color:var(--bad);background:var(--bad-soft)} .cell.none{color:#B9B7B0}
+  .cell .ed{position:absolute;top:-3px;right:-2px;font-size:10px;color:var(--acc)}
+  .lv{border:1px solid var(--line);border-radius:8px;padding:4px 6px;background:#fff}
+  .pts{font-weight:700} .pts small{color:var(--muted);font-weight:500}
+  .tot{background:var(--acc-soft)}
+  .pct{font-weight:800} .pct.ok{color:var(--ok)} .pct.mid{color:var(--warn)} .pct.low{color:var(--bad)}
+  .x{border:0;background:none;color:var(--muted);cursor:pointer;font-size:18px;padding:2px 6px;border-radius:8px} .x:hover{background:var(--bad-soft);color:var(--bad)}
+  .legend{color:var(--muted);font-size:14px;margin:10px 2px}
+  details.keys{margin-top:16px} details.keys summary{cursor:pointer;font-weight:700}
+  .keys ol{margin:8px 0;padding-left:22px} .keys li{margin:4px 0} .keys code{background:var(--ok-soft);color:var(--ok);border-radius:6px;padding:1px 6px;font-weight:700}
+  dialog{border:0;border-radius:var(--r);padding:22px;max-width:380px;width:calc(100% - 32px);box-shadow:0 20px 60px rgba(0,0,0,.25)} dialog::backdrop{background:rgba(10,10,12,.35)}
+  .empty{color:var(--muted);padding:28px;text-align:center}
+  @media (max-width:640px){.roles{grid-template-columns:1fr} h1{font-size:24px} .code{font-size:40px}}
+</style>
+</head>
+<body>
+<header class="top"><a class="logo" href="./">ala<i>q</i>ai<small>mini</small></a><span id="who" class="sub" style="margin:0"></span></header>
+<main id="app" class="wrap" aria-live="polite"></main>
+<dialog id="dlg"><form method="dialog" id="dlgForm"></form></dialog>
+
+<script>
+(function () {
+  'use strict';
+  var API = (function () {
+    try { var saved = localStorage.getItem('alaqai_api'); if (saved) return saved; } catch (e) { /* private mode */ }
+    return /(^|\.)alaqai\.com$/.test(location.hostname) ? '' : 'https://api.alaqai.online';
+  })() + '/api/mini';
+  var app = document.getElementById('app'), who = document.getElementById('who'), dlg = document.getElementById('dlg'), dlgForm = document.getElementById('dlgForm');
+  var timer = null;
+  var ERR = { not_found: 'Мұндай коды бар сабақ жоқ', closed: 'Сабақ аяқталған', name_required: 'Атыңды жаз', class_full: 'Сыныпта орын қалмады', answered: 'Бұл тапсырмаға жауап берілген',
+    bad_value: 'Жауапты жаз', too_many: 'Сұраныс көп, сәл күте тұрыңыз', too_many_rooms: 'Қазір жаңа сабақ ашу мүмкін емес, кейінірек көріңіз', bad_points: 'Ұпай ең көп ұпайдан аспауы керек', bad_key: 'Бұл сабақтың мұғалім кілті жоқ', net: 'Серверге қосылу мүмкін болмады' };
+
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function store(k, v) { try { if (v === undefined) return JSON.parse(localStorage.getItem('mini:' + k) || 'null'); if (v === null) localStorage.removeItem('mini:' + k); else localStorage.setItem('mini:' + k, JSON.stringify(v)); } catch (e) { return null; } }
+  function call(path, body) {
+    return fetch(API + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body || {}) })
+      .then(function (r) { return r.json().catch(function () { return {}; }).then(function (d) { if (!r.ok) { var e = new Error(d.error || 'http'); e.code = d.error; e.status = r.status; throw e; } return d; }); },
+        function () { var e = new Error('net'); e.code = 'net'; throw e; });
+  }
+  function msg(e) { return ERR[e.code] || 'Қате шықты, қайталап көріңіз'; }
+  function stop() { if (timer) clearInterval(timer); timer = null; }
+  function query(k) { var m = location.search.match(new RegExp('[?&]' + k + '=([^&]+)')); return m ? decodeURIComponent(m[1]) : null; }
+
+  /* ---------- start ---------- */
+  function start() {
+    stop(); who.textContent = '';
+    var last = store('teacher');
+    app.className = 'wrap';
+    app.innerHTML = '<h1>CSS: селекторлар және стильдер</h1><p class="sub">10-сынып · информатика · alaqai шағын демо-сабағы</p>' +
+      '<div class="roles"><button class="role" data-go="student"><b>Мен оқушымын</b><span>Сабақ коды мен атыңды жазып, тапсырма орында</span></button>' +
+      '<button class="role" data-go="teacher"><b>Мен мұғаліммін</b><span>Сабақ аш, оқушылардың жауабын көріп, бағала</span></button></div>' +
+      (last ? '<p style="margin-top:18px"><button class="btn" data-go="resume">Ашық сабаққа оралу · код ' + esc(last.code) + '</button></p>' : '');
+    app.querySelector('[data-go=student]').onclick = function () { studentJoin(''); };
+    app.querySelector('[data-go=teacher]').onclick = teacherNew;
+    var r = app.querySelector('[data-go=resume]'); if (r) r.onclick = function () { teacherBoard(last.code, last.key); };
+  }
+
+  /* ---------- student ---------- */
+  function studentJoin(code, error) {
+    stop(); who.textContent = '';
+    app.className = 'wrap';
+    app.innerHTML = '<h1>Сабаққа кіру</h1><p class="sub">Кодты мұғалім тақтада көрсетеді</p><form class="card" id="jf">' +
+      '<label class="f">Сабақ коды<input name="code" inputmode="numeric" autocomplete="off" maxlength="4" pattern="\\d{4}" required value="' + esc(code) + '"></label>' +
+      '<label class="f">Атың және тегің<input name="name" autocomplete="name" maxlength="40" required></label>' +
+      '<p class="err" id="je">' + esc(error || '') + '</p><button class="btn acc" type="submit">Кіру</button> <button class="btn" type="button" id="back">Артқа</button></form>';
+    var f = document.getElementById('jf');
+    f[code ? 'name' : 'code'].focus();
+    document.getElementById('back').onclick = start;
+    f.onsubmit = function (ev) {
+      ev.preventDefault();
+      var c = f.code.value.trim(), n = f.name.value.trim();
+      if (!/^\d{4}$/.test(c)) { document.getElementById('je').textContent = 'Код 4 саннан тұрады'; return; }
+      f.querySelector('[type=submit]').disabled = true;
+      call('/rooms/' + c + '/join', { name: n }).then(function (d) { store('s' + c, { token: d.token, name: n }); studentTasks(c); },
+        function (e) { f.querySelector('[type=submit]').disabled = false; document.getElementById('je').textContent = msg(e); });
+    };
+  }
+
+  function studentTasks(code) {
+    stop();
+    var me = store('s' + code); if (!me) return studentJoin(code);
+    try { history.replaceState(null, '', location.pathname + '?code=' + code); } catch (e) { /* file:// */ } // a reload brings the student back
+    var state = null;
+    function load(first) {
+      return call('/rooms/' + code + '/me', { token: me.token }).then(function (d) {
+        var changed = !state || JSON.stringify(d.tasks.map(function (t) { return t.id; })) !== JSON.stringify(state.tasks.map(function (t) { return t.id; })) || d.open !== state.open;
+        state = d; if (first || changed) draw();
+      }, function (e) { if (e.status === 403 || e.status === 404) { store('s' + code, null); stop(); studentJoin(code, e.status === 404 ? ERR.not_found : 'Қайта кір'); } });
+    }
+    function draw() {
+      who.textContent = state.name + ' · ' + code;
+      app.className = 'wrap';
+      app.innerHTML = '<h1>' + esc(state.title) + '</h1><p class="sub">' + esc(state.className) + ' · әр тапсырмаға бір рет жауап бересің</p>' +
+        (state.open ? '' : '<p class="note">Сабақ аяқталды. Жауаптар енді қабылданбайды.</p>') +
+        state.tasks.map(function (t, i) {
+          var a = state.answers[t.id];
+          var body = t.type === 'choice'
+            ? '<div class="opts">' + t.options.map(function (o, k) { var pick = a && a.value === k; return '<button type="button" class="opt' + (pick ? ' pick ' + (a.ok ? 'ok' : 'bad') : '') + '" data-t="' + t.id + '" data-v="' + k + '"' + (a || !state.open ? ' disabled' : '') + '>' + esc(o) + '</button>'; }).join('') + '</div>'
+            : '<form class="row" data-f="' + t.id + '"><input name="v" maxlength="100" autocomplete="off" style="flex:1;min-width:160px;padding:11px 14px;border:1px solid var(--line);border-radius:12px" value="' + esc(a ? a.value : '') + '"' + (a || !state.open ? ' disabled' : '') + ' aria-label="Жауап"><button class="btn k" type="submit"' + (a || !state.open ? ' disabled' : '') + '>Жауап беру</button></form>';
+          return '<section class="card task" data-task="' + t.id + '"><div class="n">Тапсырма ' + (i + 1) + (i < 3 ? ' · жалпы' : '') + '</div><div class="q">' + esc(t.q) + '</div>' + (t.code ? '<pre>' + esc(t.code) + '</pre>' : '') + body +
+            (a ? '<div class="res ' + (a.ok ? 'ok' : 'bad') + '">' + (a.ok ? '✓ Дұрыс' : '✗ Қате') + '</div>' : '') + '<p class="err" data-e="' + t.id + '"></p></section>';
+        }).join('') +
+        '<div class="score"><span>Ұпайың</span><b data-score>' + state.score.got + ' / ' + state.score.max + '</b></div>';
+      app.querySelectorAll('.opt').forEach(function (b) { b.onclick = function () { send(b.dataset.t, Number(b.dataset.v)); }; });
+      app.querySelectorAll('[data-f]').forEach(function (f) { f.onsubmit = function (ev) { ev.preventDefault(); if (f.v.value.trim()) send(f.dataset.f, f.v.value); }; });
+    }
+    function send(taskId, value) {
+      app.querySelectorAll('[data-task="' + taskId + '"] button, [data-task="' + taskId + '"] input').forEach(function (x) { x.disabled = true; });
+      call('/rooms/' + code + '/answer', { token: me.token, taskId: taskId, value: value }).then(function (d) {
+        state.answers[taskId] = { ok: d.ok, value: value }; state.score = d.score; draw();
+      }, function (e) { var p = app.querySelector('[data-e="' + taskId + '"]'); if (p) p.textContent = msg(e); load(true); });
+    }
+    load(true);
+    timer = setInterval(function () { load(false); }, 6000);
+  }
+
+  /* ---------- teacher ---------- */
+  function teacherNew() {
+    stop(); who.textContent = 'Мұғалім';
+    try { history.replaceState(null, '', location.pathname); } catch (e) { /* file:// */ }
+    app.className = 'wrap';
+    app.innerHTML = '<h1>Сабақ ашу</h1><p class="sub">Дайын сабақ: «CSS: селекторлар және стильдер». 3 жалпы тапсырма және әр оқушыға деңгейіне сай 3 тапсырма. Оқушыға деңгейі көрсетілмейді.</p>' +
+      '<form class="card" id="tf"><label class="f">Сынып<input name="cls" maxlength="40" value="10 «А»"></label><p class="err" id="te"></p>' +
+      '<button class="btn acc" type="submit">Сабақты ашу</button> <button class="btn" type="button" id="back">Артқа</button></form>';
+    document.getElementById('back').onclick = start;
+    var f = document.getElementById('tf');
+    f.onsubmit = function (ev) {
+      ev.preventDefault(); f.querySelector('[type=submit]').disabled = true;
+      call('/rooms', { className: f.cls.value }).then(function (d) { store('teacher', d); teacherBoard(d.code, d.key); },
+        function (e) { f.querySelector('[type=submit]').disabled = false; document.getElementById('te').textContent = msg(e); });
+    };
+  }
+
+  function teacherBoard(code, key) {
+    stop(); who.textContent = 'Мұғалім · ' + code;
+    var room = null, busy = false;
+    function act(body) {
+      body.key = key; busy = true;
+      return call('/rooms/' + code + '/teacher', body).then(function (d) { room = d; busy = false; draw(); }, function (e) { busy = false; alert(msg(e)); });
+    }
+    function poll() {
+      if (busy || dlg.open) return;
+      call('/rooms/' + code + '/teacher', { key: key }).then(function (d) { var s = JSON.stringify(d); if (!room || s !== JSON.stringify(room)) { room = d; if (!dlg.open) draw(); } },
+        function (e) { if (e.status === 403 || e.status === 404) { store('teacher', null); stop(); start(); } });
+    }
+    function pct(g, m) { return m ? Math.round(g / m * 100) : null; }
+    function tone(p) { return p == null ? '' : p >= 80 ? 'ok' : p >= 50 ? 'mid' : 'low'; }
+    function draw() {
+      var link = location.origin + location.pathname + '?code=' + code;
+      var cols = [0, 1, 2].map(function (i) { return { kind: 'c', i: i }; }).concat([0, 1, 2].map(function (i) { return { kind: 'l', i: i }; }));
+      app.className = 'wrap wide';
+      app.innerHTML = '<div class="codebox"><div class="code" data-code>' + esc(code) + '</div><div class="howto"><b>' + esc(room.title) + '</b> · ' + esc(room.className) + '<br>Оқушылар <a href="' + esc(link) + '" target="_blank" rel="noopener">' + esc(location.host + location.pathname) + '</a> бетіне кіріп, «Мен оқушымын» → кодты және атын жазады.' +
+        '<div class="row" style="margin-top:10px">' + (room.open ? '<button class="btn sm" data-close>Сабақты аяқтау</button>' : '<span class="note" style="padding:6px 12px">Сабақ аяқталды</span><button class="btn sm" data-reopen>Қайта ашу</button>') +
+        '<button class="btn sm" data-csv>Excel-ге (CSV)</button><button class="btn sm" data-new>Жаңа сабақ</button></div></div></div>' +
+        '<h2 style="margin-top:26px">Бағалау журналы · ' + room.students.length + ' оқушы</h2>' +
+        (room.students.length ? '<div class="tbl-wrap"><table data-journal><thead><tr><th class="nm">Оқушы</th><th title="Оқушыға көрсетілмейді">Деңгейі<br><small>(тек сізге)</small></th>' +
+          '<th class="grp" colspan="3">Жалпы тапсырмалар</th><th class="grp" colspan="3">Деңгейлік тапсырмалар</th><th class="grp">Тапсырмалар</th><th>Дәптер / ауызша</th><th class="grp tot">Барлығы</th><th class="tot">%</th><th></th></tr>' +
+          '<tr><th class="nm"></th><th></th>' + cols.map(function (c, k) { return '<th' + (k === 0 || k === 3 ? ' class="grp"' : '') + '>' + (c.i + 1) + '</th>'; }).join('') + '<th class="grp">ұпай</th><th>ұпай</th><th class="grp tot">ұпай</th><th class="tot"></th><th></th></tr></thead><tbody>' +
+          room.students.map(function (s) {
+            var tasks = room.tasks.common.concat(room.tasks.levels[s.level]);
+            var cells = tasks.map(function (t, k) {
+              var a = s.answers[t.id], ov = t.id in s.override ? s.override[t.id] : null;
+              var v = ov != null ? ov : a ? (a.ok ? 1 : 0) : null;
+              var tip = (a ? 'Жауабы: ' + (t.type === 'choice' ? t.options[a.value] : a.value) : 'Жауап жоқ') + ' · дұрысы: ' + t.right + (ov != null ? ' · мұғалім өзгертті' : '') + ' · басып өзгертіңіз';
+              return '<td' + (k === 0 || k === 3 ? ' class="grp"' : '') + '><button class="cell ' + (v === 1 ? 'ok' : v === 0 ? 'bad' : 'none') + '" data-cell="' + s.id + '|' + t.id + '" title="' + esc(tip) + '" aria-label="' + esc(s.name + ', тапсырма ' + (k + 1) + ': ' + tip) + '">' + (v === 1 ? '✓' : v === 0 ? '✗' : '·') + (ov != null ? '<span class="ed">✎</span>' : '') + '</button></td>';
+            }).join('');
+            var p = pct(s.total, s.totalMax);
+            return '<tr data-row="' + s.id + '"><td class="nm" title="' + esc(s.name) + '">' + esc(s.name) + '</td><td><select class="lv" data-lv="' + s.id + '" aria-label="Деңгейі">' + ['A', 'B', 'C'].map(function (l) { return '<option' + (l === s.level ? ' selected' : '') + '>' + l + '</option>'; }).join('') + '</select></td>' + cells +
+              '<td class="grp pts">' + s.got + '<small>/' + s.max + '</small></td>' +
+              '<td><button class="btn sm" data-extra="' + s.id + '" title="' + esc(s.extra && s.extra.note ? s.extra.note : 'Дәптердегі жұмыс, ауызша жауап') + '">' + (s.extra ? s.extra.points + ' / ' + s.extra.max : '+ ұпай') + '</button></td>' +
+              '<td class="grp tot pts" data-total>' + s.total + '<small>/' + s.totalMax + '</small></td><td class="tot"><span class="pct ' + tone(p) + '">' + (p == null ? '—' : p) + '</span></td>' +
+              '<td><button class="x" data-rm="' + s.id + '" title="Тізімнен өшіру" aria-label="' + esc(s.name) + ' — өшіру">×</button></td></tr>';
+          }).join('') + '</tbody></table></div>' +
+          '<p class="legend">✓ дұрыс · ✗ қате · · әлі жауап жоқ. Ұяшықты басып, ұпайды өзіңіз өзгерте аласыз (✎). Деңгейді өзгертсеңіз, оқушыға басқа 3 тапсырма келеді — деңгейі оған көрсетілмейді.</p>'
+          : '<div class="card empty">Оқушылар әлі кірген жоқ. Кодты тақтада көрсетіңіз.</div>') +
+        '<details class="keys"><summary>Тапсырмалар және дұрыс жауаптар</summary>' + keyList() + '</details>';
+      bind();
+    }
+    function keyList() {
+      function li(t) { return '<li>' + esc(t.q) + (t.code ? '<pre>' + esc(t.code) + '</pre>' : ' ') + ' → <code>' + esc(t.right) + '</code></li>'; }
+      return '<h3>Жалпы</h3><ol>' + room.tasks.common.map(li).join('') + '</ol>' + ['A', 'B', 'C'].map(function (l) { return '<h3>Деңгей ' + l + '</h3><ol>' + room.tasks.levels[l].map(li).join('') + '</ol>'; }).join('');
+    }
+    function bind() {
+      var q = function (s) { return app.querySelector(s); };
+      if (q('[data-close]')) q('[data-close]').onclick = function () { if (confirm('Сабақты аяқтайсыз ба? Оқушылар енді жауап бере алмайды.')) act({ action: 'close' }); };
+      if (q('[data-reopen]')) q('[data-reopen]').onclick = function () { act({ action: 'open' }); };
+      q('[data-new]').onclick = function () { if (confirm('Жаңа сабақ ашасыз ба? Бұл сабақтың журналы 14 күн сақталады, кодын жазып алыңыз: ' + code)) teacherNew(); };
+      q('[data-csv]').onclick = csv;
+      app.querySelectorAll('[data-lv]').forEach(function (s) { s.onchange = function () { act({ action: 'level', studentId: s.dataset.lv, level: s.value }); }; });
+      app.querySelectorAll('[data-cell]').forEach(function (b) { b.onclick = function () {
+        var p = b.dataset.cell.split('|'), s = room.students.filter(function (x) { return x.id === p[0]; })[0];
+        var ov = p[1] in s.override ? s.override[p[1]] : null, a = s.answers[p[1]];
+        var cur = ov != null ? ov : a ? (a.ok ? 1 : 0) : null;
+        // cycle: as answered → right → wrong → as answered
+        var next = ov == null ? (cur === 1 ? 0 : 1) : (ov === 1 ? 0 : null);
+        if (ov == null && cur === null) next = 1;
+        act({ action: 'override', studentId: p[0], taskId: p[1], points: next });
+      }; });
+      app.querySelectorAll('[data-extra]').forEach(function (b) { b.onclick = function () { extra(b.dataset.extra); }; });
+      app.querySelectorAll('[data-rm]').forEach(function (b) { b.onclick = function () { var s = room.students.filter(function (x) { return x.id === b.dataset.rm; })[0]; if (confirm(s.name + ' тізімнен өшірілсін бе?')) act({ action: 'remove', studentId: s.id }); }; });
+    }
+    function extra(id) {
+      var s = room.students.filter(function (x) { return x.id === id; })[0], ex = s.extra || {};
+      dlgForm.innerHTML = '<h2>' + esc(s.name) + '</h2><p class="sub">Дәптердегі жұмыс, ауызша жауап үшін ұпай</p><div class="row"><label class="f" style="flex:1">Алған ұпайы<input name="p" type="number" min="0" step="1" inputmode="numeric" value="' + esc(ex.points != null ? ex.points : '') + '"></label>' +
+        '<label class="f" style="flex:1">Ең көп ұпай<input name="m" type="number" min="1" max="100" step="1" inputmode="numeric" value="' + esc(ex.max || 5) + '"></label></div>' +
+        '<label class="f">Ескерту<input name="n" maxlength="40" value="' + esc(ex.note || 'Дәптер') + '"></label><p class="err" id="de"></p>' +
+        '<div class="row"><button class="btn acc" value="save">Сақтау</button>' + (s.extra ? '<button class="btn" value="clear">Өшіру</button>' : '') + '<button class="btn" value="cancel">Болдырмау</button></div>';
+      dlg.showModal(); dlgForm.p.focus();
+      dlgForm.onsubmit = function (ev) {
+        var v = ev.submitter && ev.submitter.value;
+        if (v === 'cancel') return;
+        if (v === 'clear') { act({ action: 'extra', studentId: id, points: null }); return; }
+        var p = Number(dlgForm.p.value), m = Number(dlgForm.m.value);
+        if (dlgForm.p.value === '' || !(m >= 1) || !(p >= 0) || p > m || p % 1 || m % 1) { ev.preventDefault(); document.getElementById('de').textContent = ERR.bad_points; return; }
+        act({ action: 'extra', studentId: id, points: p, max: m, note: dlgForm.n.value });
+      };
+    }
+    function csv() {
+      var qv = function (v) { return '"' + String(v).replace(/"/g, '""') + '"'; };
+      var head = ['Оқушы', 'Деңгейі', 'Жалпы 1', 'Жалпы 2', 'Жалпы 3', 'Деңгейлік 1', 'Деңгейлік 2', 'Деңгейлік 3', 'Тапсырмалар', 'Дәптер / ауызша', 'Барлығы', '%'];
+      var lines = [head.map(qv).join(';')];
+      room.students.forEach(function (s) {
+        var tasks = room.tasks.common.concat(room.tasks.levels[s.level]);
+        var marks = tasks.map(function (t) { var ov = t.id in s.override ? s.override[t.id] : null, a = s.answers[t.id]; var v = ov != null ? ov : a ? (a.ok ? 1 : 0) : ''; return v; });
+        var p = pct(s.total, s.totalMax);
+        lines.push([s.name, s.level].concat(marks, [s.got + '/' + s.max, s.extra ? s.extra.points + '/' + s.extra.max : '', s.total + '/' + s.totalMax, p == null ? '' : p]).map(qv).join(';'));
+      });
+      var blob = new Blob(['﻿' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+      var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'alaqai-mini-' + code + '.csv';
+      document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+    }
+    call('/rooms/' + code + '/teacher', { key: key }).then(function (d) { room = d; draw(); }, function (e) { store('teacher', null); start(); alert(msg(e)); });
+    timer = setInterval(poll, 2500);
+  }
+
+  /* ---------- route ---------- */
+  var qc = query('code');
+  if (qc && /^\d{4}$/.test(qc)) { if (store('s' + qc)) studentTasks(qc); else studentJoin(qc); }
+  else start();
+})();
+</script>
+</body>
+</html>
