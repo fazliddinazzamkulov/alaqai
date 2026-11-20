@@ -3,6 +3,6 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "cd test && node --test *.test.mjs && python3 player_test.py && python3 app_test.py && python3 newlesson_test.py && python3 lesson_test.py && python3 join_test.py && python3 live_test.py && python3 growth_test.py && python3 admin_test.py && python3 landing_test.py"
+    "test": "cd test && node --test *.test.mjs && python3 player_test.py && python3 app_test.py && python3 newlesson_test.py && python3 lesson_test.py && python3 join_test.py && python3 live_test.py && python3 growth_test.py && python3 journal_test.py && python3 demo_test.py && python3 admin_test.py && python3 landing_test.py"
   }
 }

@@ -36,7 +36,7 @@ def main():
         pg.wait_for_selector(".side .nav", timeout=8000)
         check("default language is kk", pg.evaluate("document.documentElement.lang") == "kk")
         navs = pg.locator(".side .nav").all_inner_texts()
-        check(f"five menu items {navs}", len(navs) == 5)
+        check(f"six menu items incl. journal {navs}", len(navs) == 6 and "Журнал" in navs)
         check("menu in Kazakh", any("Басты бет" in n for n in navs))
         check("create button", pg.locator(".side a.btn.b").count() == 1)
         pg.locator(".langs button", has_text="РУС").click()

@@ -11,7 +11,8 @@
  *   db.subscribe(fn)              — called after any write
  */
 
-const PREFIX = 'alaqai:v1:';
+// The demo copy (/demo/) keeps its made-up data under its own prefix, apart from real lessons.
+const PREFIX = globalThis.ALAQAI_STORE_PREFIX || 'alaqai:v1:';
 
 export const COLLECTIONS = [
   'classes',        // { id, name, subject }

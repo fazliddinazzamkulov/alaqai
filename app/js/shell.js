@@ -3,9 +3,9 @@ import { add, t, lang, setLang } from './i18n.js';
 import { html, icon, initials } from './ui.js';
 
 add({
-  kk: { 'nav.create': 'Сабақ құру', 'nav.home': 'Басты бет', 'nav.lessons': 'Сабақтарым', 'nav.live': 'Сабақ өткізу', 'nav.growth': 'Оқушылар өсуі', 'nav.classes': 'Сыныптар', 'nav.guest': 'Қонақ', 'nav.signin': 'Кіру', 'nav.logout': 'Шығу' },
-  ru: { 'nav.create': 'Создать урок', 'nav.home': 'Главная', 'nav.lessons': 'Мои уроки', 'nav.live': 'Провести урок', 'nav.growth': 'Рост учеников', 'nav.classes': 'Классы', 'nav.guest': 'Гость', 'nav.signin': 'Войти', 'nav.logout': 'Выйти' },
-  en: { 'nav.create': 'Create lesson', 'nav.home': 'Home', 'nav.lessons': 'My lessons', 'nav.live': 'Run a lesson', 'nav.growth': 'Student growth', 'nav.classes': 'Classes', 'nav.guest': 'Guest', 'nav.signin': 'Sign in', 'nav.logout': 'Sign out' }
+  kk: { 'nav.create': 'Сабақ құру', 'nav.home': 'Басты бет', 'nav.lessons': 'Сабақтарым', 'nav.live': 'Сабақ өткізу', 'nav.growth': 'Оқушылар өсуі', 'nav.journal': 'Журнал', 'nav.classes': 'Сыныптар', 'nav.guest': 'Қонақ', 'nav.signin': 'Кіру', 'nav.logout': 'Шығу' },
+  ru: { 'nav.create': 'Создать урок', 'nav.home': 'Главная', 'nav.lessons': 'Мои уроки', 'nav.live': 'Провести урок', 'nav.growth': 'Рост учеников', 'nav.journal': 'Журнал', 'nav.classes': 'Классы', 'nav.guest': 'Гость', 'nav.signin': 'Войти', 'nav.logout': 'Выйти' },
+  en: { 'nav.create': 'Create lesson', 'nav.home': 'Home', 'nav.lessons': 'My lessons', 'nav.live': 'Run a lesson', 'nav.growth': 'Student growth', 'nav.journal': 'Journal', 'nav.classes': 'Classes', 'nav.guest': 'Guest', 'nav.signin': 'Sign in', 'nav.logout': 'Sign out' }
 });
 
 export const IC = {
@@ -13,9 +13,10 @@ export const IC = {
   lessons: 'M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z',
   live: 'M6 4l14 8-14 8z',
   growth: 'M3 3v18h18M19 9l-5 5-4-4-3 3',
+  journal: 'M4 4h12a4 4 0 0 1 4 4v12H8a4 4 0 0 1-4-4zM8 9h8M8 13h8M8 17h5',
   classes: 'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 3a4 4 0 1 0 0 8a4 4 0 1 0 0-8M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8'
 };
-const ITEMS = [['home', '#/home'], ['lessons', '#/lessons'], ['live', '#/live'], ['growth', '#/growth'], ['classes', '#/classes']];
+const ITEMS = [['home', '#/home'], ['lessons', '#/lessons'], ['live', '#/live'], ['growth', '#/growth'], ['journal', '#/journal'], ['classes', '#/classes']];
 
 export function renderSide(el, active, user) {
   el.innerHTML = html`

@@ -18,8 +18,11 @@ with sync_playwright() as p:
     if d.locator("#burger").is_visible(): fails.append("burger on desktop")
     d.locator(".hdr-r [data-lang=ru]").click()
     if "Подготовка" not in d.locator("h1").inner_text(): fails.append("ru switch")
-    for w in ["пробн","бесплатно","Тариф","демо","Начать"]:
+    for w in ["пробн","бесплатно","Тариф","Начать"]:
         if w.lower() in d.content().lower(): fails.append("word "+w)
+    # the only demo mention is the link to the working demo copy (no server needed)
+    if d.locator("a[href='demo/']").count() != 1: fails.append("demo link")
+    if d.inner_text("body").lower().count("демо") != 1: fails.append("word демо outside the demo link")
     m=b.new_page(viewport={"width":390,"height":844}); m.on("pageerror", lambda e: errs.append(str(e)))
     m.goto(base+"/index.html"); m.wait_for_timeout(500)
     if m.locator(".hdr-r").is_visible(): fails.append("top menu visible on phone")

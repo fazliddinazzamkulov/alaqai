@@ -17,6 +17,18 @@
   try { if (!localStorage.getItem('alaqai_lang') && !/[?&]lang=/.test(location.search)) localStorage.setItem('alaqai_lang', 'kk'); } catch (e) {}
 </script>
 <script src="../assets/js/apibase.js"></script>
+<script>
+  // Demo copy (/demo/ → ?demo=1): made-up class and lessons, no server. Stays on for this tab.
+  (function () {
+    var fresh = /[?&]demo=1(&|$)/.test(location.search), on = fresh;
+    try { if (fresh) sessionStorage.setItem('alaqai_demo', '1'); on = on || sessionStorage.getItem('alaqai_demo') === '1'; } catch (e) {}
+    if (!on) return;
+    window.ALAQAI_DEMO = true; window.ALAQAI_DEMO_FRESH = fresh;
+    window.ALAQAI_API_BASE = 'https://demo.alaqai.invalid';
+    window.ALAQAI_STORE_PREFIX = 'alaqai:demo:';
+    document.write('<script src="js/demo/seed.js"><\/script><script src="js/demo/server.js"><\/script>');
+  })();
+</script>
 <script src="../assets/js/lang.js"></script>
 <script src="../assets/js/api.js" defer></script>
 <script type="module" src="js/main.js"></script>

@@ -63,7 +63,7 @@ export async function render(main, { args, query }) {
   }
   function drawThumbs() {
     const el = body.querySelector('[data-thumbs]'); if (!el) return;
-    el.innerHTML = deck.slides.map((s, i) => html`<button type="button" class="thumb${i === st.idx ? ' on' : ''}" data-thumb="${i}"><b>${i + 1}</b><span><span class="k">${t('t.' + s.type)}</span><span class="n">${s.title || s.question || s.center || ''}</span></span></button>`.toString()).join('');
+    el.innerHTML = deck.slides.map((s, i) => html`<button type="button" class="thumb${i === st.idx ? ' on' : ''}" data-thumb="${i}"><b>${i + 1}</b><span><span class="k">${t('t.' + s.type)}</span><span class="n">${String(s.title || s.question || s.center || '').replace(/==|\*\*/g, '')}</span></span></button>`.toString()).join('');
     el.querySelectorAll('[data-thumb]').forEach(b => { b.onclick = () => { st.idx = +b.dataset.thumb; player.goto(st.idx); drawThumbs(); drawPanel(); }; });
   }
   function drawPanel() {

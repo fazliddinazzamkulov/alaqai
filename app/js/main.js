@@ -15,6 +15,7 @@ const ROUTES = {
   live: ['./views/live.js', 'live', 'bare'],
   present: ['./views/present.js', 'lessons', 'bare'],
   growth: ['./views/growth.js', 'growth'],
+  journal: ['./views/journal.js', 'journal'],
   classes: ['./views/classes.js', 'classes'],
   login: ['./views/login.js', null, 'bare']
 };
@@ -72,7 +73,7 @@ let pending = null;
 db.subscribe(evt => {
   if (evt.silent || !current) return;
   clearTimeout(pending);
-  pending = setTimeout(() => { if (['home', 'lessons', 'growth', 'classes'].includes(current.route) && evt.type === 'external') render(); }, 250);
+  pending = setTimeout(() => { if (['home', 'lessons', 'growth', 'journal', 'classes'].includes(current.route) && evt.type === 'external') render(); }, 250);
 });
 
 // Examples from the first version (marked demo) never reach the server: remove them.

@@ -210,3 +210,28 @@ svg{flex:none}
 .li-agree a{color:var(--acc);font-weight:600}
 .li-google.locked{opacity:.45;filter:grayscale(1)}
 .li-google.locked > *{pointer-events:none}
+
+/* ---------- grade journal ---------- */
+.jr-wrap{overflow-x:auto}
+.jr{border-collapse:separate;border-spacing:0;width:100%;font-size:15px}
+.jr th,.jr td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap}
+.jr thead th{position:sticky;top:0;background:var(--paper);font-weight:600;vertical-align:bottom;min-width:84px}
+.jr .jr-name{position:sticky;left:0;z-index:1;background:var(--paper);text-align:left;font-weight:600;min-width:190px;max-width:240px;overflow:hidden;text-overflow:ellipsis;border-right:1px solid var(--line)}
+.jr-date{display:block;font:700 14px var(--f-head)}
+.jr-topic{display:block;max-width:120px;overflow:hidden;text-overflow:ellipsis;font-weight:500;font-size:12px;color:var(--muted)}
+.jr-cell{position:relative;width:100%;min-width:64px;height:40px;border:0;border-radius:10px;background:none;font:600 15px var(--f-body,inherit);color:var(--ink);cursor:pointer}
+.jr-cell:hover{background:var(--hover)}
+.jr-cell small,.jr-tot small{font-weight:500;color:var(--muted);font-size:12px}
+.jr-cell.ok b{color:var(--ok)} .jr-cell.mid b{color:var(--warn)} .jr-cell.low b{color:var(--bad)}
+.jr-hand{position:absolute;top:2px;right:4px;font-style:normal;font-size:11px;color:var(--acc)}
+.jr-tot{background:var(--acc-soft)}
+.jr-pct{font:700 15px var(--f-head)} .jr-pct.ok{color:var(--ok)} .jr-pct.mid{color:var(--warn)} .jr-pct.low{color:var(--bad)}
+.jr tfoot th,.jr tfoot td{font-weight:700;border-bottom:0;color:var(--ink2)}
+
+/* ---------- demo copy banner ---------- */
+.demo-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 18px;background:#FFF4E5;border-bottom:1px solid #F5C38A;color:var(--warn);font-size:14px;line-height:1.35}
+.demo-bar b{font-weight:700}
+.demo-bar span{flex:1 1 220px;color:var(--ink2)}
+.demo-bar button{border:1px solid #F5C38A;background:#fff;color:var(--warn);font:600 14px inherit;border-radius:999px;padding:5px 14px;cursor:pointer}
+.demo-bar button:hover{background:var(--warn-soft)}
+@media (max-width:640px){.jr .jr-name{min-width:120px;max-width:140px;white-space:normal;font-size:14px}.demo-bar{padding:6px 12px;font-size:13px}}
